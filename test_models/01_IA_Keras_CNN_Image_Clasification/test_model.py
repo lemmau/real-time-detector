@@ -41,8 +41,8 @@ for index, filename in enumerate(list_file_with[:5]):
     y = fig.add_subplot(6, 5, index+1)
 
     # se obtiene la imagen
-    img_pixel = cv2.imread(path_img, cv2.IMREAD_COLOR) #RBG Level
-    img_pixel = cv2.resize(img_pixel, (64, 64)) #64 x 64 pixel
+    img_color = cv2.imread(path_img, cv2.IMREAD_COLOR) #RBG Level
+    img_pixel = cv2.resize(img_color, (64, 64)) #64 x 64 pixel
     
     # se convierte la imagen a matriz y se realiza la evaluacion
     data = img_pixel.reshape(1, 64, 64, 3)
@@ -55,7 +55,7 @@ for index, filename in enumerate(list_file_with[:5]):
         str_label = 'pred: Without Mask'
 
     # se muestra la imagen junto con su leyenda
-    y.imshow(img_pixel)
+    y.imshow(img_color)
     plt.title(str_label)
     y.axes.get_xaxis().set_visible(False)
     y.axes.get_yaxis().set_visible(False)
@@ -66,8 +66,8 @@ for index, filename in enumerate(list_file_without[:5]):
     y = fig.add_subplot(6, 5, index+6)
 
     # se obtiene la imagen
-    img_pixel = cv2.imread(path_img, cv2.IMREAD_COLOR) #RBG Level
-    img_pixel = cv2.resize(img_pixel, (64, 64)) #64 x 64 pixel
+    img_color = cv2.imread(path_img, cv2.IMREAD_COLOR) #RBG Level
+    img_pixel = cv2.resize(img_color, (64, 64)) #64 x 64 pixel
     
     # se convierte la imagen a matriz y se realiza la evaluacion
     data = img_pixel.reshape(1, 64, 64, 3)
@@ -79,7 +79,7 @@ for index, filename in enumerate(list_file_without[:5]):
     else:
         str_label = 'pred: Without Mask'
 
-    y.imshow(img_pixel)
+    y.imshow(img_color)
     plt.title(str_label)
     y.axes.get_xaxis().set_visible(False)
     y.axes.get_yaxis().set_visible(False)
