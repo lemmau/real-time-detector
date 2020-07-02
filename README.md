@@ -4,8 +4,8 @@ This project is developing as a thesis for our careers of Systems Information En
 
 Members:
 
-    Leandro Mauro (mimauro@est.frba.utn.edu.ar)
-    Tomas Agustin De Pietro ()
-    Lucas Martín Cepeda ()
-    Guillermo Basaldúa ()
-    Agustin Bellorini Mansilla ()
+- Leandro Mauro (mimauro@est.frba.utn.edu.ar)
+- Tomas Agustin De Pietro ()
+- Lucas Martín Cepeda ()
+- Guillermo Basaldúa ()
+- Agustin Bellorini Mansilla ()
