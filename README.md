@@ -11,7 +11,7 @@ Members:
 - Agustin Bellorini Mansilla ()
 
 # Dependencies Installation
-We encoure to use python virtual environments for dependencies
+We encourage to use python virtual environments for dependencies
 ```
 $ sudo apt install python3-venv 
 $ python3 -m venv venv
