@@ -1,3 +1,5 @@
 venv/
 *.pyc
 flask/config.py
+node_modules
+flask/static
