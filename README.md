@@ -6,9 +6,9 @@ Members:
 
 - Leandro Mauro (mimauro@est.frba.utn.edu.ar)
 - Tomas Agustin De Pietro (tomas94depi@gmail.com)
-- Lucas Martín Cepeda ()
-- Guillermo Basaldúa ()
-- Agustin Bellorini Mansilla ()
+- Lucas Martín Cepeda (lucascepeda007@gmail.com)
+- Guillermo Basaldúa (guillermobasaldua@yahoo.com.ar)
+- Agustin Bellorini Mansilla (belloriniagustin@gmail.com)
 
 # Dependencies Installation
 We encourage to use python virtual environments for dependencies
@@ -21,4 +21,18 @@ $ python3 -m pip instal -r requirements.txt
 if you want to leave the venv context just run 
 ```
 $ deactivate
+```
+
+For node depencies run:
+```
+$ npm i
+```
+For local development run: 
+
+```
+$ npm run local
+```
+This will watch all changes while developing, refreshing the build and placing it in the folder where Flask can read it. Otherwise, if you just want to build once:
+```
+$ npm run build
 ```
