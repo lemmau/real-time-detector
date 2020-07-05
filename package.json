@@ -1,0 +1,38 @@
+{
+  "name": "real-time-detector",
+  "version": "1.0.0",
+  "description": "This project is developing as a thesis for our careers of Systems Information Engineer at the Univesidad Tecnológica Nacional (UTN - FRBA) - Argentina.",
+  "main": "index.js",
+  "scripts": {
+    "local": "webpack -d --watch",
+    "build": "webpack -d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lemmau/real-time-detector.git"
+  },
+  "keywords": [
+    "UTN",
+    "Covid-19",
+    "Detection"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lemmau/real-time-detector/issues"
+  },
+  "homepage": "https://github.com/lemmau/real-time-detector#readme",
+  "dependencies": {
+    "@babel/cli": "^7.10.4",
+    "@babel/core": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "html-webpack-plugin": "^4.3.0",
+    "install": "^0.13.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
+}
