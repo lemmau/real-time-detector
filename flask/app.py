@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 
-app = Flask(__name__, template_folder='../react', static_folder="../react")
+app = Flask(__name__, template_folder='static', static_folder="static")
 
 app.config.from_object('config')
 
