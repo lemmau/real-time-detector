@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `Event`(
 
 CREATE TABLE IF NOT EXISTS `Object`(
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name varchar(50) NOT NULL,
     description varchar(200),
     isDeleted BOOL NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
