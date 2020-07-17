@@ -24,7 +24,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './react/index.html',
             filename: "index.html",
-            inject: false,
     }),
     ]
 
