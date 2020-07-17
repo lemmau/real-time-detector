@@ -33,8 +33,6 @@
     "install": "^0.13.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-native-live-stream": "^1.0.1",
-    "react-player": "^2.5.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   },
