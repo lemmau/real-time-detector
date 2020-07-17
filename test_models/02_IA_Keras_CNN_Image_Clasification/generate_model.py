@@ -8,6 +8,7 @@ from tensorflow.keras.models import model_from_json
 from tensorflow.keras.layers import Dropout, Flatten, Dense, Activation
 from tensorflow.keras.layers import  Convolution2D, MaxPooling2D
 from tensorflow.keras import backend as K
+from matplotlib import pyplot as plt
 
 
 # se cancela cuaquier otro proceso de entrenamiento
@@ -97,12 +98,13 @@ cnn.summary()
 #  cantidad de epocas 20
 #  generador de imagenes de validacion
 #  cantidad de pasos para validacion 300
-cnn.fit_generator(
+history = cnn.fit_generator(
     training_generator,
     steps_per_epoch=steps,
     epochs=epochs,
     validation_data=validate_generator,
     validation_steps=validation_steps)
+
 
 print("Fin de entrenamiento del modelo")
 
@@ -121,3 +123,25 @@ with open("./test_models/02_IA_Keras_CNN_Image_Clasification/model/model.json", 
 cnn.save_weights('./test_models/02_IA_Keras_CNN_Image_Clasification/model/weights.h5')
 
 print("Se ha guardado el modelo generado")
+
+# SHOW MODEL TRAIN SEQUENCE
+
+# se muestra el avance del entrenamiendo en cuanto a la presicion
+plt.figure()
+plt.plot(history.history['accuracy'],'r',label='training accuracy')
+plt.plot(history.history['val_accuracy'],label='validation accuracy')
+plt.xlabel('# epochs')
+plt.ylabel('accurancy')
+plt.legend()
+plt.savefig('./test_models/02_IA_Keras_CNN_Image_Clasification/model/accur.png')
+plt.close()
+
+# se muestra el avance del entrenamiento en cuanto a la perdida
+plt.figure()
+plt.plot(history.history['loss'],'r',label='training loss')
+plt.plot(history.history['val_loss'],label='validation loss')
+plt.xlabel('# epochs')
+plt.ylabel('loss')
+plt.legend()
+plt.savefig('./test_models/02_IA_Keras_CNN_Image_Clasification/model/loss.png')
+plt.close()

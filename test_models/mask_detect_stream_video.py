@@ -69,7 +69,7 @@ while True:
 
         # se prepara la imagen para enviar al modelo
         img_pixel = rgb_frame[top:bottom, left:right]
-        img_pixel = cv2.resize(img_pixel, (224, 224)) #64 x 64 pixel
+        img_pixel = cv2.resize(img_pixel, (224, 224)) #224 x 224 pixel
 
         # se converte la imagen a informacion y se predice el uso de barbijo
         data = img_pixel.reshape(1, 224, 224, 3)

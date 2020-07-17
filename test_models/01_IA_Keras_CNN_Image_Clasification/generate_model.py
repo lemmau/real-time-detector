@@ -4,6 +4,7 @@ import random
 import os
 import sys
 from tqdm import tqdm
+from matplotlib import pyplot as plt
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import *
 from tensorflow.keras.optimizers import *
@@ -95,14 +96,13 @@ print("Modelo compilado")
 model.summary()
 
 # entrenamiento del modelo
-model.fit(x=train_data, y=train_label, epochs=50, batch_size=128, validation_split=0.1)
+history = model.fit(x=train_data, y=train_label, epochs=50, batch_size=128, validation_split=0.1)
 
 print("Fin de entrenamiento del modelo")
 
 # impresion de las metricas del modelo craado
 scores = model.evaluate(train_data, train_label, verbose=0)
 print("%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-
 
 # MODEL TO JSON
 
@@ -118,3 +118,26 @@ with open("./test_models/01_IA_Keras_CNN_Image_Clasification/model/model.json", 
 # almacenamiento de los pesos a formato h5
 model.save_weights("./test_models/01_IA_Keras_CNN_Image_Clasification/model/weights.h5")
 print("Se ha guardado el modelo generado")
+
+
+# SHOW MODEL TRAIN SEQUENCE
+
+# se muestra el avance del entrenamiendo en cuanto a la presicion
+plt.figure()
+plt.plot(history.history['accuracy'],'r',label='training accuracy')
+plt.plot(history.history['val_accuracy'],label='validation accuracy')
+plt.xlabel('# epochs')
+plt.ylabel('accurancy')
+plt.legend()
+plt.savefig('./test_models/01_IA_Keras_CNN_Image_Clasification/model/accur.png')
+plt.close()
+
+# se muestra el avance del entrenamiento en cuanto a la perdida
+plt.figure()
+plt.plot(history.history['loss'],'r',label='training loss')
+plt.plot(history.history['val_loss'],label='validation loss')
+plt.xlabel('# epochs')
+plt.ylabel('loss')
+plt.legend()
+plt.savefig('./test_models/01_IA_Keras_CNN_Image_Clasification/model/loss.png')
+plt.close()

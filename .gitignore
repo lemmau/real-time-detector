@@ -1,5 +1,2 @@
-/test_models/01_IA_Keras_CNN_Image_Clasification/model
-/test_models/02_IA_Keras_CNN_Image_Clasification/model
-/test_models/03_IA_Keras_SSD_Object_Detection/model
-/test_models/03_IA_Keras_SSD_Object_Detection/face_detector
 /test_models/03_IA_Keras_SSD_Object_Detection/test_model_video.py
+/test_models/test_programs

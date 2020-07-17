@@ -20,15 +20,16 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from imutils import paths
+from matplotlib import pyplot as plt
 
 
 # carpetas de archivos de entrenamiento y download de modelo
 images_path = './test_models/03_IA_Keras_SSD_Object_Detection/data/train'
 target_dir = './test_models/03_IA_Keras_SSD_Object_Detection/model/'
 
-# Parametros de entrenamiento
-
-epocas = 10
+# Parametros de entrenamiento# se convierte la informacion al matriz final
+data = np.array(data, dtype="float32")
+labels = np.array(labels)
 lr = 1e-4
 batch_size = 32
 
@@ -121,7 +122,7 @@ model.summary()
 #  cantidad de pasos para validacion = cantidad de imagenes
 #   de validacion sobre el tamanio del batch
 #  cantidad de epocas 10
-model.fit(
+history = model.fit(
 	aug.flow(trainX, trainY, batch_size=batch_size),
 	steps_per_epoch=len(trainX) // batch_size,
 	validation_data=(testX, testY),
@@ -146,32 +147,24 @@ model.save_weights('./test_models/03_IA_Keras_SSD_Object_Detection/model/weights
 
 print("Se ha guardado el modelo generado")
 
-# # make predictions on the testing set
-# print("[INFO] evaluating network...")
-# predIdxs = model.predict(testX, batch_size=BS)
+# SHOW MODEL TRAIN SEQUENCE
 
-# # for each image in the testing set we need to find the index of the
-# # label with corresponding largest predicted probability
-# predIdxs = np.argmax(predIdxs, axis=1)
+# se muestra el avance del entrenamiendo en cuanto a la presicion
+plt.figure()
+plt.plot(history.history['accuracy'],'r',label='training accuracy')
+plt.plot(history.history['val_accuracy'],label='validation accuracy')
+plt.xlabel('# epochs')
+plt.ylabel('accurancy')
+plt.legend()
+plt.savefig('./test_models/03_IA_Keras_SSD_Object_Detection/model/accur.png')
+plt.close()
 
-# # show a nicely formatted classification report
-# print(classification_report(testY.argmax(axis=1), predIdxs,
-# 	target_names=lb.classes_))
-
-# # serialize the model to disk
-# print("[INFO] saving mask detector model...")
-# model.save(args["model"], save_format="h5")
-
-# # plot the training loss and accuracy
-# N = EPOCHS
-# plt.style.use("ggplot")
-# plt.figure()
-# plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
-# plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-# plt.plot(np.arange(0, N), H.history["acc"], label="train_acc")
-# plt.plot(np.arange(0, N), H.history["val_accuracy"], label="val_acc")
-# plt.title("Training Loss and Accuracy")
-# plt.xlabel("Epoch #")
-# plt.ylabel("Loss/Accuracy")
-# plt.legend(loc="lower left")
-# plt.savefig(args["plot"])
+# se muestra el avance del entrenamiento en cuanto a la perdida
+plt.figure()
+plt.plot(history.history['loss'],'r',label='training loss')
+plt.plot(history.history['val_loss'],label='validation loss')
+plt.xlabel('# epochs')
+plt.ylabel('loss')
+plt.legend()
+plt.savefig('./test_models/03_IA_Keras_SSD_Object_Detection/model/loss.png')
+plt.close()
