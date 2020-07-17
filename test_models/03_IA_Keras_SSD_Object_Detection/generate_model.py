@@ -27,9 +27,9 @@ from matplotlib import pyplot as plt
 images_path = './test_models/03_IA_Keras_SSD_Object_Detection/data/train'
 target_dir = './test_models/03_IA_Keras_SSD_Object_Detection/model/'
 
-# Parametros de entrenamiento# se convierte la informacion al matriz final
-data = np.array(data, dtype="float32")
-labels = np.array(labels)
+# Parametros de entrenamiento
+
+epocas = 20
 lr = 1e-4
 batch_size = 32
 
