@@ -4,7 +4,7 @@
   "description": "This project is developing as a thesis for our careers of Systems Information Engineer at the Univesidad Tecnológica Nacional (UTN - FRBA) - Argentina.",
   "main": "index.js",
   "scripts": {
-    "local": "webpack-dev-s^Cver --mode development --open",
+    "local": "webpack-dev-server --mode development --open",
     "build": "webpack -d"
   },
   "repository": {
