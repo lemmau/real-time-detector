@@ -4,7 +4,7 @@ This project is developing as a thesis for our careers of Systems Information En
 
 Members:
 
-- Leandro Mauro (mimauro@est.frba.utn.edu.ar)
+- Leandro Mauro (leammau@gmail.com)
 - Tomas Agustin De Pietro (tomas94depi@gmail.com)
 - Lucas Martín Cepeda (lucascepeda007@gmail.com)
 - Guillermo Basaldúa (guillermobasaldua@yahoo.com.ar)
@@ -14,9 +14,10 @@ Members:
 We encourage to use python virtual environments for dependencies
 ```
 $ sudo apt install python3-venv 
-$ python3 -m venv venv
+$ python -m venv venv
 $ source venv/bin/activate
-$ python3 -m pip install -r requirements.txt
+$ pip install cmake 
+$ pip install -r requirements.txt
 ```
 if you want to leave the venv context just run 
 ```
@@ -35,4 +36,16 @@ $ npm run local
 This will watch all changes while developing, refreshing the build and placing it in the folder where Flask can read it. Otherwise, if you just want to build once:
 ```
 $ npm run build
+```
+
+Remember export the FLASK_APP and FLASK_ENV environment variables
+```
+$ export FLASK_APP=flask/app.py
+$ export FLASK_ENV=development
+```
+And finally copy the config sample and run the webapp
+```
+$ cp flask/config.py.sample flask/config.py
+$ flask run
+ * Running on http://127.0.0.1:5000/
 ```
