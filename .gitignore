@@ -3,3 +3,6 @@ venv/
 flask/config.py
 node_modules
 flask/static
+.vscode/settings.json
+core/data/kaggle-masks
+core/models/*
