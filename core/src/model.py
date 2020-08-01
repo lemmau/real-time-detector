@@ -7,7 +7,6 @@ import torchvision
 import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning)
-warnings.filterwarnings("ignore", category=SourceChangeWarning)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class VGGBase(nn.Module):
