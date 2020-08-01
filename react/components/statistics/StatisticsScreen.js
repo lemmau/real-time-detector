@@ -11,31 +11,29 @@ export const StatisticsScreen = () => {
   
     return (
       <>
-<div id="header">
-<FormControl component="fieldset">
-      <FormLabel component="legend"><b></b></FormLabel>
-      <FormGroup aria-label="position" row></FormGroup>
-      <FormControlLabel
-          value="Enviar estadísticas por email"
-          control={<Checkbox color="primary" />}
-          label="Enviar estadísticas por email"
-        />
-        <FormLabel component="legend"><b>Alertas sonoras</b></FormLabel>
-      <FormGroup aria-label="position" row></FormGroup>
-      <FormControlLabel
-          value="Alertas sonoras"
-          control={<Checkbox color="primary" />}
-          label="Alertas sonoras"
-        />
-    </FormControl>
-</div>
-<hr/>
-<div>
-                        <Button href="/configuration" color="primary">Volver a Configuración</Button>
-                        <Button className="right" href="/webcam" color="primary">Guardar</Button>
-                    
-                    
-</div>
+      <div id="header">
+      <FormControl component="fieldset">
+            <FormLabel component="legend"><b></b></FormLabel>
+            <FormGroup aria-label="position" row></FormGroup>
+            <FormControlLabel
+                value="Enviar estadísticas por email"
+                control={<Checkbox color="primary" />}
+                label="Enviar estadísticas por email"
+              />
+              <FormLabel component="legend"><b>Alertas sonoras</b></FormLabel>
+            <FormGroup aria-label="position" row></FormGroup>
+            <FormControlLabel
+                value="Alertas sonoras"
+                control={<Checkbox color="primary" />}
+                label="Alertas sonoras"
+              />
+          </FormControl>
+      </div>
+      <hr/>
+      <div>
+          <Button href="/configuration" color="primary">Volver a Configuración</Button>
+          <Button className="right" href="/webcam" color="primary">Guardar</Button>             
+      </div>
       </>
     );
   }; 
