@@ -28,7 +28,7 @@ export const Navbar = () => {
                         activeClassName="active"
                         className="nav-item nav-link" 
                         exact
-                        to="/camera"
+                        to="/configuration"
                     >
                         Configuración
                     </NavLink>
@@ -36,7 +36,7 @@ export const Navbar = () => {
                     <NavLink 
                         activeClassName="active"
                         className="nav-item nav-link" 
-                        to="/camera"
+                        to="/statistics"
                     >
                         Estadísticas
                     </NavLink>
@@ -47,7 +47,7 @@ export const Navbar = () => {
                         activeClassName="active"
                         className="nav-item nav-link" 
                         exact
-                        to="/camera"
+                        to="/webcam"
                     >
                         Vivo
                     </NavLink>
