@@ -38,11 +38,15 @@
     "react-image": "^4.0.3",
     "react-router-dom": "^5.2.0",
     "reactstrap": "^8.5.1",
+    "styled-components": "^5.1.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
     "file-loader": "^6.0.0",
     "webpack-dev-server": "^3.11.0"
+  },
+  "resolutions": {
+    "styled-components": "^5"
   }
 }
