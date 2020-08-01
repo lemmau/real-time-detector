@@ -7,6 +7,7 @@ module.exports = {
     output: {
         filename: 'build.js',
         path: path.join(__dirname, 'flask/static/'),
+        publicPath: '/',
     },
     resolve: {
         extensions: ['.js', '.jsx'],
@@ -17,13 +18,23 @@ module.exports = {
             test: /\.(js|jsx)$/,
             exclude: /node_modules/,
             use: ['babel-loader']
-        },     
+        },
+        {
+            test: /\.(png|svg|jpg|gif)$/,
+            use: [
+            'file-loader',
+            ],
+        },
         ]
+    },
+    devServer: {
+        historyApiFallback: true,
     },
     plugins: [
         new HtmlWebpackPlugin({
             template: './react/index.html',
             filename: "index.html",
+        
     }),
     ]
 
