@@ -25,7 +25,6 @@ export const ConfigurationScreen = () => (
           value="Máscara"
           control={<Checkbox color="primary" />}
           label="Máscara"
-          labelPlacement="Máscara"
         />
         <FormLabel component="legend"><b>Alertas sonoras</b></FormLabel>
       <FormGroup aria-label="position" row></FormGroup>
