@@ -11,7 +11,6 @@ with open(configFile) as file:
     config = json.load(file)
 
 
-print(app.config.get('email'))
 @app.route('/')
 @app.route('/configuration')
 @app.route('/camera')
