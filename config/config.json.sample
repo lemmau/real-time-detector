@@ -1,0 +1,15 @@
+{
+    "backendEndpoint": "http://localhost:5000",
+    "database": {
+        "host": "localhost",
+        "port": 3306,
+        "username": "root",
+        "password": "root"
+    },
+    "email": {
+        "smptServer": "smtp.gmail.com",
+        "smptPort": 587,
+        "senderMail": "example@gmail.com",
+        "senderPassword": "password"
+    }
+}
