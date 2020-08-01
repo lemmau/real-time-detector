@@ -35,13 +35,14 @@
     "install": "^0.13.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-image": "^4.0.3",
     "react-router-dom": "^5.2.0",
-    "react-webcam": "^5.2.0",
     "reactstrap": "^8.5.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
+    "file-loader": "^6.0.0",
     "webpack-dev-server": "^3.11.0"
   }
 }
