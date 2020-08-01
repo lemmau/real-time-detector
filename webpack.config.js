@@ -35,6 +35,8 @@ module.exports = {
             template: './react/index.html',
             filename: "index.html",
     }),
-    ]
-
+    ],
+    externals: {
+        'Config': JSON.stringify(require(path.join(__dirname, 'config/config.json'))),
+    },
 }
