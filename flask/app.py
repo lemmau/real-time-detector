@@ -1,11 +1,17 @@
+import os
+import json
 from flask import Flask, render_template, Response
 from src.Video import Video
 
 app = Flask(__name__, template_folder='static', static_folder="static")
 
-#app.config.from_object('config')
+configFile = os.path.abspath(os.getcwd()) + '/config/config.json' 
+print(configFile)
+with open(configFile) as file:
+    config = json.load(file)
 
 
+print(app.config.get('email'))
 @app.route('/')
 @app.route('/configuration')
 @app.route('/camera')
