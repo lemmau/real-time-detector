@@ -11,7 +11,9 @@ from imutils.video import FPS
 device = torch.device('cpu')
 
 # Load model checkpoint
-checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth.tar'
+checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar'
+# checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth.tar'
+
 checkpoint = torch.load(checkpoint, map_location='cpu')
 print('\nLoaded checkpoint from epoch %d.\n' % (checkpoint['epoch'] + 1))
 
@@ -21,7 +23,7 @@ model = checkpoint['model'].to(device).eval() # eval() turn the model into evalu
 resize = transforms.Resize((300, 300))
 to_tensor = transforms.ToTensor()
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225]) # We use the standard transformation for RGB images - More info can be found here https://discuss.pytorch.org/t/understanding-transform-normalize/21730/22 
+                                 std=[0.229, 0.224, 0.225]) # We use the standard transformation for RGB images - More info can be found here https://discuss.pytorch.org/t/understanding-transform-normalize/21730/22
 
 
 def detect(original_image, min_score, max_overlap, max_objects):
@@ -55,41 +57,45 @@ def detect(original_image, min_score, max_overlap, max_objects):
         detected_label = det_labels[i]
 
         draw.rectangle(xy=box_location, outline=label_color_map[detected_label]) # Draw rectangle more info -> https://www.geeksforgeeks.org/python-pil-imagedraw-draw-rectangle/
-        
-        # Increase thickness on rectangle
-        draw.rectangle(xy=[l + 1. for l in box_location], outline=label_color_map[detected_label])
-        draw.rectangle(xy=[l + 2. for l in box_location], outline=label_color_map[detected_label])
-        draw.rectangle(xy=[l + 3. for l in box_location], outline=label_color_map[detected_label])
 
-        text_size = font.getsize(detected_label.replace('_', ' ', 1).upper())
+        # Increase thickness on rectangle
+        # draw.rectangle(xy=[l + 1. for l in box_location], outline=label_color_map[detected_label])
+        # draw.rectangle(xy=[l + 2. for l in box_location], outline=label_color_map[detected_label])
+        # draw.rectangle(xy=[l + 3. for l in box_location], outline=label_color_map[detected_label])
+
+        # Text
+        text = det_labels[i].upper()+ " " + "{:.2%}".format(det_scores[0][i].item())
+        text_size = font.getsize(text)
         text_location = [box_location[0] + 2., box_location[1] - text_size[1]]
         textbox_location = [box_location[0], box_location[1] - text_size[1], box_location[0] + text_size[0] + 4., box_location[1]]
-        draw.rectangle(xy=textbox_location, fill=label_color_map[detected_label])
+        draw.rectangle(xy=textbox_location, fill=label_color_map[det_labels[i]])
+        draw.text(xy=text_location, text=text, fill='white',
+                  font=font)
     del draw
     return annotated_image
 
 # Use to run SSD300 on image
-if __name__ == '__main__':
-    img_path = './core/data/test_data/2.jpg'
-    original_image = Image.open(img_path, mode='r')
-    detect(original_image, min_score=0.2, max_overlap=0.5, max_objects=200).show()
+# if __name__ == '__main__':
+    # img_path = './core/data/test_data/3.jpg'
+    # original_image = Image.open(img_path, mode='r')
+    # detect(original_image, min_score=0.2, max_overlap=0.5, max_objects=200).show()
 
 # Use to run SSD300 on webcam
-# if __name__ == '__main__':
-#     video_capture = cv2.VideoCapture(0)
+if __name__ == '__main__':
+    video_capture = cv2.VideoCapture(0)
 
-#     while True:
-#         ret, frame = video_capture.read()
-#         original_image = Image.fromarray(frame)
-#         prediction = detect(original_image, min_score=0.1,
-#                             max_overlap=0.5, max_objects=100)
+    while True:
+        ret, frame = video_capture.read()
+        original_image = Image.fromarray(frame)
+        prediction = detect(original_image, min_score=0.7,
+                            max_overlap=0.1, max_objects=100)
 
-#         cv2.imshow('Video', np.array(prediction))
+        cv2.imshow('Video', np.array(prediction))
 
-#         # Se espera la tecla 'q' para salir
-#         if cv2.waitKey(1) & 0xFF == ord('q'):
-#             break
+        # Se espera la tecla 'q' para salir
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-#     # se liberan los recursos de la camara
-#     video_capture.release()
-#     cv2.destroyAllWindows()
+    # se liberan los recursos de la camara
+    video_capture.release()
+    cv2.destroyAllWindows()
