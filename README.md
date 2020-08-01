@@ -43,6 +43,10 @@ Remember export the FLASK_APP and FLASK_ENV environment variables
 $ export FLASK_APP=flask/app.py
 $ export FLASK_ENV=development
 ```
+In the config folder there is a config sample, rename it for "config.json"
+```
+$ mv config.json.sample config.json
+```
 And finally copy the config sample and run the webapp
 ```
 $ cp flask/config.py.sample flask/config.py
