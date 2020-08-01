@@ -3,3 +3,4 @@ venv/
 flask/config.py
 node_modules
 flask/static
+config/*.json
