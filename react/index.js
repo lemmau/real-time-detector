@@ -1,9 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-
-import HelloWord from './components/App'
+import { IADetectorApp } from './IADetectorApp';
 
 ReactDOM.render(
-    <HelloWord/>
-	, document.getElementById('root')
-)
+  <IADetectorApp />,
+  document.getElementById('root')
+);
