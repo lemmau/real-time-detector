@@ -49,7 +49,6 @@ $ cp config/config.json.sample config/config.json
 ```
 And finally copy the config sample and run the webapp
 ```
-$ cp flask/config.py.sample flask/config.py
 $ flask run
  * Running on http://127.0.0.1:5000/
 ```
