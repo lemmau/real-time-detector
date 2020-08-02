@@ -4,3 +4,6 @@ flask/config.py
 node_modules
 flask/static
 config/*.json
+.vscode/settings.json
+core/data/kaggle-masks
+core/models/*
