@@ -3,10 +3,14 @@ from src.Video import Video
 
 app = Flask(__name__, template_folder='static', static_folder="static")
 
-app.config.from_object('config')
+#app.config.from_object('config')
 
 
 @app.route('/')
+@app.route('/configuration')
+@app.route('/camera')
+@app.route('/statistics')
+@app.route('/webcam')
 def hello_world():
     return render_template('index.html')
 
