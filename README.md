@@ -45,7 +45,7 @@ $ export FLASK_ENV=development
 ```
 In the config folder there is a config sample, rename it for "config.json"
 ```
-$ mv config.json.sample config.json
+$ cp config/config.json.sample config/config.json
 ```
 And finally copy the config sample and run the webapp
 ```
