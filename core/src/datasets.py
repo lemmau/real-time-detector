@@ -21,7 +21,7 @@ class PascalVOCDataset(Dataset):
         with open(os.path.join(data_folder, self.split + '_objects.json'), 'r') as j:
             self.objects = json.load(j)
 
-        print('Len images loaded to train: ' + len(self.images))
+        print('Length images loaded to ' + self.split + ': ' + len(self.images).__str__())
 
         assert len(self.images) == len(self.objects)
 
