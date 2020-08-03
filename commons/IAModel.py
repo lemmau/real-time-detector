@@ -10,7 +10,7 @@ class IAModel():
     def __init__(self, modelPath: str, classes:list):
   
         self.modelPath = modelPath
-        self.model = torch.load("core/checkpoint_ssd300_kaggle.pth.tar", map_location='cpu')
+        self.model = torch.load(self.modelPath, map_location='cpu')
         print('\nLoaded checkpoint from epoch %d.\n' % (self.model['epoch'] + 1))
         self.model = self.model['model'].to(torch.device('cpu')).eval()
         self.classes = classes
