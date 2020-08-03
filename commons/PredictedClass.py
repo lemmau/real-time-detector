@@ -5,8 +5,6 @@ class PredictedClass():
         self.id = identifier
         self.label = label
         self.color = color
-        self.score = None
-        self.boxLimits = []
 
 class ClassList():
 

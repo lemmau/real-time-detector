@@ -40,23 +40,18 @@ class IAModel():
             [original_image.width, original_image.height, original_image.width, original_image.height]).unsqueeze(0)
         det_boxes = det_boxes * original_dims
 
-        predictedClasses = []
-
-        for labelId, box, score in zip(det_labels, det_boxes, det_scores):
-            c = self.classes.getClassByPredictedId(labelId)
-            c.boxLimits = box.tolist()
-            c.score = round(score.tolist()[0], 4)
-            predictedClasses.append(c)
+        annotated_image = original_image
 
         #if det_labels == ['background']:
         #    return original_image
 
-        annotated_image = original_image
-
-        for c in predictedClasses: 
+        for labelId, box, score in zip(det_labels, det_boxes, det_scores):
+            c = self.classes.getClassByPredictedId(labelId)
+            boxLimits = box.tolist()
+            score = round(score.tolist()[0], 4)
             
-            ElementDrawer.drawRectangule(original_image, c.boxLimits, c.color)
-            text = c.label.upper()+ " " + "{:.2%}".format(c.score)
-            ElementDrawer.drawTextBox(original_image, text, "home/depi/.fonts/calibri.ttf", c.boxLimits, c.color)
+            ElementDrawer.drawRectangule(annotated_image, boxLimits, c.color)
+            text = c.label.upper()+ " " + "{:.2%}".format(score)
+            ElementDrawer.drawTextBox(annotated_image, text, "home/depi/.fonts/calibri.ttf", boxLimits, c.color)
 
         return annotated_image
