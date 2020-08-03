@@ -1,6 +1,6 @@
 import sys
 import cv2
-sys.path.insert(0, '/var/www/real-time-detector/commons')
+sys.path.insert(0, 'commons')
 from PIL import Image
 from imutils.video import VideoStream
 from PredictedClass import ClassList
@@ -12,7 +12,7 @@ classes.addClass(1, 'with_mask', '#3cb44b')
 classes.addClass(2, 'without_mask', '#e6194B')
 
 # Load model checkpoint
-checkpoint = "/var/www/real-time-detector/core/checkpoint_ssd300_kaggle.pth.tar"
+checkpoint = "core/checkpoint_ssd300_kaggle.pth.tar"
 model = IAModel(checkpoint, classes)
 
 
