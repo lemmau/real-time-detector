@@ -2,8 +2,8 @@ import sys
 import torch
 from torchvision import transforms
 from PIL import Image
-sys.path.insert(0, '/var/www/real-time-detector/')
-from commons.ElementDrawer import ElementDrawer
+sys.path.insert(0, '/var/www/real-time-detector/commons')
+from ElementDrawer import ElementDrawer
 
 class IAModel():
 

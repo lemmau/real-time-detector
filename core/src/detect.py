@@ -1,10 +1,10 @@
 import sys
 import cv2
-sys.path.insert(0, '/var/www/real-time-detector/')
+sys.path.insert(0, '/var/www/real-time-detector/commons')
 from PIL import Image
 from imutils.video import VideoStream
-from commons.PredictedClass import ClassList
-from commons.IAModel import IAModel
+from PredictedClass import ClassList
+from IAModel import IAModel
 
 classes = ClassList()
 classes.addClass(0, 'background', '#ffffff')
