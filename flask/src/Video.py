@@ -1,22 +1,26 @@
 import cv2
 import threading
-import imutils
-from imutils.video import VideoStream
+import numpy as np
+from PIL import Image
 
 class Video():
 
-    # TODO: implement chose video input, instead the default one
-    videoInput = VideoStream(src=0).start()
+    #TODO: implement chose video input, instead the default one
+    videoInput = cv2.VideoCapture(0)
     outputFrame = None
     lock = threading.Lock()
 
     @staticmethod
-    def getFrame():
+    def getFrame(model):
         while True:
 
-            frame = Video.videoInput.read()
-            Video.outputFrame = imutils.resize(frame, width=400)
-
+            _, frame = Video.videoInput.read()
+            #Video.outputFrame = imutils.resize(frame, width=400)
+            image = Image.fromarray(frame)
+            prediction = model.detect(image, min_score=0.2, max_overlap=0.5, max_objects=200)
+            
+            Video.outputFrame = np.array(prediction)
+      
             with Video.lock:
                 
                 if Video.outputFrame is None:
