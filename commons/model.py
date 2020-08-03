@@ -1,7 +1,7 @@
 import sys
-sys.path.insert(0, '/var/www/real-time-detector/')
+sys.path.insert(0, 'commons')
 from torch import nn
-from commons.utils import *
+from utils import *
 import torch.nn.functional as F
 from math import sqrt
 from itertools import product as product

@@ -2,7 +2,7 @@ import sys
 import torch
 from torchvision import transforms
 from PIL import Image
-sys.path.insert(0, '/var/www/real-time-detector/commons')
+sys.path.insert(0, 'commons')
 from ElementDrawer import ElementDrawer
 
 class IAModel():
@@ -10,7 +10,7 @@ class IAModel():
     def __init__(self, modelPath: str, classes:list):
   
         self.modelPath = modelPath
-        self.model = torch.load("/var/www/real-time-detector/core/checkpoint_ssd300_kaggle.pth.tar", map_location='cpu')
+        self.model = torch.load("core/checkpoint_ssd300_kaggle.pth.tar", map_location='cpu')
         print('\nLoaded checkpoint from epoch %d.\n' % (self.model['epoch'] + 1))
         self.model = self.model['model'].to(torch.device('cpu')).eval()
         self.classes = classes
@@ -52,6 +52,6 @@ class IAModel():
             
             ElementDrawer.drawRectangule(annotated_image, boxLimits, c.color)
             text = c.label.upper()+ " " + "{:.2%}".format(score)
-            ElementDrawer.drawTextBox(annotated_image, text, "home/depi/.fonts/calibri.ttf", boxLimits, c.color)
+            ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, c.color)
 
         return annotated_image
