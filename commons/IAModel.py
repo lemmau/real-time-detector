@@ -42,8 +42,8 @@ class IAModel():
 
         annotated_image = original_image
 
-        #if det_labels == ['background']:
-        #    return original_image
+        if det_labels == ['background']:
+            return original_image
 
         for labelId, box, score in zip(det_labels, det_boxes, det_scores):
             c = self.classes.getClassByPredictedId(labelId)
