@@ -1,11 +1,11 @@
 import sys
-sys.path.insert(0, '/var/www/real-time-detector/')
+sys.path.insert(0, '/var/www/real-time-detector/commons')
 import os
 import json
 from flask import Flask, render_template, Response
 from src.Video import Video
-from commons.IAModel import IAModel
-from commons.PredictedClass import ClassList
+from IAModel import IAModel
+from PredictedClass import ClassList
 
 app = Flask(__name__, template_folder='static', static_folder="static")
 
