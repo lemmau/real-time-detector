@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '/var/www/real-time-detector/commons')
+sys.path.insert(0, 'commons')
 import os
 import json
 from flask import Flask, render_template, Response
