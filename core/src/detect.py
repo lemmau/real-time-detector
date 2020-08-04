@@ -1,5 +1,6 @@
 import sys
 import cv2
+import numpy as np
 sys.path.insert(0, 'commons')
 from PIL import Image
 from imutils.video import VideoStream
@@ -30,7 +31,7 @@ if __name__ == '__main__':
 #     while True:
 #         ret, frame = video_capture.read()
 #         original_image = Image.fromarray(frame)
-#         prediction = detect(original_image, min_score=0.7,
+#         prediction = model.detect(original_image, min_score=0.7,
 #                             max_overlap=0.1, max_objects=100)
 
 #         cv2.imshow('Video', np.array(prediction))
