@@ -1,5 +1,5 @@
 from utils import *
-from datasets import PascalVOCDataset
+from .datasets import PascalVOCDataset
 from tqdm import tqdm
 from pprint import PrettyPrinter
 

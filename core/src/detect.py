@@ -3,9 +3,9 @@ import cv2
 import numpy as np
 sys.path.insert(0, 'commons')
 from PIL import Image
-from imutils.video import VideoStream
-from PredictedClass import ClassList
-from IAModel import IAModel
+from commons.PredictedClass import ClassList
+from commons.IAModel import IAModel
+from .. definitions import  CHECKPOINT, TEST_DATA_PATH
 
 classes = ClassList()
 classes.addClass(0, 'background', '#ffffff')
@@ -13,13 +13,13 @@ classes.addClass(1, 'with_mask', '#3cb44b')
 classes.addClass(2, 'without_mask', '#e6194B')
 
 # Load model checkpoint
-checkpoint = "core/checkpoint_ssd300_kaggle.pth.tar"
+checkpoint = CHECKPOINT
 model = IAModel(checkpoint, classes)
 
 
 # Use to run SSD300 on image
 if __name__ == '__main__':
-    img_path = '/home/depi/Desktop/depi.png'
+    img_path = TEST_DATA_PATH + '3.jpg'
     original_image = Image.open(img_path, mode='r')
     result = model.detect(original_image, min_score=0.2, max_overlap=0.5, max_objects=200)
     result.show()

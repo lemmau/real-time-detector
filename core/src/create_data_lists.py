@@ -1,5 +1,5 @@
 from utils import create_data_lists
+from ..definitions import KAGGLE_PATH, OUTPUT_PATH
 
 if __name__ == '__main__':
-    create_data_lists(kaggle_path = './core/data/kaggle-masks',
-                      output_folder='./core/data/kaggle-masks')
+    create_data_lists(kaggle_path = KAGGLE_PATH, output_folder= OUTPUT_PATH)
