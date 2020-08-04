@@ -34,6 +34,7 @@ class IAModel():
 
         det_boxes = det_boxes[0].to('cpu')
         det_labels = det_labels[0].to('cpu').tolist() # returns list of ints
+        det_scores = det_scores[0].to('cpu')
 
         # Transform back to original image dimensions
         original_dims = torch.FloatTensor(
@@ -45,11 +46,11 @@ class IAModel():
         if det_labels == ['background']:
             return original_image
 
-        for labelId, box, score in zip(det_labels, det_boxes, det_scores):
+        for labelId, box, score in zip(det_labels, det_boxes.tolist(), det_scores):
             c = self.classes.getClassByPredictedId(labelId)
-            boxLimits = box.tolist()
-            score = round(score.tolist()[0], 4)
-            
+            boxLimits = box
+            score = round(score.item(), 4)
+
             ElementDrawer.drawRectangule(annotated_image, boxLimits, c.color)
             text = c.label.upper()+ " " + "{:.2%}".format(score)
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, c.color)
