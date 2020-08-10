@@ -17,6 +17,8 @@ rev_label_map = {v: k for k, v in label_map.items()}  # Inverse mapping
 distinct_colors = ['#3cb44b', '#e6194B', '#ffffff']
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
 
+checkpoint_name = 'checkpoint_ssd300-masks.pth.tar'
+
 def find_intersection(set_1, set_2):
     lower_bounds = torch.max(set_1[:, :2].unsqueeze(1), set_2[:, :2].unsqueeze(0))  # (n1, n2, 2)
     upper_bounds = torch.min(set_1[:, 2:].unsqueeze(1), set_2[:, 2:].unsqueeze(0))  # (n1, n2, 2)
@@ -345,6 +347,12 @@ def save_checkpoint(epoch, model, optimizer):
              'model': model,
              'optimizer': optimizer}
     # filename = 'checkpoint_ssd300.pth.tar' # Ensure filename is right 
+
+    if epoch%500 != 0:
+      filename = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/' + checkpoint_name # Ensure filename is right 
+    else:
+      filename = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/model-backup/' + checkpoint_name + '(E' + epoch.__str__() + ')'
+    
     torch.save(state, filename)
 
 def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, true_difficulties):	
