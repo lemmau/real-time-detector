@@ -5,17 +5,18 @@ import torch.utils.data
 from commons.model import SSD300, MultiBoxLoss
 from .datasets import PascalVOCDataset
 from utils import *
+from .. definitions import CHECKPOINT, KAGGLE_PATH
 
 # Data parameters
-data_folder = './core/data/kaggle-masks/'  # folder with images
+data_folder = KAGGLE_PATH  # folder with images
 keep_difficult = True
 
 n_classes = len(label_map)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Learning parameters
-# checkpoint = './models/checkpoint_ssd300_kaggle.pth'  # path to model checkpoint, None if none
-# checkpoint = None  # path to model checkpoint, None if nonek
+checkpoint = CHECKPOINT  # path to model checkpoint, None if none
+# checkpoint = None  CHECKPOINT # path to model checkpoint, None if nonek
 batch_size = 8  # batch size
 iterations = 120000 # 120000  # number of iterations to train
 workers = 4  # number of workers for loading data in the DataLoader
@@ -138,5 +139,5 @@ def train(train_loader, model, criterion, optimizer, epoch):
         # assert not np.any(np.isnan(losses.val)) # Add some validation for loss = nan 
     del predicted_locs, predicted_scores, images, boxes, labels
 
-if __name__ == '__main__':
+if __name__ == 'core.src.train':
     main()
