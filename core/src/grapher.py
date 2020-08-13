@@ -43,3 +43,6 @@ def getLoss(logLines):
         losses.append(loss)
 
     return [float(loss) for loss in losses]
+
+if __name__ == 'core.src.grapher':
+    main()
