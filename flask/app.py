@@ -17,7 +17,9 @@ with open(configFile) as file:
 classes = ClassList()
 classes.addClass(0, 'background', '#ffffff')
 classes.addClass(1, 'with_mask', '#3cb44b')
-classes.addClass(2, 'without_mask', '#e6194B')
+classes.addClass(2, 'with_glasses', '#092FEB')
+classes.addClass(3, 'with_mask_and_glasses', '#FFF926')
+classes.addClass(4, 'clean', '#e6194B')
 
 maskDetector = IAModel('/var/www/real-time-detector/core/checkpoint_ssd300_kaggle.pth.tar', classes)
 

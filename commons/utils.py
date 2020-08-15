@@ -9,13 +9,15 @@ from os.path import isfile, join
 
 device = torch.device('cpu')
 
-voc_labels = ('with_mask', 'without_mask')
+voc_labels = ('with_mask', 'with_glasses', 'with_mask_and_glasses', 'clean')
 label_map = {k: v + 1 for v, k in enumerate(voc_labels)}
 label_map['background'] = 0
 rev_label_map = {v: k for k, v in label_map.items()}  # Inverse mapping
 
-distinct_colors = ['#3cb44b', '#e6194B', '#ffffff']
+distinct_colors = ['#3cb44b', '#092FEB', '#FFF926', '#e6194B', '#ffffff']
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
+
+images_to_train = 700
 
 def find_intersection(set_1, set_2):
     lower_bounds = torch.max(set_1[:, :2].unsqueeze(1), set_2[:, :2].unsqueeze(0))  # (n1, n2, 2)
@@ -45,7 +47,7 @@ def create_data_lists(kaggle_path, output_folder):
     train_objects = list()
     n_objects = 0
 
-    ids = listdir(os.path.join(kaggle_path, 'images'))[:700]
+    ids = listdir(os.path.join(kaggle_path, 'images'))[:images_to_train]
     ids = [f.split('.')[0] for f in ids]
     # ids = [".".join(f.split(".")[:-1]) for f in os.listdir(os.path.join(kaggle_path, 'images')) if os.path.isfile(f)][:700]
 
@@ -77,7 +79,7 @@ def create_data_lists(kaggle_path, output_folder):
 
     # with open(os.path.join(kaggle_path, 'ImageSets/Main/test.txt')) as f:
     #     ids = f.read().splitlines()
-    ids = listdir(os.path.join(kaggle_path, 'images'))[700:]
+    ids = listdir(os.path.join(kaggle_path, 'images'))[images_to_train:]
     ids = [f.split('.')[0] for f in ids]
 
     for id in ids:
