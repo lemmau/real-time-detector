@@ -7,4 +7,3 @@ config/config.json
 core/data/kaggle-masks
 core/models/*
 .idea/
-plot.png
