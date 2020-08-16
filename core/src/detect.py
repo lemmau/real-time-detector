@@ -1,11 +1,17 @@
-import sys
+# USAGE (from project's root directory)
+# python3 main.py --detect [source]
 import cv2
 import numpy as np
-sys.path.insert(0, 'commons')
 from PIL import Image
 from commons.PredictedClass import ClassList
 from commons.IAModel import IAModel
-from .. definitions import  CHECKPOINT, TEST_DATA_PATH
+from .. definitions import CHECKPOINT, TEST_DATA_PATH, BACKGROUND_RGB, WITH_MASK_RGB, WITHOUT_MASK_RGB
+import argparse
+
+# construct the argument parser and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-d", "--detect", required=True, help="detect video or image")
+args = vars(ap.parse_args())
 
 classes = ClassList()
 classes.addClass(0, 'background', '#ffffff')
@@ -15,19 +21,17 @@ classes.addClass(3, 'with_mask_and_glasses', '#000000')
 classes.addClass(4, 'clean', '#e6194B')
 
 # Load model checkpoint
-checkpoint = CHECKPOINT
-model = IAModel(checkpoint, classes)
-
+model = IAModel(CHECKPOINT, classes)
 
 # Use to run SSD300 on image
-# if __name__ == '__main__':
-#     img_path = TEST_DATA_PATH + '9.jpg'
-#     original_image = Image.open(img_path, mode='r')
-#     result = model.detect(original_image, min_score=0.2, max_overlap=0.5, max_objects=200)
-#     result.show()
+if args["detect"] == "image":
+    img_path = TEST_DATA_PATH + '3.jpg'
+    original_image = Image.open(img_path, mode='r')
+    result = model.detect(original_image, min_score=0.2, max_overlap=0.5, max_objects=200)
+    result.show()
 
 # Use to run SSD300 on webcam
-if __name__ == '__main__':
+if args["detect"] == "video":
     video_capture = cv2.VideoCapture(0)
 
     while True:

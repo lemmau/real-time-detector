@@ -4,7 +4,7 @@ node_modules
 flask/static
 config/config.json
 .vscode/settings.json
-core/data/kaggle-masks
 core/models/*
 .idea/
 core/data/*
+plot.png
