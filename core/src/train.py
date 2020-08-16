@@ -130,12 +130,18 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
         # Print status
         if i % print_freq == 0:
-            print('Epoch: [{0}][{1}/{2}]\t'
-                  'Batch Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Data Time {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(epoch, i, len(train_loader),
-                                                                  batch_time=batch_time,
-                                                                  data_time=data_time, loss=losses))
+            logMessage = (("[{0}] Epoch: [{1}/{2}]\t"
+                "Batch Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t"
+                "Data Time {data_time.val:.3f} ({data_time.avg:.3f})\t"
+                "Loss {loss.val:.4f} ({loss.avg:.4f})\n").format(datetime.now(), epoch, epochs,
+                                                        batch_time=batch_time,
+                                                        data_time=data_time, loss=losses))
+                          
+            print(logMessage)
+            
+            with open('/content/drive/My Drive/Colab Notebooks/SSD300/repo/log.txt', 'a') as f:
+              f.write(logMessage.__str__())
+
         # assert not np.any(np.isnan(losses.val)) # Add some validation for loss = nan 
     del predicted_locs, predicted_scores, images, boxes, labels
 

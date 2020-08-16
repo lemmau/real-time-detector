@@ -10,6 +10,7 @@ COLAB_REPO = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/'
 # dataset relative paths
 KAGGLE_PATH = './core/data/kaggle-masks'
 OUTPUT_PATH = './core/data/kaggle-masks'
+LOG_PATH = './core/data/log.txt'
 
 # RGB Colors for classes
 BACKGROUND_RGB = '#ffffff'
