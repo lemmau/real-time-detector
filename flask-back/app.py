@@ -1,18 +1,18 @@
 import os
 import json
-from flask import Flask, render_template, Response
+from flask import Flask, Response
 from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
 
 app = Flask(__name__)
 
-configFile = os.path.abspath(os.getcwd()) + '/config/config.json' 
+configFile = os.path.abspath(os.getcwd()) + '/config/config.json'
 
 with open(configFile) as file:
     config = json.load(file)
 
-app.config.from_json(config)
+app.config.update(config)
 
 classes = ClassList()
 classes.addClass(0, 'background', '#ffffff')
@@ -25,6 +25,6 @@ maskDetector = IAModel(config['ia']['modelPath'], classes)
 def video():
     return Response(Video.getFrame(model=maskDetector), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
-@app.route('configuration', methods=['POST'])
+@app.route('/configuration', methods=['POST'])
 def setConfiguration():
     pass
