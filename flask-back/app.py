@@ -4,6 +4,7 @@ from flask import Flask, Response
 from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
+from core.definitions import CHECKPOINT as modelPath
 
 app = Flask(__name__)
 
@@ -19,7 +20,7 @@ classes.addClass(0, 'background', '#ffffff')
 classes.addClass(1, 'with_mask', '#3cb44b')
 classes.addClass(2, 'without_mask', '#e6194B')
 
-maskDetector = IAModel(config['ia']['modelPath'], classes)
+maskDetector = IAModel(modelPath, classes)
 
 @app.route('/video_feed')
 def video():
