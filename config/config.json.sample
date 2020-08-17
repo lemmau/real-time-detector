@@ -11,8 +11,5 @@
         "smptPort": 587,
         "senderMail": "example@gmail.com",
         "senderPassword": "password"
-    },
-    "ia": {
-        "modelPath": "/var/www/real-time-detector/core/checkpoint_ssd300_kaggle.pth.tar"
     }
 }
