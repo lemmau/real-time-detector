@@ -34,12 +34,21 @@ def getConfiguration():
     objectDetectionConfig = app.config['objectDetection']
     return jsonify(objectDetectionConfig)
 
-@app.route('/configuration/<element>/<enable>', methods=['GET'])
-def setConfiguration(element:str, enable:str):
+@app.route('/configuration', methods=['POST'])
+def setConfiguration():
+
+    requestData = request.json
+    print(requestData)
+
+    if 'element' not in requestData or 'enable' not in requestData:
+        return jsonify('{"status":"error, "message": "\'element\' or \'enable\' not property not found"}')
+
+    element = requestData['element']
+    enable = requestData['enable']
 
     if element not in app.config['possibleElements']:
         return jsonify('{"status":"error, "message": "Element is not allowed"}')
 
-    app.config['objectDetection'][element] = bool(int(enable))
+    app.config['objectDetection'][element] = bool(enable)
 
     return jsonify('{"status":"ok, "message": "Configuration Changed"}')
