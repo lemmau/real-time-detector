@@ -2,7 +2,7 @@ import os
 
 # relative paths
 CORE_PATH = os.path.dirname(os.path.abspath(__file__))
-CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_kaggle.pth.tar'
+CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar'
 CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300-masks.pth.tar'
 TEST_DATA_PATH = CORE_PATH + '/data/test_data/'
 COLAB_REPO = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/'

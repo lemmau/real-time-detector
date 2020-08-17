@@ -11,12 +11,10 @@ const WebcamWrapper = styled.div`
 `
 
 export const WebcamScreen = () => {
-  
   return (
     <WebcamWrapper>
       <Img
-        src={[Config.backendEndpoint + '/video_feed',
-              image]}
+        src={[Config.backendEndpoint + '/video_feed', image]}
       />
     </WebcamWrapper>
   );

@@ -2,11 +2,16 @@ import torch
 from torchvision import transforms
 from PIL import Image
 from ElementDrawer import ElementDrawer
+from PredictedClass import ClassList
+from core.definitions import CHECKPOINT, TEST_DATA_PATH, BACKGROUND_RGB, WITH_MASK_RGB, WITHOUT_MASK_RGB
 
 class IAModel():
-
-    def __init__(self, modelPath: str, classes:list):
-  
+    def __init__(self, modelPath: str):
+        classes = ClassList()
+        classes.addClass(0, 'background', BACKGROUND_RGB)
+        classes.addClass(1, 'with_mask', WITH_MASK_RGB)
+        classes.addClass(2, 'without_mask', WITHOUT_MASK_RGB)
+        
         self.modelPath = modelPath
         self.model = torch.load(self.modelPath, map_location='cpu')
         print('\nLoaded checkpoint from epoch %d.\n' % (self.model['epoch'] + 1))
@@ -15,7 +20,6 @@ class IAModel():
         self.device = torch.device('cpu')
 
     def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int) -> Image:
-
         # Transforms needed for SSD300 (we are using torchvision to apply image tranformation) -> https://pytorch.org/docs/stable/torchvision/transforms.html
         resize = transforms.Resize((300, 300))
         to_tensor = transforms.ToTensor()
