@@ -19,11 +19,12 @@ const ElementDetectionCheckbox = (props) => {
 
   async function setConfiguration(isEnable){  
     const requestOptions = {
-      method: 'GET',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({'element': props.value, 'enable': isEnable}),
     }
 
-    await fetch(Config.backendEndpoint + '/configuration/' + props.value + '/' + isEnable , requestOptions)
-    //const data = await response.json()
+    await fetch(Config.backendEndpoint + '/configuration', requestOptions)
   }
 
   return <FormControlLabel
@@ -68,7 +69,7 @@ export const ConfigurationScreen = () => {
       <FormGroup aria-label="position" row></FormGroup>
       
       {Object.entries(elementsCheckboxs).map(
-        ([key, value]) => <ElementDetectionCheckbox value={key} checked={value}/>
+        ([key, value]) => <ElementDetectionCheckbox value={key} checked={value} key={key}/>
       )}
 
         <FormLabel component="legend"><b>Alertas sonoras</b></FormLabel>
