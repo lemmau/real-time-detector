@@ -52,10 +52,9 @@ class IAModel():
             return original_image
 
         for labelId, box, score in zip(det_labels, det_boxes.tolist(), det_scores):
-            predictedClass = self.classes.getClassByPredictedId(labelId)
-            shouldDraw = self.evaluateElementsConfiguration(prediction=predictedClass, elementsDict=elementsConfiguration)
+            predictedClass = self.evaluateElementsConfiguration(prediction=self.classes.getClassByPredictedId(labelId), elementsDict=elementsConfiguration)
 
-            if (not shouldDraw):
+            if (not predictedClass):
                 return original_image
 
             boxLimits = box
@@ -74,23 +73,20 @@ class IAModel():
 
         if (not maskEnable and not glassesEnable):
             if(prediction.id == 1 or prediction.id == 2 or prediction.id == 3):
-                return False
+                return None
         elif (not maskEnable):
             if(prediction.id == 1):
-                return False
+                return self.classes.getClassByPredictedId(4)
             if(prediction.id == 3):
-                prediction.label = 'with_glasses'
-                return True
+                return self.classes.getClassByPredictedId(2)
         elif (not glassesEnable):
             if(prediction.id == 2):
-                return False
+                return self.classes.getClassByPredictedId(4)
             if(prediction.id == 3):
-                prediction.label = 'with_mask'
-                return True
-        elif (not faceShieldEnable):
-            #TODO: Add support for face shield configuration
+                return self.classes.getClassByPredictedId(1)
+        #TODO: Add support for face shield configuration
+        # elif (not faceShieldEnable):
             # if(prediction.id == 5):
             #     return False
-            return True
         
-        return True
+        return prediction
