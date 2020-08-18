@@ -4,7 +4,7 @@ from flask import Flask, Response
 from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
-from core.definitions import CHECKPOINT
+from core.definitions import CHECKPOINT as modelPath
 
 app = Flask(__name__)
 
@@ -15,7 +15,7 @@ with open(configFile) as file:
 
 app.config.update(config)
 
-maskDetector = IAModel(CHECKPOINT)
+maskDetector = IAModel(modelPath)
 
 @app.route('/video_feed')
 def video():
