@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
 
-    entry: ['./react/index.js'],
+    entry: ['@babel/polyfill', './react/index.js'],
     output: {
         filename: 'build.js',
         path: path.join(__dirname, 'flask/static/'),
