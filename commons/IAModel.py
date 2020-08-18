@@ -52,8 +52,8 @@ class IAModel():
             return original_image
 
         for labelId, box, score in zip(det_labels, det_boxes.tolist(), det_scores):
-            c = self.classes.getClassByPredictedId(labelId)
-            shouldDraw = self.evaluateElementsConfiguration(prediction=c, elementsDict=elementsConfiguration)
+            predictedClass = self.classes.getClassByPredictedId(labelId)
+            shouldDraw = self.evaluateElementsConfiguration(prediction=predictedClass, elementsDict=elementsConfiguration)
 
             if (not shouldDraw):
                 return original_image
@@ -61,9 +61,9 @@ class IAModel():
             boxLimits = box
             score = round(score.item(), 4)
 
-            ElementDrawer.drawRectangule(annotated_image, boxLimits, c.color)
-            text = c.label.upper()+ " " + "{:.2%}".format(score)
-            ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, c.color)
+            ElementDrawer.drawRectangule(annotated_image, boxLimits, predictedClass.color)
+            text = predictedClass.label.upper()+ " " + "{:.2%}".format(score)
+            ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
 
         return annotated_image
     
@@ -72,7 +72,10 @@ class IAModel():
         glassesEnable = elementsDict[GLASSES]
         faceShieldEnable = elementsDict[FACE_SHIELD]
 
-        if (not maskEnable):
+        if (not maskEnable and not glassesEnable):
+            if(prediction.id == 1 or prediction.id == 2 or prediction.id == 3):
+                return False
+        elif (not maskEnable):
             if(prediction.id == 1):
                 return False
             if(prediction.id == 3):
@@ -84,5 +87,10 @@ class IAModel():
             if(prediction.id == 3):
                 prediction.label = 'with_mask'
                 return True
+        elif (not faceShieldEnable):
+            #TODO: Add support for face shield configuration
+            # if(prediction.id == 5):
+            #     return False
+            return True
         
         return True
