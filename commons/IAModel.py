@@ -1,16 +1,19 @@
 import torch
+import json
 from torchvision import transforms
 from PIL import Image
 from ElementDrawer import ElementDrawer
 from PredictedClass import ClassList
-from core.definitions import CHECKPOINT, TEST_DATA_PATH, BACKGROUND_RGB, WITH_MASK_RGB, WITHOUT_MASK_RGB
+from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD
 
 class IAModel():
     def __init__(self, modelPath: str):
         classes = ClassList()
         classes.addClass(0, 'background', BACKGROUND_RGB)
         classes.addClass(1, 'with_mask', WITH_MASK_RGB)
-        classes.addClass(2, 'without_mask', WITHOUT_MASK_RGB)
+        classes.addClass(2, 'with_glasses', WITH_GLASSES_RGB)
+        classes.addClass(3, 'with_mask_and_glasses', WITH_MASK_AND_GLASSES_RGB)
+        classes.addClass(4, 'clean', CLEAN_RGB)
         
         self.modelPath = modelPath
         self.model = torch.load(self.modelPath, map_location='cpu')
@@ -19,7 +22,7 @@ class IAModel():
         self.classes = classes
         self.device = torch.device('cpu')
 
-    def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int) -> Image:
+    def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str) -> Image:
         # Transforms needed for SSD300 (we are using torchvision to apply image tranformation) -> https://pytorch.org/docs/stable/torchvision/transforms.html
         resize = transforms.Resize((300, 300))
         to_tensor = transforms.ToTensor()
@@ -50,6 +53,11 @@ class IAModel():
 
         for labelId, box, score in zip(det_labels, det_boxes.tolist(), det_scores):
             c = self.classes.getClassByPredictedId(labelId)
+            shouldDraw = self.evaluateElementsConfiguration(prediction=c, elementsDict=elementsConfiguration)
+
+            if (not shouldDraw):
+                return original_image
+
             boxLimits = box
             score = round(score.item(), 4)
 
@@ -58,3 +66,23 @@ class IAModel():
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, c.color)
 
         return annotated_image
+    
+    def evaluateElementsConfiguration(self, prediction, elementsDict):
+        maskEnable = elementsDict[MASK]
+        glassesEnable = elementsDict[GLASSES]
+        faceShieldEnable = elementsDict[FACE_SHIELD]
+
+        if (not maskEnable):
+            if(prediction.id == 1):
+                return False
+            if(prediction.id == 3):
+                prediction.label = 'with_glasses'
+                return True
+        elif (not glassesEnable):
+            if(prediction.id == 2):
+                return False
+            if(prediction.id == 3):
+                prediction.label = 'with_mask'
+                return True
+        
+        return True

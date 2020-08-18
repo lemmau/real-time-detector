@@ -5,7 +5,7 @@ from flask_cors import CORS
 from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
-from core.definitions import CHECKPOINT as modelPath
+from core.definitions import CHECKPOINT_NEW as modelPath
 
 app = Flask(__name__)
 # TODO: set cors properly
@@ -22,7 +22,8 @@ maskDetector = IAModel(modelPath)
 
 @app.route('/video_feed')
 def video():
-    return Response(Video.getFrame(model=maskDetector), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    elementsConfig = json.loads(getConfiguration().get_data().decode("utf-8"))
+    return Response(Video.getFrame(model=maskDetector, elementsConfiguration=elementsConfig), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @app.route('/configuration', methods=['GET'])
 def getConfiguration():
