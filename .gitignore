@@ -8,4 +8,3 @@ core/data/kaggle-masks
 core/models/*
 .idea/
 plot.png
-core/definitions.py
