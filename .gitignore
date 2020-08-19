@@ -8,3 +8,4 @@ core/data/*
 core/models/*
 .idea/
 plot.png
+core/definitions.py

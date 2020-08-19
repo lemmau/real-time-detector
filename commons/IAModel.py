@@ -1,9 +1,7 @@
-import sys
 import torch
 from torchvision import transforms
 from PIL import Image
-sys.path.insert(0, 'commons')
-from .ElementDrawer import ElementDrawer
+from ElementDrawer import ElementDrawer
 
 class IAModel():
 
