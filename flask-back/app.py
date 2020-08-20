@@ -1,6 +1,7 @@
 import os
 import json
 from flask import Flask, Response
+from flask_sqlalchemy import SQLAlchemy
 from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
@@ -14,6 +15,16 @@ with open(configFile) as file:
     config = json.load(file)
 
 app.config.update(config)
+
+dbUser = config['database']['username']
+dbPassword = config['database']['password']
+dbHost = config['database']['host']
+dbPort = config['database']['port']
+database = config['database']['dbName']
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{dbUser}:{dbPassword}@{dbHost}:{dbPort}/{database}'
+print(f'mysql://{dbUser}:{dbPassword}@{dbHost}/{database}')
+db = SQLAlchemy(app)
 
 classes = ClassList()
 classes.addClass(0, 'background', '#ffffff')
