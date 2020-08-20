@@ -14,9 +14,11 @@ ap.add_argument("-d", "--detect", required=True, help="detect video or image")
 args = vars(ap.parse_args())
 
 classes = ClassList()
-classes.addClass(0, 'background', BACKGROUND_RGB)
-classes.addClass(1, 'with_mask', WITH_MASK_RGB)
-classes.addClass(2, 'without_mask', WITHOUT_MASK_RGB)
+classes.addClass(0, 'background', '#ffffff')
+classes.addClass(1, 'with_mask', '#3cb44b')
+classes.addClass(2, 'with_glasses', '#092FEB')
+classes.addClass(3, 'with_mask_and_glasses', '#000000')
+classes.addClass(4, 'clean', '#e6194B')
 
 # Load model checkpoint
 model = IAModel(CHECKPOINT, classes)
@@ -35,7 +37,7 @@ if args["detect"] == "video":
     while True:
         ret, frame = video_capture.read()
         original_image = Image.fromarray(frame)
-        prediction = model.detect(original_image, min_score=0.7,
+        prediction = model.detect(original_image, min_score=0.6,
                             max_overlap=0.1, max_objects=100)
 
         cv2.imshow('Video', np.array(prediction))
