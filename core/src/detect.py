@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 from commons.PredictedClass import ClassList
 from commons.IAModel import IAModel
-from .. definitions import CHECKPOINT, TEST_DATA_PATH, BACKGROUND_RGB, WITH_MASK_RGB, WITHOUT_MASK_RGB
+from .. definitions import CHECKPOINT, TEST_DATA_PATH
 import argparse
 
 # construct the argument parser and parse the arguments
@@ -13,15 +13,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--detect", required=True, help="detect video or image")
 args = vars(ap.parse_args())
 
-classes = ClassList()
-classes.addClass(0, 'background', '#ffffff')
-classes.addClass(1, 'with_mask', '#3cb44b')
-classes.addClass(2, 'with_glasses', '#092FEB')
-classes.addClass(3, 'with_mask_and_glasses', '#000000')
-classes.addClass(4, 'clean', '#e6194B')
-
 # Load model checkpoint
-model = IAModel(CHECKPOINT, classes)
+model = IAModel(CHECKPOINT)
 
 # Use to run SSD300 on image
 if args["detect"] == "image":
