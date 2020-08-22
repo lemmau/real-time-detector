@@ -23,7 +23,6 @@ dbPort = config['database']['port']
 database = config['database']['dbName']
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{dbUser}:{dbPassword}@{dbHost}:{dbPort}/{database}'
-print(f'mysql://{dbUser}:{dbPassword}@{dbHost}/{database}')
 db = SQLAlchemy(app)
 
 classes = ClassList()
