@@ -12,4 +12,3 @@ class Event(db.Model):
     isDeleted = db.Column(db.Boolean, default=False)
 
     detectedClass = db.relationship('DetectedClass')
-    
