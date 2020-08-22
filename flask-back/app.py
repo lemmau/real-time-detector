@@ -1,13 +1,16 @@
 import os
 import json
-from flask import Flask, Response
+from flask import Flask, Response, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
-from core.definitions import CHECKPOINT as modelPath
+from core.definitions import CHECKPOINT_NEW as modelPath
 
 app = Flask(__name__)
+# TODO: set cors properly
+cors = CORS(app)
 
 configFile = os.path.abspath(os.getcwd()) + '/config/config.json'
 
@@ -25,17 +28,34 @@ database = config['database']['dbName']
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{dbUser}:{dbPassword}@{dbHost}:{dbPort}/{database}'
 db = SQLAlchemy(app)
 
-classes = ClassList()
-classes.addClass(0, 'background', '#ffffff')
-classes.addClass(1, 'with_mask', '#3cb44b')
-classes.addClass(2, 'without_mask', '#e6194B')
+maskDetector = IAModel(modelPath)
 
-maskDetector = IAModel(modelPath, classes)
 
 @app.route('/video_feed')
 def video():
-    return Response(Video.getFrame(model=maskDetector), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    elementsConfig = json.loads(getConfiguration().get_data().decode("utf-8"))
+    return Response(Video.getFrame(model=maskDetector, elementsConfiguration=elementsConfig), mimetype = "multipart/x-mixed-replace; boundary=frame")
+
+@app.route('/configuration', methods=['GET'])
+def getConfiguration():
+    objectDetectionConfig = app.config['objectDetection']
+    return jsonify(objectDetectionConfig)
 
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
-    pass
+
+    requestData = request.json
+    print(requestData)
+
+    if 'element' not in requestData or 'enable' not in requestData:
+        return jsonify('{"status":"error, "message": "\'element\' or \'enable\' not property not found"}')
+
+    element = requestData['element']
+    enable = requestData['enable']
+
+    if element not in app.config['possibleElements']:
+        return jsonify('{"status":"error, "message": "Element is not allowed"}')
+
+    app.config['objectDetection'][element] = bool(enable)
+
+    return jsonify('{"status":"ok, "message": "Configuration Changed"}')

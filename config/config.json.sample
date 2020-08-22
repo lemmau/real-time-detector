@@ -12,5 +12,11 @@
         "smptPort": 587,
         "senderMail": "example@gmail.com",
         "senderPassword": "password"
+    },
+    "possibleElements": ["Barbijo", "Protección ocular", "Máscara"],
+    "objectDetection": {
+        "Barbijo": true,
+        "Protección ocular": false,
+        "Máscara": false
     }
 }
