@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Img} from 'react-image';
 import styled from 'styled-components'
 import image from '../../assets/broken-image.png';
 import Config from 'Config';
+import Toast from 'react-bootstrap/Toast';
+import ToastHeader from 'react-bootstrap/ToastHeader';
+import ToastBody from 'react-bootstrap/ToastBody';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
 
 const WebcamWrapper = styled.div`
   align-items: center;
@@ -11,11 +17,34 @@ const WebcamWrapper = styled.div`
 `
 
 export const WebcamScreen = () => {
+  const [show, setShow] = useState(false);
+
   return (
+    <>
+    <Row>
+      <Col xs={6}>
+        <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
+          <Toast.Header>
+            <img
+              src="holder.js/20x20?text=%20"
+              className="rounded mr-2"
+              alt=""
+            />
+            <strong className="mr-auto">Alerta</strong>
+            <small>0 mins ago</small>
+          </Toast.Header>
+          <Toast.Body>Hay mucha gente sin protección</Toast.Body>
+        </Toast>
+      </Col>
+      <Col xs={6}>
+        <Button onClick={() => setShow(true)}>Show Toast</Button>
+      </Col>
+    </Row>
     <WebcamWrapper>
       <Img
         src={[Config.backendEndpoint + '/video_feed', image]}
       />
     </WebcamWrapper>
+    </>
   );
 };
