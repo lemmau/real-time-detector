@@ -21,8 +21,9 @@ class IAModel():
         self.model = self.model['model'].to(torch.device('cpu')).eval()
         self.classes = classes
         self.device = torch.device('cpu')
+        self.detectedClassesPrevious = None
 
-    def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str) -> Image:
+    def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str, soundAlarmEnable:bool) -> Image:
         # Transforms needed for SSD300 (we are using torchvision to apply image tranformation) -> https://pytorch.org/docs/stable/torchvision/transforms.html
         resize = transforms.Resize((300, 300))
         to_tensor = transforms.ToTensor()
@@ -51,8 +52,11 @@ class IAModel():
         if det_labels == ['background']:
             return original_image
 
+        currentDetectedClasses = []
+
         for labelId, box, score in zip(det_labels, det_boxes.tolist(), det_scores):
             predictedClass = self.evaluateElementsConfiguration(prediction=self.classes.getClassByPredictedId(labelId), elementsDict=elementsConfiguration)
+            currentDetectedClasses.append(predictedClass)
 
             if (not predictedClass):
                 return original_image
@@ -64,8 +68,26 @@ class IAModel():
             text = predictedClass.label.upper()+ " " + "{:.2%}".format(score)
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
 
+        self.detectedClassesPrevious = currentDetectedClasses
+
+        if (soundAlarmEnable):
+            predictionAlarm = shouldThrowAlarm(currentDetectedClasses)
+        
         return annotated_image
-    
+
+    def shouldThrowAlarm(self, currentDetectedClasses):
+        if (len(self.detectedClassesPrevious) >= len(currentDetectedClasses)):
+            return False
+        else:
+            # 4 represent the 'clean' class
+            previousInfractions = filter(lambda detectedClass: detectedClass.id == 4, self.detectedClassesPrevious)
+            currentInfractions = filter(lambda detectedClass: detectedClass.id == 4, currentDetectedClasses)
+
+            if(currentInfractions > previousInfractions):
+                return True
+
+        return False
+
     def evaluateElementsConfiguration(self, prediction, elementsDict):
         maskEnable = elementsDict[MASK]
         glassesEnable = elementsDict[GLASSES]
