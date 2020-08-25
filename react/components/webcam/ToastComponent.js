@@ -9,28 +9,13 @@ import ToastBody from 'react-bootstrap/ToastBody';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import { ToastComponent } from './ToastComponent';
 
-const WebcamWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`
-
-
-
-
-export const WebcamScreen = () => {
-  const [show, setShow] = useState(false);
-  const getAlarm = async() => {
-    const response = await fetch(Config.backendEndpoint + "/alarm");
-    const data = await response.json();
-    {() => setShow(data)};
-  }
-
-  return (
-    <>{show && <div>
-    <Row>
+export const ToastComponent = () => {
+    const [show, setShow] = useState(false);
+  
+    return (
+      <>
+      <Row>
         <Col xs={6}>
           <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
             <Toast.Header>
@@ -49,12 +34,7 @@ export const WebcamScreen = () => {
           <Button onClick={() => setShow(true)}>Show Toast</Button>
         </Col>
       </Row>
-      </div>}
-    <WebcamWrapper>
-      <Img
-        src={[Config.backendEndpoint + '/video_feed', image]}
-      />
-    </WebcamWrapper>
-    </>
-  );
-};
+      </>
+    );
+  };
+  
