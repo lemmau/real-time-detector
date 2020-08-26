@@ -9,7 +9,8 @@ import ToastBody from 'react-bootstrap/ToastBody';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import { ToastComponent } from './ToastComponent';
+import ReactAudioPlayer from 'react-audio-player';
+
 
 const WebcamWrapper = styled.div`
   align-items: center;
@@ -49,12 +50,17 @@ export const WebcamScreen = () => {
           <Button onClick={() => setShow(true)}>Show Toast</Button>
         </Col>
       </Row>
+      
       </div>}
     <WebcamWrapper>
       <Img
         src={[Config.backendEndpoint + '/video_feed', image]}
       />
     </WebcamWrapper>
+    <ReactAudioPlayer
+        src={'/sound.mp3'}
+        autoPlay
+      />
     </>
   );
 };

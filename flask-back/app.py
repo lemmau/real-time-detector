@@ -30,6 +30,11 @@ def getConfiguration():
     objectDetectionConfig = app.config['objectDetection']
     return jsonify(objectDetectionConfig)
 
+@app.route('/alarm', methods=['GET'])
+def getAlarm():
+    objectDetectionConfig = app.config['objectDetection']
+    return jsonify(objectDetectionConfig)
+
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
 
