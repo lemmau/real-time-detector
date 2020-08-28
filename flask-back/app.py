@@ -1,6 +1,7 @@
 import os
 import json
 from flask import Flask, Response, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from src.Video import Video
 from IAModel import IAModel
@@ -18,7 +19,17 @@ with open(configFile) as file:
 
 app.config.update(config)
 
+dbUser = config['database']['username']
+dbPassword = config['database']['password']
+dbHost = config['database']['host']
+dbPort = config['database']['port']
+database = config['database']['dbName']
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{dbUser}:{dbPassword}@{dbHost}:{dbPort}/{database}'
+db = SQLAlchemy(app)
+
 maskDetector = IAModel(modelPath)
+
 
 @app.route('/video_feed')
 def video():

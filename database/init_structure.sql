@@ -3,16 +3,7 @@ CREATE DATABASE IF NOT EXISTS `real-time-detector`;
 
 USE `real-time-detector`;
 
-CREATE TABLE IF NOT EXISTS `Event`(
-    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    timestamp INT UNSIGNED NOT NULL,
-    objectId INT UNSIGNED NOT NULL,
-    isInfraction BOOL NOT NULL,
-    isDeleted BOOL NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `Object`(
+CREATE TABLE IF NOT EXISTS `DetectedClass`(
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     name varchar(50) NOT NULL,
     description varchar(200),
@@ -20,16 +11,23 @@ CREATE TABLE IF NOT EXISTS `Object`(
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `EventObject`(
-    eventId INT UNSIGNED NOT NULL,
-    objectId INT UNSIGNED NOT NULL,
+INSERT INTO `DetectedClass` (`name`, `description`) VALUES
+    ("Limpio", "Cara Limpia, la persona no usa elementos en su rostro"),
+    ("Barbijo", "Barbijo"),
+    ("Protección ocular", "gafas, lentes u otro element que proteja ojos"),
+    ("Mascara Facial", "mascaras que cumbre todo el rostro"),
+    ("Barbijo y Protección ocular", "Barbijo y gafas, lentes u otro element que proteja ojos");
+
+
+CREATE TABLE IF NOT EXISTS `Event`(
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    timestamp INT UNSIGNED NOT NULL,
+    detectedClassId INT UNSIGNED NOT NULL,
+    isInfraction BOOL NOT NULL,
     isDeleted BOOL NOT NULL DEFAULT 0,
-    PRIMARY KEY (`eventId`, `objectId`),
-    CONSTRAINT `Constr_EventObject_Event_fk`
-        FOREIGN KEY `eventObject_event_fk` (`eventId`) REFERENCES `Event` (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `Constr_EventObject_Object_fk`
-        FOREIGN KEY `eventObject_object_fk` (`objectId`) REFERENCES `Object` (`id`)
+    PRIMARY KEY (`id`),
+    CONSTRAINT `Event_DetectedClass_fk`
+        FOREIGN KEY (`detectedClassId`) REFERENCES DetectedClass(id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -38,7 +36,6 @@ CREATE TABLE IF NOT EXISTS `Cron`(
     date DATETIME NOT NULL,
     frecuency varchar(10) NOT NULL,
     isDeleted bool NOT NULL DEFAULT 0,
-    operationType INT NOT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -58,21 +55,10 @@ CREATE TABLE IF NOT EXISTS `DailyReport`(
     day DATETIME NOT NULL,
     infractions INT UNSIGNED NOT NULL,
     events INT UNSIGNED NOT NULL,
-    isDeleted bool NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
-);
-
-CREATE TABLE IF NOT EXISTS `DailyObject` (
-    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    dailyReportId INT UNSIGNED NOT NULL,
-    objectId INT UNSIGNED NOT NULL,
-    count INT UNSIGNED NOT NULL,
+    detectedClassId INT UNSIGNED NOT NULL,
     isDeleted bool NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
-    CONSTRAINT `Constr_DailyObject_DailyReport_fk`
-        FOREIGN KEY `DailyReport_fk` (`dailyReportId`) REFERENCES `DailyReport` (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `Constr_DailyObject_Object_fk`
-        FOREIGN KEY `dailyObject_Object_fk` (`objectId`) REFERENCES `Object` (`id`)
+    CONSTRAINT `DailyReport_DetectedClass_fk`
+        FOREIGN KEY (`detectedClassId`) REFERENCES DetectedClass(id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
