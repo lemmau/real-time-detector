@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 import TextField from '@material-ui/core/TextField';
 import Config from "Config";
+import styled from 'styled-components'
+import PropTypes from 'prop-types';
 
 const Graph = (props) => {
 
@@ -13,10 +15,25 @@ const Graph = (props) => {
       );
 };
 
+Graph.propTypes = {
+  date: PropTypes.string.isRequired,
+  graphData: PropTypes.object.isRequired,
+};
+
+const NotFoundWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 700px;
+  height: 440px;
+  font-size: 25px;
+`
+
 export const ModalGraph = () => {
 
   const [ date, setDate ] = useState('2020-08-30');
   const [ graphData, setGraphData ] = useState({});
+  const [ hasDataAvailable, setHasDataAvailable ] = useState(false);
 
   useEffect(() => {
 
@@ -37,6 +54,7 @@ export const ModalGraph = () => {
       }
     
       setGraphData(data)
+      setHasDataAvailable(Object.entries(data).length !== 0);
     };
 
     getStatistics();
@@ -52,10 +70,17 @@ export const ModalGraph = () => {
           onChange={(e) => setDate(e.target.value)}
       />
 
-      <Graph
-        date={date}
-        graphData={graphData}
-      />
+      {
+        hasDataAvailable?
+          <Graph
+          date={date}
+          graphData={graphData}
+         /> : 
+         <NotFoundWrapper>
+           <p>No hay Datos para Mostrar</p>
+         </NotFoundWrapper>
+      }
+
     </>
     );
 };
