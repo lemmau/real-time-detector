@@ -1,10 +1,11 @@
 import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import imagen from './imagen.png';
 
 export const Navbar = () => {
     return (
         <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
-            
+             <img src={imagen} width="40" height="40" alt="Imagen" />
             <Link 
                 className="navbar-brand" 
                 to="/"

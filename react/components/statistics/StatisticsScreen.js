@@ -78,7 +78,7 @@ renderRow.propTypes = {
 };
 
 export const StatisticsScreen = () => {
-  const[startDate, setStartDate]=useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [showD, setShowD] = useState(false);
   const [showC, setShowC] = useState(false);

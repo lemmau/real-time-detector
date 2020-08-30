@@ -10,6 +10,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ReactAudioPlayer from 'react-audio-player';
+import Webcam from "react-webcam";
 
 
 const WebcamWrapper = styled.div`
@@ -22,45 +23,10 @@ const WebcamWrapper = styled.div`
 
 
 export const WebcamScreen = () => {
-  const [show, setShow] = useState(false);
-  const getAlarm = async() => {
-    const response = await fetch(Config.backendEndpoint + "/alarm");
-    const data = await response.json();
-    {() => setShow(data)};
-  }
 
   return (
-    <>{show && <div>
-    <Row>
-        <Col xs={6}>
-          <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
-            <Toast.Header>
-              <img
-                src="holder.js/20x20?text=%20"
-                className="rounded mr-2"
-                alt=""
-              />
-              <strong className="mr-auto">Alerta</strong>
-              <small>0 mins ago</small>
-            </Toast.Header>
-            <Toast.Body>Hay mucha gente sin protección</Toast.Body>
-          </Toast>
-        </Col>
-        <Col xs={6}>
-          <Button onClick={() => setShow(true)}>Show Toast</Button>
-        </Col>
-      </Row>
-      
-      </div>}
-    <WebcamWrapper>
-      <Img
-        src={[Config.backendEndpoint + '/video_feed', image]}
-      />
-    </WebcamWrapper>
-    <ReactAudioPlayer
-        src={'/sound.mp3'}
-        autoPlay
-      />
+    <>
+    <Webcam />
     </>
   );
 };
