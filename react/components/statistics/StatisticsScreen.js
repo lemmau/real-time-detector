@@ -3,7 +3,6 @@ import React,{useState} from 'react';
 //import './Camera.css';
 import './StatisticsScreen.css'
 import Button from 'react-bootstrap/Button';
-import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from 'react-bootstrap/Modal';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -18,19 +17,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TimePicker from 'react-time-picker';
 import "react-datepicker/dist/react-datepicker.css";
-//import DatePicker from "react-datepicker";
-//import { ScrollProvider } from '@foo-software/react-scroll-context';
-//import { Parallax } from 'react-scroll-parallax';
-//import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-//import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-//import StarIcon from '@material-ui/icons/Star';
 import PropTypes from 'prop-types';
 import { FixedSizeList } from 'react-window';
 import DeleteIcon from '@material-ui/icons/Delete';
-//import grafico from './grafico.png';
-//import { Link, NavLink } from 'react-router-dom'
 import { ModalGraph } from './StatisticGraphModal';
 
 const useStyles = makeStyles((theme) => ({
