@@ -8,7 +8,7 @@ const Graph = (props) => {
     return(
     <Plot
         data={props.graphData}
-        layout={ {width: 700, height: 440, title: 'Detections - ' + props.date, barmode: 'stack'} }
+        layout={ {width: 700, height: 440, title: 'Detecciones - ' + props.date, barmode: 'stack'} }
       />
       );
 };
@@ -46,7 +46,7 @@ export const ModalGraph = () => {
     <>
       <TextField
           id="date"
-          label="Date"
+          label="Fecha"
           type="date"
           defaultValue={date}
           onChange={(e) => setDate(e.target.value)}
