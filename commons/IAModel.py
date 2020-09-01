@@ -22,7 +22,7 @@ class IAModel():
         self.classes = classes
         self.device = torch.device('cpu')
 
-    def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str) -> Image:
+    def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str = None) -> Image:
         # Transforms needed for SSD300 (we are using torchvision to apply image tranformation) -> https://pytorch.org/docs/stable/torchvision/transforms.html
         resize = transforms.Resize((300, 300))
         to_tensor = transforms.ToTensor()
@@ -67,6 +67,9 @@ class IAModel():
         return annotated_image
     
     def evaluateElementsConfiguration(self, prediction, elementsDict):
+        if (elementsDict is None):
+            return prediction
+            
         maskEnable = elementsDict[MASK]
         glassesEnable = elementsDict[GLASSES]
         faceShieldEnable = elementsDict[FACE_SHIELD]
