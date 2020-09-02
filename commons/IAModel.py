@@ -4,7 +4,7 @@ from torchvision import transforms
 from PIL import Image
 from ElementDrawer import ElementDrawer
 from PredictedClass import ClassList
-from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD
+from definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD
 
 class IAModel():
     def __init__(self, modelPath: str):
@@ -54,6 +54,7 @@ class IAModel():
         for labelId, box, score in zip(det_labels, det_boxes.tolist(), det_scores):
             predictedClass = self.evaluateElementsConfiguration(prediction=self.classes.getClassByPredictedId(labelId), elementsDict=elementsConfiguration)
 
+            print('Predicted class: ', predictedClass.label)
             if (not predictedClass):
                 return original_image
 
