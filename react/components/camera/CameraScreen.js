@@ -69,12 +69,9 @@ export const CameraScreen = () => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value={1}>{devices.map((device, key) => (
-          <div>
-            {device.label || `Device ${key + 1}`}
-          </div>
- 
-        ))}</MenuItem>
+          
+          {devices.map((device, key) => (<MenuItem value={key}>{device.label || `Device ${key + 1}`}</MenuItem>))}
+          
         </Select>
       </FormControl></Modal.Body>
         <Modal.Footer>
