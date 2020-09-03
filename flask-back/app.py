@@ -3,14 +3,18 @@ import json
 from flask import Flask, Response, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_socketio import SocketIO, send
 from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
 from core.definitions import CHECKPOINT_NEW as modelPath
 
 app = Flask(__name__)
+socketIo = SocketIO(app, cors_allowed_origins='*')
 # TODO: set cors properly
 cors = CORS(app)
+
+clients = []
 
 configFile = os.path.abspath(os.getcwd()) + '/config/config.json'
 
@@ -30,6 +34,26 @@ db = SQLAlchemy(app)
 
 maskDetector = IAModel(modelPath)
 
+
+@socketIo.on('connect')
+def handle_connect():
+    print('Client connected')
+    clients.append(request.sid)
+
+@socketIo.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
+    clients.remove(request.sid)
+
+def send_message():
+    for c in clients:
+        print(c)
+        socketIo.emit('alarm','esta es la dataaa', room=c)
+
+@app.route('/test_alarm')
+def testAlarm():
+    send_message()
+    return "ok"
 
 @app.route('/video_feed')
 def video():
