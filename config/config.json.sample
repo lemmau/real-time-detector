@@ -4,7 +4,8 @@
         "host": "localhost",
         "port": 3306,
         "username": "root",
-        "password": "root"
+        "password": "root",
+        "dbName": "real-time-detector" 
     },
     "email": {
         "smptServer": "smtp.gmail.com",

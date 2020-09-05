@@ -53,7 +53,7 @@ export const Navbar = () => {
             <div className="navbar-collapse">
                 <div className="navbar-nav">
 
-                
+
                     
                     <NavLink 
                         activeClassName="active"
@@ -71,8 +71,6 @@ export const Navbar = () => {
                     >
                         Estadísticas
                     </NavLink>
-                    
-                    
 
                     <NavLink 
                         activeClassName="active"
@@ -91,7 +89,7 @@ export const Navbar = () => {
                         activeClassName="active"
                         className="nav-item nav-link" 
                         exact
-                        to="/login"
+                        to="/camera"
                     >
                         Salir
                     </NavLink>
