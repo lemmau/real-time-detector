@@ -1,6 +1,5 @@
 import os
 import json
-import pandas as pd
 from flask import Flask, Response, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
