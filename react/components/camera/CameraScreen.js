@@ -29,51 +29,22 @@ export const CameraScreen = () => {
     setCamara(event.target.value);
   };
 
-    /*return (
-        /*<>
-        <ModalHeader>
-                     Seleccione cámara
-                </ModalHeader>
-            <FormControl variant="outlined" className={classes.formControl}>
-        <InputLabel id="demo-simple-select-outlined-label">Cámara</InputLabel>
-        <Select
-          labelId="demo-simple-select-outlined-label"
-          id="demo-simple-select-outlined"
-          label="Age"
-        >
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <MenuItem value={1}>Cámara 1</MenuItem>
-          <MenuItem value={2}>Cámara 2</MenuItem>
-          <MenuItem value={3}>Cámara 3</MenuItem>
-        </Select>
-      </FormControl>
-      <hr/>
-                        <Button className="right" color="primary" href="/configuration">Guardar</Button>
-    </>   */
+  const [deviceId, setDeviceId] = React.useState({});
+  const [devices, setDevices] = React.useState([]);
+ 
+  const handleDevices = React.useCallback(
+    mediaDevices =>
+      setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput")),
+    [setDevices]
+  );
+ 
+  React.useEffect(
+    () => {
+      navigator.mediaDevices.enumerateDevices().then(handleDevices);
+    },
+    [handleDevices]
+  );
 
-
-        /*<>
-            <Modal isOpen show={show} onHide={handleClose}>
-                <ModalHeader closeButton>
-                     Seleccione cámara
-                </ModalHeader>
-                <ModalBody>
-                    <select>
-                        <option selected value="1">Cámara 1</option>
-                        <option value="2">Cámara 2</option>
-                        <option value="3">Cámara 3</option>
-                        <option value="4">Cámara 4</option>
-                    </select>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="primary" onClick={handleClose}>Guardar</Button>
-                </ModalFooter>
-            </Modal>
-        </>
-
-    );*/
     const [show, setShow] = useState(true);
 
   const handleClose = () => setShow(false);
@@ -95,9 +66,9 @@ export const CameraScreen = () => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value={1}>Cámara 1</MenuItem>
-          <MenuItem value={2}>Cámara 2</MenuItem>
-          <MenuItem value={3}>Cámara 3</MenuItem>
+          
+          {devices.map((device, key) => (<MenuItem value={key}>{device.label || `Device ${key + 1}`}</MenuItem>))}
+          
         </Select>
       </FormControl></Modal.Body>
         <Modal.Footer>
