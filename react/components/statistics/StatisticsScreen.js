@@ -54,10 +54,15 @@ const useStyles = makeStyles((theme) => ({
     marginRight:50,
     marginLeft:20,
   },
+  savebutton:{ 
+    position:"absolute",
+    right:150, 
+  },
   topcorner:{ 
     position:"absolute",
      top:0,
-    right:0, },
+    right:0, 
+  },
 }));
 
 function renderRow(props) {
@@ -221,8 +226,7 @@ export const StatisticsScreen = () => {
 </div>
 <hr/>
 <div>
-    <Button href="/configuration" color="primary">Volver a Configuración</Button>
-    <Button className="right" href="/webcam" color="primary">Guardar</Button>
+    <Button className={classes.savebutton} href="/webcam" color="primary">Guardar</Button>
 </div>
       </>
     );
