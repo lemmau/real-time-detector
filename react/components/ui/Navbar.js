@@ -15,14 +15,6 @@ export const Navbar = () => {
             <div className="navbar-collapse">
                 <div className="navbar-nav">
 
-                <NavLink 
-                        activeClassName="active"
-                        className="nav-item nav-link" 
-                        exact
-                        to="/camera"
-                    >
-                        Cámara
-                    </NavLink>
                     
                     <NavLink 
                         activeClassName="active"
@@ -40,8 +32,6 @@ export const Navbar = () => {
                     >
                         Estadísticas
                     </NavLink>
-                    
-                    
 
                     <NavLink 
                         activeClassName="active"
@@ -60,9 +50,9 @@ export const Navbar = () => {
                         activeClassName="active"
                         className="nav-item nav-link" 
                         exact
-                        to="/login"
+                        to="/camera"
                     >
-                        Logout
+                        Salir
                     </NavLink>
                 </ul>
             </div>
