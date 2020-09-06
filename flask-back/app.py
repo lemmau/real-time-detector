@@ -59,3 +59,27 @@ def setConfiguration():
     app.config['objectDetection'][element] = bool(enable)
 
     return jsonify('{"status":"ok, "message": "Configuration Changed"}')
+
+
+@app.route('/statistic/<day>', methods=['GET'])
+def getStatisticOfToday(day):
+
+    sql = f"""SELECT date_format(dr.day, '%%H') hour, dc.name, dr.events FROM DailyReport dr
+              JOIN DetectedClass dc ON dc.id = dr.detectedClassId
+              WHERE date_format(dr.day, '%%Y-%%m-%%d') = '{day}'
+              ORDER BY dr.day"""
+
+    queryResult = db.engine.execute(sql)
+
+    jsonObject = {}
+
+    for row in queryResult:
+        className = row['name']
+
+        if className not in jsonObject:
+            jsonObject[className] = {'x': [], 'y': [], 'name': className}
+
+        jsonObject[className]['x'].append(row['hour'])
+        jsonObject[className]['y'].append(row['events'])
+
+    return jsonify(list(jsonObject.values()))
