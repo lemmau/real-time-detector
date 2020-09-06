@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Config from "Config";
 import styled from 'styled-components'
 import PropTypes from 'prop-types';
+import Moment from 'moment';
 
 const Graph = (props) => {
 
@@ -31,7 +32,7 @@ const NotFoundWrapper = styled.div`
 
 export const ModalGraph = () => {
 
-  const [ date, setDate ] = useState('2020-08-30');
+  const [ date, setDate ] = useState(Moment(Date.now()).format('YYYY-MM-DD'));
   const [ graphData, setGraphData ] = useState({});
   const [ hasDataAvailable, setHasDataAvailable ] = useState(false);
 
