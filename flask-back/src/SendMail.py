@@ -15,26 +15,21 @@ class SendMail():
 
 		with open(config) as file:
 			configFile = json.load(file)
-		
+			
+		self.config = configFile
 		self.context = ssl.create_default_context()
 		self.smtpServer = configFile['email']['smptServer']
 		self.smtpPort = configFile['email']['smptPort']
 
 		self.server = smtplib.SMTP(self.smtpServer,self.smtpPort)
-			
 
 	def login(self):
-		config = os.path.abspath(os.getcwd()) + '/config/config.json'
-
-		with open(config) as file:
-			configFile = json.load(file)
-
-		self.mailSender = configFile['email']['senderMail']
+		self.mailSender = self.config['email']['senderMail']
 
 		self.server.ehlo()
 		self.server.starttls(context=self.context)
 		self.server.ehlo()
-		self.server.login(self.mailSender, configFile['email']['senderPassword'])
+		self.server.login(self.mailSender, self.config['email']['senderPassword'])
 
 	def send(self, listMails: list, subject: str, message: str, attachments: list):
 		msg = MIMEMultipart()
@@ -50,7 +45,6 @@ class SendMail():
 	        
 			part['Content-Disposition'] = 'attachment; filename="{fileName}"'.format(fileName=basename(file))
 			msg.attach(part)
-
 
 		self.server.sendmail(self.mailSender, listMails, msg.as_string())
 
