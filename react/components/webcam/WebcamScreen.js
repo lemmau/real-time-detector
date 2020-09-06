@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Img} from 'react-image';
 import styled from 'styled-components'
 import image from '../../assets/broken-image.png';
@@ -19,12 +19,11 @@ export const WebcamScreen = () => {
 
   const { addToast } = useToasts()
 
-  //const getMessages = () => {
-  socket.on('alarm', data => {
-    console.log(data);
-    addToast('Saved Successfully', { appearance: 'success' })
-  });
-  //};
+  useEffect( () => { 
+    socket.on('alarm', data => {
+      addToast('Infraccion Detectada', { appearance: 'error' })
+    });
+  }, []);
 
   return (
     
