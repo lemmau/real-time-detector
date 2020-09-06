@@ -157,7 +157,6 @@ export const StatisticsScreen = () => {
           <Modal.Title>Nuevo destinatario</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Email
           <form  noValidate autoComplete="off">
             <TextField id="outlined-basic" label="Ingresar email" variant="outlined" />
           </form>
@@ -185,7 +184,7 @@ export const StatisticsScreen = () => {
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
-          label="Age"
+          label="Frecuencia"
         >
           <MenuItem value="">
             <em></em>
@@ -202,7 +201,7 @@ export const StatisticsScreen = () => {
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
-          label="Age"
+          label="Enviar el día/número"
         >
           <MenuItem value="">
             <em></em>

@@ -61,7 +61,7 @@ export const CameraScreen = () => {
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
-          label="Age"
+          label="Cámara"
         >
           <MenuItem value="">
             <em>None</em>
