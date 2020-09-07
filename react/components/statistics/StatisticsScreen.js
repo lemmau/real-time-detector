@@ -80,6 +80,7 @@ export const StatisticsScreen = () => {
   const[startDate, setStartDate]=useState(new Date());
   const [show, setShow] = useState(false);
   const [showD, setShowD] = useState(false);
+  const [showC, setShowC] = useState(false);
   const classes = useStyles();
   const [camara, setCamara] = React.useState('');
 
@@ -106,6 +107,7 @@ export const StatisticsScreen = () => {
           value="Enviar estadísticas por email"
           control={<Checkbox color="primary" />}
           label="Enviar estadísticas por email"
+          onClick={() => setShowC(!showC)}
         />
     </FormControl></td>
     <td>
@@ -132,6 +134,7 @@ export const StatisticsScreen = () => {
         </Modal.Footer>
       </Modal></td></tr>
       <p></p>
+      {showC && <div>
       <tr><h3>Destinatarios</h3></tr>
       <tr>
         <td>
@@ -216,6 +219,7 @@ export const StatisticsScreen = () => {
         
         </td>
       </tr>
+      </div>}
 </div>
 <hr/>
 <div>
