@@ -38,10 +38,11 @@
     "react-plotly.js": "^2.4.0",
     "react-router-dom": "^5.2.0",
     "react-scroll-parallax": "^2.3.4",
+    "react-time-picker": "^4.0.1",
     "react-window": "^1.8.5",
     "reactstrap": "^8.5.1",
     "styled-components": "^5.1.1",
-    "webpack": "^4.43.0",
+    "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
