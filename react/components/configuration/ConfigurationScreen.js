@@ -70,19 +70,43 @@ export const ConfigurationScreen = () => {
     getFields();
   }, []);
 
+
+  const [checked, setChecked] = useState(checked);
+
+  function checkboxClicked() {
+    setChecked(!checked);
+  }
+
   return (
     <div>
       <FormControl component="fieldset">
         <FormLabel component="legend">
+          <br></br>
           <b>Elementos obligatorios</b>
         </FormLabel>
         <FormGroup aria-label="position" row></FormGroup>
+        <FormControlLabel
+          value="Barbijo"
+          control={<Checkbox color="primary" onChange={checkboxClicked}/>}
+          label="Barbijo"
+        />
+        <FormControlLabel
+          value="Proteccion ocular"
+          control={<Checkbox color="primary" onChange={checkboxClicked}/>}
+          label="Proteccion ocular"
+        />
+        <FormControlLabel
+          value="Mascara"
+          control={<Checkbox color="primary" onChange={checkboxClicked}/>}
+          label="Mascara"
+        />
 
-        {Object.entries(elementsCheckboxs).map(([key, value]) => (
+        {/* {Object.entries(elementsCheckboxs).map(([key, value]) => (
           <ElementDetectionCheckbox value={key} checked={value} key={key} />
-        ))}
+        ))} */}
 
         <FormLabel component="legend">
+          <br></br>
           <b>Alertas sonoras</b>
         </FormLabel>
         <FormGroup aria-label="position" row></FormGroup>
@@ -90,7 +114,6 @@ export const ConfigurationScreen = () => {
           value="Alertas sonoras"
           control={<Checkbox color="primary" />}
           label="Alertas sonoras"
-          labelPlacement="Alertas sonoras"
         />
       </FormControl>
 
