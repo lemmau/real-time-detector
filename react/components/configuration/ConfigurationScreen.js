@@ -77,6 +77,12 @@ export const ConfigurationScreen = () => {
     setChecked(!checked);
   }
 
+  function checkboxClickedBarbijo() {
+    setChecked(!checked);
+    document.getElementById("chMascara").disable=true;
+    
+  }
+
   return (
     <div>
       <FormControl component="fieldset">
@@ -86,8 +92,9 @@ export const ConfigurationScreen = () => {
         </FormLabel>
         <FormGroup aria-label="position" row></FormGroup>
         <FormControlLabel
+          htmlFor="chB" id="chBarbijo"
           value="Barbijo"
-          control={<Checkbox color="primary" onChange={checkboxClicked}/>}
+          control={<Checkbox  color="primary" onChange={checkboxClickedBarbijo}/>}
           label="Barbijo"
         />
         <FormControlLabel
@@ -96,6 +103,7 @@ export const ConfigurationScreen = () => {
           label="Proteccion ocular"
         />
         <FormControlLabel
+          id="chMascara"
           value="Mascara"
           control={<Checkbox color="primary" onChange={checkboxClicked}/>}
           label="Mascara"
