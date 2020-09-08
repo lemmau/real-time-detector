@@ -8,11 +8,9 @@ from IAModel import IAModel
 from PredictedClass import ClassList
 from core.definitions import CHECKPOINT_NEW as modelPath
 from apscheduler.schedulers.background import BackgroundScheduler
-from src.SendMail import SendMail
+from src.EmailSender import EmailSender
 # from src.Email import Email
-from datetime import datetime, timedelta
-import time
-import calendar
+from datetime import datetime
 
 app = Flask(__name__)
 # TODO: set cors properly
@@ -70,43 +68,10 @@ def setCron():
     print(frequency)
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(triggerEmailSender, 'cron', second=30, args=[frequency, datetime.today()])
+    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', second=1, args=[frequency, datetime.today(), db])
     scheduler.start()
 
     return jsonify('{"status":"ok, "message": "Cron successfully triggered"}')
-
-def triggerEmailSender(frecuency, now):
-    endDay = now.strftime("%Y-%m-%d")
-    startDay = now - timedelta(days = 7) if frecuency['frecuency'] == 'weekly' else monthdelta(now, -1)
-    startDay = startDay.strftime("%Y-%m-%d")
-
-    sql = f"""SELECT date_format(dr.day, '%%H') hour, dc.name, dr.events FROM DailyReport dr
-            JOIN DetectedClass dc ON dc.id = dr.detectedClassId
-            WHERE date_format(dr.day, '%%Y-%%m-%%d') >= '{startDay}'
-            AND date_format(dr.day, '%%Y-%%m-%%d') <= '{endDay}'
-            ORDER BY dr.day"""
-
-    queryResult = db.engine.execute(sql)
-    jsonObject = {}
-
-    for row in queryResult:
-        className = row['name']
-
-        if className not in jsonObject:
-            jsonObject[className] = {'x': [], 'y': [], 'name': className}
-
-        jsonObject[className]['x'].append(row['hour'])
-        jsonObject[className]['y'].append(row['events'])
-
-    SendMail.sendMailTo(['belloriniagustin@gmail.com'], 'subject', jsonObject.__str__())
-    print('Tick! The time is: %s' % datetime.now())
-
-def monthdelta(date, delta):
-    m, y = (date.month+delta) % 12, date.year + ((date.month)+delta-1) // 12
-    if not m: m = 12
-    d = min(date.day, calendar.monthrange(y, m)[1])
-
-    return date.replace(day=d,month=m, year=y)
 
 @app.route('/statistic/<day>', methods=['GET'])
 def getStatisticOfToday(day):
