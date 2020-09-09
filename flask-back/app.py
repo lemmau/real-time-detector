@@ -33,6 +33,7 @@ database = config['database']['dbName']
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{dbUser}:{dbPassword}@{dbHost}:{dbPort}/{database}'
 db = SQLAlchemy(app)
+app.app_context().push()
 
 @app.route('/video_feed')
 def video():
@@ -68,7 +69,7 @@ def setCron():
     print(frequency)
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', second=1, args=[frequency, datetime.today(), db])
+    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', second=1, args=[frequency, datetime.today(), db, app])
     scheduler.start()
 
     return jsonify('{"status":"ok, "message": "Cron successfully triggered"}')

@@ -3,9 +3,9 @@ venv/
 node_modules
 flask/static
 config/config.json
-.vscode/settings.json
 core/data/*
 core/models/*
 .idea/
 plot.png
 *.csv
+.vscode/*
