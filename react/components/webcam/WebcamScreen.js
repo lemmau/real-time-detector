@@ -12,16 +12,16 @@ const WebcamWrapper = styled.div`
   justify-content: center;
 `
 
-let endpoint = Config.backendEndpoint;
-let socket = io.connect(endpoint);
+const endpoint = Config.backendEndpoint;
+const socket = io.connect(endpoint);
 
 export const WebcamScreen = () => {
 
-  const { addToast } = useToasts()
-
-  useEffect( () => { 
-    socket.on('alarm', data => {
-      addToast('Infraccion Detectada', { appearance: 'error' })
+  const { addToast } = useToasts();
+  
+  useEffect( () => {
+    socket.off('alarm').on('alarm', data => {
+      addToast('Infraccion Detectada', { appearance: 'error' });
     });
   }, []);
 
