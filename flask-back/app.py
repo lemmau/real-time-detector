@@ -37,23 +37,17 @@ maskDetector = IAModel(modelPath)
 
 @socketIo.on('connect')
 def handle_connect():
-    print('Client connected')
     clients.append(request.sid)
 
 @socketIo.on('disconnect')
 def handle_disconnect():
-    print('Client disconnected')
     clients.remove(request.sid)
 
-def send_message():
-    for c in clients:
-        print(c)
-        socketIo.emit('alarm','esta es la dataaa', room=c)
+def throwAlarm():
+    soundAlarmOn = app.config['soundAlarm']
+    for client in clients:
+        socketIo.emit('alarm', {'audio': soundAlarmOn}, room=client)
 
-@app.route('/test_alarm')
-def testAlarm():
-    send_message()
-    return "ok"
 
 @app.route('/video_feed')
 def video():
