@@ -24,3 +24,8 @@ CLEAN_RGB = '#e6194B'
 MASK = 'Barbijo'
 GLASSES = 'Proteccion ocular'
 FACE_SHIELD = 'Mascara'
+
+FIRST_DAY_MONTH_SPANISH = 'Primer dia del mes'
+LAST_DAY_MONTH_SPANISH = 'Ultimo dia del mes'
+FIRST_DAY_MONTH_CRON = '1'
+LAST_DAY_MONTH_CRON = 'last'

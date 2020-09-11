@@ -3,13 +3,14 @@ import json
 from flask import Flask, Response, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
 from core.definitions import CHECKPOINT_NEW as modelPath
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from src.Video import Video
 from src.EmailSender import EmailSender
-# from src.Email import Email
+from src.Cron import Cron
 from datetime import datetime
 
 app = Flask(__name__)
@@ -34,6 +35,8 @@ database = config['database']['dbName']
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{dbUser}:{dbPassword}@{dbHost}:{dbPort}/{database}'
 db = SQLAlchemy(app)
 app.app_context().push()
+
+scheduler = BackgroundScheduler()
 
 @app.route('/video_feed')
 def video():
@@ -69,10 +72,23 @@ def setCron():
     print(frequency)
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', second=1, args=[frequency, datetime.today(), db, app])
+
+    selectedDayOfWeek = Cron.translateDayOfWeek(frequency['propiedadAdicional']) or '*'
+    selectedDayOfMonth = Cron.calculateDayOfMonth(frequency['propiedadAdicional']) or '*'
+
+    # cronTabExpresion = '0 ' + frequency['hora'] + ' ' + selectedDayOfMonth + ' * ' + selectedDayOfWeek
+    cronTabExpresion = '0,15,30,45 * * * *'
+    scheduler.add_job(EmailSender.triggerEmailSender, CronTrigger.from_crontab(cronTabExpresion), args=[frequency, datetime.today(), db, app])
+
     scheduler.start()
 
     return jsonify('{"status":"ok, "message": "Cron successfully triggered"}')
+
+@app.route('/removeCron', methods=['GET'])
+def removeCron():
+    scheduler.remove_all_jobs()
+
+    return jsonify('{"status":"ok, "message": "Cron successfully removed"}')
 
 @app.route('/statistic/<day>', methods=['GET'])
 def getStatisticOfToday(day):
