@@ -81,13 +81,10 @@ def setCron():
 
     selectedDayOfWeek = Cron.translateDayOfWeek(frequency['propiedadAdicional']) or '*'
     selectedDayOfMonth = Cron.calculateDayOfMonth(frequency['propiedadAdicional']) or '*'
+    cron = Cron(date=datetime.today().strftime("%Y-%m-%d"), day_of_week=selectedDayOfWeek, day=selectedDayOfMonth, hour=frequency['hora'], isDeleted=False)
 
-    # TODO Remove test expression
-    # cronTabExpresion = '0,15,30,45 * * * *' # test expresion
-    cronTabExpresion = '0 ' + frequency['hora'] + ' ' + selectedDayOfMonth + ' * ' + selectedDayOfWeek
-    scheduler.add_job(EmailSender.triggerEmailSender, CronTrigger.from_crontab(cronTabExpresion), args=[frequency, datetime.today(), db, app])
+    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', day=selectedDayOfMonth, day_of_week=selectedDayOfWeek, hour=frequency['hora'], args=[frequency, datetime.today(), db, app])
 
-    cron = Cron(date=datetime.today().strftime("%Y-%m-%d"), frecuency=cronTabExpresion, isDeleted=False)
     save(session, cron)
 
     scheduler.start()
