@@ -35,8 +35,8 @@ CREATE TABLE IF NOT EXISTS `Cron`(
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     date varchar(20) NOT NULL,
     day_of_week varchar(10) NOT NULL,
-	day varchar(10) NOT NULL,
-	hour varchar(2) NOT NULL,
+    day varchar(10) NOT NULL,
+    hour varchar(2) NOT NULL,
     isDeleted bool NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 );
