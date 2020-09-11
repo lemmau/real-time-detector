@@ -7,12 +7,19 @@ from src.SendMail import SendMail
 from src.DetectedClass import DetectedClass
 from dateutil import rrule
 from src.Email import Email
+from core.definitions import PERIODICIDAD_MENSUAL, PERIODICIDAD_SEMANAL, PERIODICIDAD_DIARIA
 
 class EmailSender:
 
     @staticmethod
     def triggerEmailSender(frecuency, now, db, app):
-        startDay = now - timedelta(days = 7) if frecuency['frecuency'] == 'weekly' else EmailSender.monthdelta(now, -1)
+        startDayOptions = {
+            PERIODICIDAD_DIARIA: now - timedelta(days = 1),
+            PERIODICIDAD_SEMANAL: now - timedelta(days = 7),
+            PERIODICIDAD_MENSUAL: EmailSender.monthdelta(now, -1)
+        }
+
+        startDay = startDayOptions.get(frecuency['periodicidad'], None)
         startDay = startDay.strftime("%Y-%m-%d")
         endDay = now.strftime("%Y-%m-%d")
 
