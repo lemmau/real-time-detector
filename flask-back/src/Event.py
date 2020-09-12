@@ -35,20 +35,10 @@ class Event(db.Model):
                 newClasses = Event.Diff(detectedClassesPrevious, currentDetectedClasses)
 
                 for newClass in newClasses:
+                    print('New detection to be saved: ', newClass.label)
 
-                    if(detectedClassesPrevious != None):
-                        print('Previous')
-                        print([c.label for c in detectedClassesPrevious])
-                    if(currentDetectedClasses != None):
-                        print('Current')
-                        print([c.label for c in currentDetectedClasses])
 
-                    print('New class to be saved')
-                    print(newClass.label)
-
-                    print('-------------------')
-
-                    # save(session, Event(timestamp, newClass.id, newClass.id == INFRACTION_ID))
+                    save(session, Event(timestamp, newClass.id, newClass.id == INFRACTION_ID))
 
     @staticmethod
     def shouldPersistEvents(detectedClassesPrevious, currentDetectedClasses):
