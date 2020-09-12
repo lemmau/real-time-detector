@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS `Event`(
     detectedClassId INT UNSIGNED NOT NULL,
     isInfraction BOOL NOT NULL,
     isDeleted BOOL NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `Event_DetectedClass_fk`
-        FOREIGN KEY (`detectedClassId`) REFERENCES DetectedClass(id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (`id`)
+    -- CONSTRAINT `Event_DetectedClass_fk`
+    --     FOREIGN KEY (`detectedClassId`) REFERENCES DetectedClass(id)
+    --     ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `Cron`(
