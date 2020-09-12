@@ -29,12 +29,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{dbUser}:{dbPassword}@{dbHost}
 db = SQLAlchemy(app)
 
 maskDetector = IAModel(modelPath)
-
+app.app_context().push()
 
 @app.route('/video_feed')
 def video():
     elementsConfig = json.loads(getConfiguration().get_data().decode("utf-8"))
-    return Response(Video.getFrame(model=maskDetector, elementsConfiguration=elementsConfig), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    return Response(Video.getFrame(model=maskDetector, elementsConfiguration=elementsConfig, app=app), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @app.route('/configuration', methods=['GET'])
 def getConfiguration():

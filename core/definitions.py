@@ -24,3 +24,9 @@ CLEAN_RGB = '#e6194B'
 MASK = 'Barbijo'
 GLASSES = 'Proteccion ocular'
 FACE_SHIELD = 'Mascara'
+
+INFRACTION_ID = 4
+
+MIN_SCORE=0.5
+MAX_OVERLAP=0.2
+MAX_OBJECTS=200

@@ -1,9 +1,11 @@
 import torch
 import json
+from datetime import datetime
 from torchvision import transforms
 from PIL import Image
 from ElementDrawer import ElementDrawer
 from PredictedClass import ClassList
+from src.Event import Event
 from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD
 
 class IAModel():
@@ -21,8 +23,9 @@ class IAModel():
         self.model = self.model['model'].to(torch.device('cpu')).eval()
         self.classes = classes
         self.device = torch.device('cpu')
+        self.detectedClassesPrevious = None
 
-    def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str) -> Image:
+    def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str, app) -> Image:
         # Transforms needed for SSD300 (we are using torchvision to apply image tranformation) -> https://pytorch.org/docs/stable/torchvision/transforms.html
         resize = transforms.Resize((300, 300))
         to_tensor = transforms.ToTensor()
@@ -48,11 +51,14 @@ class IAModel():
 
         annotated_image = original_image
 
-        if det_labels == ['background']:
+        if det_labels == [0]:
             return original_image
+
+        currentDetectedClasses = []
 
         for labelId, box, score in zip(det_labels, det_boxes.tolist(), det_scores):
             predictedClass = self.evaluateElementsConfiguration(prediction=self.classes.getClassByPredictedId(labelId), elementsDict=elementsConfiguration)
+            currentDetectedClasses.append(predictedClass)
 
             if (not predictedClass):
                 return original_image
@@ -63,6 +69,10 @@ class IAModel():
             ElementDrawer.drawRectangule(annotated_image, boxLimits, predictedClass.color)
             text = predictedClass.label.upper()+ " " + "{:.2%}".format(score)
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
+
+        Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, datetime.timestamp(datetime.now()), app)
+
+        self.detectedClassesPrevious = currentDetectedClasses
 
         return annotated_image
     

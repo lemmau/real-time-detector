@@ -1,7 +1,6 @@
 from app import db
 from src.DetectedClass import DetectedClass
 
-
 class DailyReport(db.Model):
 
     __tablename__ = 'DailyReport'
