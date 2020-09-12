@@ -37,7 +37,6 @@ class Event(db.Model):
                 for newClass in newClasses:
                     print('New detection to be saved: ', newClass.label)
 
-
                     save(session, Event(timestamp, newClass.id, newClass.id == INFRACTION_ID))
 
     @staticmethod
