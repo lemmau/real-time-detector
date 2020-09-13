@@ -33,7 +33,7 @@ class Cron(db.Model):
             'domingo': 'sun'
         }
 
-        return days.get(dayOfWeek, None)
+        return days.get(dayOfWeek.lower(), None)
 
     @staticmethod
     def calculateDayOfMonth(dayOfMonth):

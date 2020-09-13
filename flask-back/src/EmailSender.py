@@ -19,7 +19,7 @@ class EmailSender:
             PERIODICIDAD_MENSUAL: EmailSender.monthdelta(now, -1)
         }
 
-        startDay = startDayOptions.get(frecuency['periodicidad'], None)
+        startDay = startDayOptions.get(frecuency['periodicidad'].lower(), None)
         startDay = startDay.strftime("%Y-%m-%d")
         endDay = now.strftime("%Y-%m-%d")
 

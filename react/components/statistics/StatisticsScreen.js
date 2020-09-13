@@ -167,22 +167,22 @@ export const StatisticsScreen = () => {
     handleShowMonthDay();
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // TODO API para pasarle los datos al back
-    // async function setStatisticsConfiguration() {
-    //   const requestOptions = {
-    //     method: "GET",
-    //   };
+    const frecuency = {
+      hora: hora,
+      periodicidad: periodicidad,
+      propiedadAdicional: propiedadAdicional,
+    };
 
-    //   const response = await fetch(
-    //     Config.backendEndpoint + "/configuration"+ periodicidad + hora + propiedadAdicional,
-    //     requestOptions
-    //   );
-    //   const data = await response.json();
-    // }
-    // setStatisticsConfiguration();
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(frecuency),
+    };
+
+    await fetch(Config.backendEndpoint + "/loadCron", requestOptions);
   };
 
   return (
