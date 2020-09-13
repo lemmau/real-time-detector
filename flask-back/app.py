@@ -89,11 +89,17 @@ def setCron():
 
     scheduler.start()
 
+    app.config["sendEmails"] = "true"
+
+    for prop in frequency:
+        app.config['frequency'][prop] = frequency[prop]
+
     return jsonify('{"status":"ok, "message": "Cron successfully triggered"}')
 
 @app.route('/removeCron', methods=['GET'])
 def removeCron():
     scheduler.remove_all_jobs()
+    app.config["sendEmails"] = "false"
 
     return jsonify('{"status":"ok, "message": "Cron successfully removed"}')
 

@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-//import 'bootstrap/dist/css/bootstrap.css';
-//import './Camera.css';
 import "./StatisticsScreen.css";
 import Button from "react-bootstrap/Button";
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,7 +13,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
-import TimePicker from "react-time-picker";
 import "react-datepicker/dist/react-datepicker.css";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -91,9 +88,11 @@ export const StatisticsScreen = () => {
   const [showD, setShowD] = useState(false);
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
-  const [periodicidad, setFrequency] = useState("diaria");
-  const [hora, setHour] = useState("");
-  const [propiedadAdicional, setAditionalProperty] = useState("");
+  const [periodicidad, setFrequency] = useState('diaria');
+  const [hora, setHour] = useState('');
+  const [propiedadAdicional, setAditionalProperty] = useState('');
+  const [sendEmails, setSendEmails] = useState(false);
+
   const hours = [
     "01",
     "02",
@@ -133,11 +132,6 @@ export const StatisticsScreen = () => {
   const monthlyOptions = ["Primer dia del mes", "Ultimo dia del mes"];
 
   const classes = useStyles();
-  const [camara, setCamara] = React.useState("");
-
-  const handleChange = (event) => {
-    setCamara(event.target.value);
-  };
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -150,39 +144,48 @@ export const StatisticsScreen = () => {
 
   function clickDay() {
     setFrequency("diaria");
-    setAditionalProperty("");
+    setAditionalProperty('');
     handleCloseWeekDay();
     handleCloseMonthDay();
   }
   function clickWeekDay() {
     setFrequency("semanal");
-    setAditionalProperty("");
+    setAditionalProperty('');
     handleShowWeekDay();
     handleCloseMonthDay();
   }
   function clickMonthDay() {
     setFrequency("mensual");
-    setAditionalProperty("");
+    setAditionalProperty('');
     handleCloseWeekDay();
     handleShowMonthDay();
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("SendEmails: ", sendEmails);
 
-    const frecuency = {
-      hora: hora,
-      periodicidad: periodicidad,
-      propiedadAdicional: propiedadAdicional,
-    };
+    if (sendEmails) {
+      const frecuency = {
+        hora: hora,
+        periodicidad: periodicidad,
+        propiedadAdicional: propiedadAdicional,
+      };
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(frecuency),
-    };
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(frecuency),
+      };
 
-    await fetch(Config.backendEndpoint + "/loadCron", requestOptions);
+      await fetch(Config.backendEndpoint + "/loadCron", requestOptions);
+    } else {
+      const requestOptions = {
+        method: "GET",
+      };
+
+      await fetch(Config.backendEndpoint + "/removeCron", requestOptions);
+    }
   };
 
   return (
@@ -202,6 +205,8 @@ export const StatisticsScreen = () => {
                   value="Enviar estadísticas por email"
                   control={<Checkbox color="primary" />}
                   label="Enviar estadísticas por email"
+                  checked={sendEmails}
+                  onClick={() => setSendEmails(!sendEmails)}
                 />
               </FormControl>
             </td>
@@ -287,9 +292,6 @@ export const StatisticsScreen = () => {
                   id="demo-simple-select-outlined"
                   label="Frecuencia"
                 >
-                  <MenuItem value="">
-                    <em></em>
-                  </MenuItem>
                   <MenuItem value={"diaria"} onClick={clickDay}>
                     Diaria
                   </MenuItem>
@@ -313,13 +315,10 @@ export const StatisticsScreen = () => {
                     id="demo-simple-select-outlined"
                     label="Enviar el día"
                   >
-                    <MenuItem value="">
-                      <em></em>
-                    </MenuItem>
                     {weekDays.map((day) => (
                       <MenuItem
                         value={day}
-                        onClick={(e) => setAditionalProperty(day)}
+                        onClick={() => setAditionalProperty(day)}
                       >
                         {day}
                       </MenuItem>
@@ -339,9 +338,6 @@ export const StatisticsScreen = () => {
                     id="demo-simple-select-outlined"
                     label="Enviar el día"
                   >
-                    <MenuItem value="">
-                      <em></em>
-                    </MenuItem>
                     {monthlyOptions.map((monthlyOption) => (
                       <MenuItem
                         value={monthlyOption}
@@ -364,11 +360,8 @@ export const StatisticsScreen = () => {
                   id="demo-simple-select-outlined"
                   label="Hora"
                 >
-                  <MenuItem value="">
-                    <em></em>
-                  </MenuItem>
                   {hours.map((hour) => (
-                    <MenuItem value={hour} onClick={(e) => setHour(hour)}>
+                    <MenuItem value={hour} onClick={() => setHour(hour)}>
                       {hour}
                     </MenuItem>
                   ))}
