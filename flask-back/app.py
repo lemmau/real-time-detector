@@ -11,6 +11,8 @@ from core.definitions import CHECKPOINT_NEW as modelPath
 
 app = Flask(__name__)
 socketIo = SocketIO(app, cors_allowed_origins='*')
+app.config["socketIo"] = socketIo
+app.config["clients"] = []
 # TODO: set cors properly
 cors = CORS(app)
 
@@ -37,22 +39,22 @@ maskDetector = IAModel(modelPath)
 
 @socketIo.on('connect')
 def handle_connect():
-    clients.append(request.sid)
+    app.config["clients"].append(request.sid)
 
 @socketIo.on('disconnect')
 def handle_disconnect():
-    clients.remove(request.sid)
+    app.config["clients"].remove(request.sid)
 
-def throwAlarm():
-    soundAlarmOn = app.config['soundAlarm']
-    for client in clients:
-        socketIo.emit('alarm', {'audio': soundAlarmOn}, room=client)
+# def throwAlarm():
+#     soundAlarmOn = app.config['soundAlarm']
+#     for client in app.config["clients"]:
+#         socketIo.emit('alarm', {'audio': soundAlarmOn}, room=client)
 
 
 @app.route('/video_feed')
 def video():
     elementsConfig = json.loads(getConfiguration().get_data().decode("utf-8"))
-    return Response(Video.getFrame(model=maskDetector, elementsConfiguration=elementsConfig), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    return Response(Video.getFrame(model=maskDetector, elementsConfiguration=elementsConfig, app=app), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @app.route('/configuration', methods=['GET'])
 def getConfiguration():

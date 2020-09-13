@@ -11,13 +11,13 @@ class Video():
     lock = threading.Lock()
 
     @staticmethod
-    def getFrame(model, elementsConfiguration):
+    def getFrame(model, elementsConfiguration,  app):
         while True:
 
             _, frame = Video.videoInput.read()
             #Video.outputFrame = imutils.resize(frame, width=400)
             image = Image.fromarray(frame)
-            prediction = model.detect(image, min_score=0.2, max_overlap=0.2, max_objects=200, elementsConfiguration=elementsConfiguration)
+            prediction = model.detect(image, min_score=0.2, max_overlap=0.2, max_objects=200, elementsConfiguration=elementsConfiguration, app=app)
             
             Video.outputFrame = np.array(prediction)
       
