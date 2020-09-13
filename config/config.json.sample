@@ -1,0 +1,22 @@
+{
+    "backendEndpoint": "http://localhost:5000",	
+    "database": {	
+        "host": "localhost",	
+        "port": 3306,	
+        "username": "root",	
+        "password": "root",	
+        "dbName": "real-time-detector" 	
+    },	
+    "email": {	
+        "smptServer": "smtp.gmail.com",	
+        "smptPort": 587,	
+        "senderMail": "example@gmail.com",	
+        "senderPassword": "password"	
+    },	
+    "possibleElements": ["Barbijo", "Protección ocular", "Máscara"],	
+    "objectDetection": {	
+        "Barbijo": true,	
+        "Protección ocular": false,	
+        "Máscara": false	
+    }	
+}
