@@ -1,5 +1,8 @@
+import os
+import json
 import smtplib, ssl
-from app import configFile
+# from flask import app
+# from app import app
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -8,23 +11,27 @@ from os.path import basename
 class SendMail():
 
 	def __init__(self):
+		config = os.path.abspath(os.getcwd()) + '/config/config.json'
+
+		with open(config) as file:
+			configFile = json.load(file)
+			
+		self.config = configFile
 		self.context = ssl.create_default_context()
 		self.smtpServer = configFile['email']['smptServer']
 		self.smtpPort = configFile['email']['smptPort']
 
 		self.server = smtplib.SMTP(self.smtpServer,self.smtpPort)
-			
 
 	def login(self):
-		self.mailSender = configFile['email']['senderMail']
+		self.mailSender = self.config['email']['senderMail']
 
 		self.server.ehlo()
 		self.server.starttls(context=self.context)
 		self.server.ehlo()
-		self.server.login(self.mailSender, configFile['email']['senderPassword'])
+		self.server.login(self.mailSender, self.config['email']['senderPassword'])
 
 	def send(self, listMails: list, subject: str, message: str, attachments: list):
-
 		msg = MIMEMultipart()
 		msg['From'] = self.mailSender
 		msg['To'] = ",".join(listMails)
@@ -39,9 +46,7 @@ class SendMail():
 			part['Content-Disposition'] = 'attachment; filename="{fileName}"'.format(fileName=basename(file))
 			msg.attach(part)
 
-
 		self.server.sendmail(self.mailSender, listMails, msg.as_string())
-
 
 	@staticmethod
 	def sendMailTo(listMails: list, subject: str, message: str, attachments=[]):

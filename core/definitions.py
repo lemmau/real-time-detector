@@ -3,7 +3,7 @@ import os
 # relative paths
 CORE_PATH = os.path.dirname(os.path.abspath(__file__))
 CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar'
-CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300-masks&glasses.pth(E1256).tar'
+CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300-masks&glasses.pth(E5710).tar'
 TEST_DATA_PATH = CORE_PATH + '/data/test_data/'
 COLAB_REPO = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/'
 
@@ -30,3 +30,11 @@ INFRACTION_ID = 4
 MIN_SCORE=0.5
 MAX_OVERLAP=0.001
 MAX_OBJECTS=200
+
+FIRST_DAY_MONTH_SPANISH = 'Primer dia del mes'
+LAST_DAY_MONTH_SPANISH = 'Ultimo dia del mes'
+FIRST_DAY_MONTH_CRON = '1'
+LAST_DAY_MONTH_CRON = 'last'
+PERIODICIDAD_MENSUAL = 'mensual'
+PERIODICIDAD_SEMANAL = 'semanal'
+PERIODICIDAD_DIARIA = 'diaria'

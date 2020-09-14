@@ -18,5 +18,6 @@
         "Barbijo": true,
         "Protección ocular": false,
         "Máscara": false
-    }
+    },
+    "soundAlarm": false
 }
