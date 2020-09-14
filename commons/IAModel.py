@@ -60,8 +60,6 @@ class IAModel():
             predictedClass = self.evaluateElementsConfiguration(prediction=self.classes.getClassByPredictedId(labelId), elementsDict=elementsConfiguration)
             currentDetectedClasses.append(predictedClass)
 
-            currentDetectedClasses.append(predictedClass)
-
             if (not predictedClass):
                 return original_image
 
