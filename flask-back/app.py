@@ -4,6 +4,7 @@ from flask import Flask, Response, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import sessionmaker
 from flask_cors import CORS
+from flask_socketio import SocketIO, send
 from IAModel import IAModel
 from PredictedClass import ClassList
 from core.definitions import CHECKPOINT_NEW as modelPath
@@ -16,8 +17,13 @@ from src.DBHelper import *
 from datetime import datetime
 
 app = Flask(__name__)
+socketIo = SocketIO(app, cors_allowed_origins='*')
+app.config["socketIo"] = socketIo
+app.config["clients"] = []
 # TODO: set cors properly
 cors = CORS(app)
+
+clients = []
 
 configFile = os.path.abspath(os.getcwd()) + '/config/config.json'
 
@@ -44,10 +50,24 @@ app.app_context().push()
 
 scheduler = BackgroundScheduler()
 
+@socketIo.on('connect')
+def handle_connect():
+    app.config["clients"].append(request.sid)
+
+@socketIo.on('disconnect')
+def handle_disconnect():
+    app.config["clients"].remove(request.sid)
+
+# def throwAlarm():
+#     soundAlarmOn = app.config['soundAlarm']
+#     for client in app.config["clients"]:
+#         socketIo.emit('alarm', {'audio': soundAlarmOn}, room=client)
+
+
 @app.route('/video_feed')
 def video():
     elementsConfig = json.loads(getConfiguration().get_data().decode("utf-8"))
-    return Response(Video.getFrame(model=realTimeDetector, elementsConfiguration=elementsConfig), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    return Response(Video.getFrame(model=maskDetector, elementsConfiguration=elementsConfig, app=app), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @app.route('/configuration', methods=['GET'])
 def getConfiguration():
