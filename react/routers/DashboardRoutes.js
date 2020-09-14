@@ -6,12 +6,13 @@ import { ConfigurationScreen } from '../components/configuration/ConfigurationSc
 import { StatisticsScreen } from '../components/statistics/StatisticsScreen';
 import { CameraScreen } from '../components/camera/CameraScreen';
 import { WebcamScreen } from '../components/webcam/WebcamScreen';
+import { ToastProvider } from 'react-toast-notifications'
 
 export const DashboardRoutes = () => {
     return (
         <>
             <Navbar />
-
+            <ToastProvider>
             <div className="container mt-2">
                 <Switch>
                     <Route exact path="/configuration" component={ ConfigurationScreen } />
@@ -22,7 +23,7 @@ export const DashboardRoutes = () => {
                     <Redirect to="/camera" />
                 </Switch>
             </div>
-
+            </ToastProvider>
 
         </>
     )
