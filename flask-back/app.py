@@ -48,8 +48,6 @@ session = Session()
 
 app.app_context().push()
 
-maskDetector = IAModel(modelPath)
-app.app_context().push()
 scheduler = BackgroundScheduler()
 
 @socketIo.on('connect')
@@ -69,7 +67,7 @@ def handle_disconnect():
 @app.route('/video_feed')
 def video():
     elementsConfig = json.loads(getConfiguration().get_data().decode("utf-8"))
-    return Response(Video.getFrame(model=maskDetector, elementsConfiguration=elementsConfig, app=app), mimetype = "multipart/x-mixed-replace; boundary=frame")
+    return Response(Video.getFrame(model=realTimeDetector, elementsConfiguration=elementsConfig, app=app), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @app.route('/configuration', methods=['GET'])
 def getConfiguration():
