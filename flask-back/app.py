@@ -2,12 +2,19 @@ import os
 import json
 from flask import Flask, Response, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import sessionmaker
 from flask_cors import CORS
 from flask_socketio import SocketIO, send
-from src.Video import Video
 from IAModel import IAModel
 from PredictedClass import ClassList
 from core.definitions import CHECKPOINT_NEW as modelPath
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from src.Video import Video
+from src.EmailSender import EmailSender
+from src.Cron import Cron
+from src.DBHelper import *
+from datetime import datetime
 
 app = Flask(__name__)
 socketIo = SocketIO(app, cors_allowed_origins='*')
@@ -25,6 +32,8 @@ with open(configFile) as file:
 
 app.config.update(config)
 
+realTimeDetector = IAModel(modelPath)
+
 dbUser = config['database']['username']
 dbPassword = config['database']['password']
 dbHost = config['database']['host']
@@ -33,9 +42,13 @@ database = config['database']['dbName']
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{dbUser}:{dbPassword}@{dbHost}:{dbPort}/{database}'
 db = SQLAlchemy(app)
+Session = sessionmaker()
+Session.configure(bind=db.engine)
+session = Session()
 
-maskDetector = IAModel(modelPath)
+app.app_context().push()
 
+scheduler = BackgroundScheduler()
 
 @socketIo.on('connect')
 def handle_connect():
@@ -63,7 +76,6 @@ def getConfiguration():
 
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
-
     requestData = request.json
     print(requestData)
 
@@ -80,6 +92,36 @@ def setConfiguration():
 
     return jsonify('{"status":"ok, "message": "Configuration Changed"}')
 
+@app.route('/loadCron', methods=['POST'])
+def setCron():
+    frequency = request.json
+    print(frequency)
+
+    scheduler = BackgroundScheduler()
+
+    selectedDayOfWeek = Cron.translateDayOfWeek(frequency['propiedadAdicional']) or '*'
+    selectedDayOfMonth = Cron.calculateDayOfMonth(frequency['propiedadAdicional']) or '*'
+    cron = Cron(date=datetime.today().strftime("%Y-%m-%d"), day_of_week=selectedDayOfWeek, day=selectedDayOfMonth, hour=frequency['hora'], isDeleted=False)
+
+    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', day=selectedDayOfMonth, day_of_week=selectedDayOfWeek, hour=frequency['hora'], args=[frequency, datetime.today(), db, app])
+
+    save(session, cron)
+
+    scheduler.start()
+
+    app.config["sendEmails"] = "true"
+
+    for prop in frequency:
+        app.config['frequency'][prop] = frequency[prop]
+
+    return jsonify('{"status":"ok, "message": "Cron successfully triggered"}')
+
+@app.route('/removeCron', methods=['GET'])
+def removeCron():
+    scheduler.remove_all_jobs()
+    app.config["sendEmails"] = "false"
+
+    return jsonify('{"status":"ok, "message": "Cron successfully removed"}')
 
 @app.route('/statistic/<day>', methods=['GET'])
 def getStatisticOfToday(day):

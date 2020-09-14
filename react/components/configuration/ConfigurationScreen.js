@@ -4,7 +4,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { Button } from "reactstrap";
 import Config from "Config";
 
