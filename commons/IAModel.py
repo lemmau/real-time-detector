@@ -1,9 +1,11 @@
 import torch
 import json
+from datetime import datetime
 from torchvision import transforms
 from PIL import Image
 from ElementDrawer import ElementDrawer
 from PredictedClass import ClassList
+from src.Event import Event
 from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD
 
 class IAModel():
@@ -56,7 +58,6 @@ class IAModel():
 
         for labelId, box, score in zip(det_labels, det_boxes.tolist(), det_scores):
             predictedClass = self.evaluateElementsConfiguration(prediction=self.classes.getClassByPredictedId(labelId), elementsDict=elementsConfiguration)
-
             currentDetectedClasses.append(predictedClass)
 
             if (not predictedClass):
@@ -69,6 +70,7 @@ class IAModel():
             text = predictedClass.label.upper()+ " " + "{:.2%}".format(score)
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
 
+        Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, datetime.timestamp(datetime.now()), app)
 
         if self.shouldThrowAlarm(currentDetectedClasses):
             soundAlarmOn = app.config['soundAlarm']

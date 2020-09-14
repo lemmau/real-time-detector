@@ -25,6 +25,12 @@ MASK = 'Barbijo'
 GLASSES = 'Proteccion ocular'
 FACE_SHIELD = 'Mascara'
 
+INFRACTION_ID = 4
+
+MIN_SCORE=0.5
+MAX_OVERLAP=0.001
+MAX_OBJECTS=200
+
 FIRST_DAY_MONTH_SPANISH = 'Primer dia del mes'
 LAST_DAY_MONTH_SPANISH = 'Ultimo dia del mes'
 FIRST_DAY_MONTH_CRON = '1'
