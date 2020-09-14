@@ -42,10 +42,10 @@ class Event(db.Model):
     @staticmethod
     def shouldPersistEvents(detectedClassesPrevious, currentDetectedClasses):
         noneCurrent = currentDetectedClasses == None
-        nonePrevious = detectedClassesPrevious == None and not noneCurrent
-        moreClassesOnCurrent = not nonePrevious and len(detectedClassesPrevious) < len(currentDetectedClasses)
+        noneDetections = not detectedClassesPrevious and not noneCurrent
+        moreClassesOnCurrent = not noneDetections and len(detectedClassesPrevious) < len(currentDetectedClasses)
 
-        return not noneCurrent and (nonePrevious or moreClassesOnCurrent)
+        return not noneCurrent and (noneDetections or moreClassesOnCurrent)
 
     @staticmethod
     def Diff(list1, list2):
