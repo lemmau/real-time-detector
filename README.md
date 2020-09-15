@@ -7,7 +7,6 @@ Members:
 - Leandro Mauro (leammau@gmail.com)
 - Tomas Agustin De Pietro (tomas94depi@gmail.com)
 - Lucas Martín Cepeda (lucascepeda007@gmail.com)
-- Guillermo Basaldúa (guillermobasaldua@yahoo.com.ar)
 - Agustin Bellorini Mansilla (belloriniagustin@gmail.com)
 
 # Dependencies Installation
