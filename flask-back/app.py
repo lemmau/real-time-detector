@@ -15,6 +15,7 @@ from src.EmailSender import EmailSender
 from src.Cron import Cron
 from src.DBHelper import *
 from datetime import datetime
+from collections import OrderedDict
 
 app = Flask(__name__)
 socketIo = SocketIO(app, cors_allowed_origins='*')
@@ -71,8 +72,17 @@ def video():
 
 @app.route('/configuration', methods=['GET'])
 def getConfiguration():
-    objectDetectionConfig = app.config['objectDetection']
-    return jsonify(objectDetectionConfig)
+    objectDetectionConfig = OrderedDict(app.config['objectDetection'])
+
+    shouldDisableFaceMask = objectDetectionConfig['Barbijo'] or objectDetectionConfig['Proteccion ocular']
+    shouldDisableGlassesAndMask = objectDetectionConfig['Mascara']
+
+    elements = OrderedDict({key: {'elementName': key, 'isChecked': value} for key, value in objectDetectionConfig.items()})
+    elements["Barbijo"]['isDisabled'] = shouldDisableGlassesAndMask
+    elements["Proteccion ocular"]['isDisabled'] = shouldDisableGlassesAndMask
+    elements["Mascara"]['isDisabled'] = shouldDisableFaceMask
+
+    return jsonify(list(elements.values()))
 
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
