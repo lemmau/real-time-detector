@@ -104,13 +104,10 @@ def setCron():
     frequency = request.json
     print(frequency)
 
-    scheduler = BackgroundScheduler()
-
     selectedDayOfWeek = Cron.translateDayOfWeek(frequency['propiedadAdicional']) or '*'
     selectedDayOfMonth = Cron.calculateDayOfMonth(frequency['propiedadAdicional']) or '*'
     cron = Cron(date=datetime.today().strftime("%Y-%m-%d"), day_of_week=selectedDayOfWeek, day=selectedDayOfMonth, hour=frequency['hora'], isDeleted=False)
 
-    #TODO validate
     scheduler.add_job(EmailSender.triggerEmailSender, 'cron', day=selectedDayOfMonth, day_of_week=selectedDayOfWeek, hour=frequency['hora'], args=[frequency, datetime.today(), db, app], id=EMAIL_SENDER_CRON_ID)
 
     save(session, cron)
@@ -126,7 +123,6 @@ def setCron():
 
 @app.route('/removeCron', methods=['GET'])
 def removeCron():
-    #TODO validate 
     scheduler.remove_job(EMAIL_SENDER_CRON_ID)
     app.config["sendEmails"] = "false"
 
