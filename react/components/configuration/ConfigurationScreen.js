@@ -11,16 +11,18 @@ import Config from "Config";
 const ElementDetectionCheckbox = (props) => {
   const [checked, setChecked] = useState(props.checked);
 
-  function checkboxClicked() {
+  async function checkboxClicked() {
     setChecked(!checked);
-    setConfiguration(+!checked);
+    await setConfiguration(+!checked);
+    props.onChange();
+
   }
 
   async function setConfiguration(isEnable) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ element: props.value, enable: isEnable }),
+      body: JSON.stringify({ 'element': props.value, 'enable': isEnable }),
     };
 
     await fetch(Config.backendEndpoint + "/configuration", requestOptions);
@@ -34,6 +36,7 @@ const ElementDetectionCheckbox = (props) => {
           checked={checked}
           color="primary"
           onChange={checkboxClicked}
+          disabled={props.disable}
         />
       }
       label={props.value}
@@ -44,31 +47,39 @@ const ElementDetectionCheckbox = (props) => {
 ElementDetectionCheckbox.propTypes = {
   value: PropTypes.string,
   checked: PropTypes.bool,
+  disable: PropTypes.bool,
 };
 
 ElementDetectionCheckbox.defaultProps = {
   checked: false,
+  disable: false,
 };
 
+
 export const ConfigurationScreen = () => {
-  const [elementsCheckboxs, setElementsCheckboxs] = useState({});
+  const [elementsCheckboxs, setElementsCheckboxs] = useState([]);
 
   useEffect(() => {
-    async function getFields() {
-      const requestOptions = {
-        method: "GET",
-      };
-
-      const response = await fetch(
-        Config.backendEndpoint + "/configuration",
-        requestOptions
-      );
-      const data = await response.json();
-      setElementsCheckboxs(data);
-    }
-
-    getFields();
+    getElementsCheckbox();
   }, []);
+
+  async function getElementsCheckbox() {
+    const requestOptions = {
+      method: "GET",
+    };
+
+    const response = await fetch(
+      Config.backendEndpoint + "/configuration",
+      requestOptions
+    );
+    const data = await response.json();
+    setElementsCheckboxs(data);
+    console.log(data);
+  }
+
+  function checkboxUpdated(){
+    getElementsCheckbox();
+  }
 
   return (
     <div>
@@ -78,8 +89,8 @@ export const ConfigurationScreen = () => {
         </FormLabel>
         <FormGroup aria-label="position" row></FormGroup>
 
-        {Object.entries(elementsCheckboxs).map(([key, value]) => (
-          <ElementDetectionCheckbox value={key} checked={value} key={key} />
+        {[...elementsCheckboxs].map((check) => (
+          <ElementDetectionCheckbox value={check['elementName']} checked={check['isChecked']} disable={check['isDisabled']} key={check['elementName']} onChange={checkboxUpdated}/>
         ))}
 
         <FormLabel component="legend">
@@ -90,7 +101,6 @@ export const ConfigurationScreen = () => {
           value="Alertas sonoras"
           control={<Checkbox color="primary" />}
           label="Alertas sonoras"
-          labelPlacement="Alertas sonoras"
         />
       </FormControl>
 
