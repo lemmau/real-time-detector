@@ -20,15 +20,10 @@ def getEventsByClass(db, startTime, endTime):
         'Barbijo y Protección ocular': []
     }
 
-    # sql = f"""SELECT * FROM Event e
-    #     JOIN DetectedClass dc ON dc.id = e.detectedClassId
-    #     WHERE e.timestamp >= '{startTimestamp}'
-    #     AND e.timestamp <= '{endTimestamp}'
-    #     ORDER BY e.timestamp"""
     sql = f"""SELECT * FROM Event e
         JOIN DetectedClass dc ON dc.id = e.detectedClassId
-        WHERE e.timestamp >= 1599921493
-        AND e.timestamp <= 1599944227
+        WHERE e.timestamp >= {startTimestamp}
+        AND e.timestamp <= {endTimestamp}
         ORDER BY e.timestamp"""
 
     queryResult = db.engine.execute(sql)

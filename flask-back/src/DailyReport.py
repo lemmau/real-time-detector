@@ -28,23 +28,21 @@ class DailyReport(db.Model):
         endTime = datetime.now()
         startTime = endTime - timedelta(hours=24)
 
-        # allClasses = getAllClasses()
         allEventsLast24hsByClass = getEventsByClass(db, startTime, endTime)
 
         dailyReportsRowsToAdd = []
 
         for eventsByClass in allEventsLast24hsByClass:
-            #TODO add suport for hour
-            if allEventsLast24hsByClass[eventsByClass]:
-                events = len(allEventsLast24hsByClass[eventsByClass])
-                #TODO format day for sqlAlchemy
-                day = datetime.fromtimestamp(allEventsLast24hsByClass[eventsByClass][0].timestamp)
-                detectedClassId = allEventsLast24hsByClass[eventsByClass][0].detectedClassId
+            for hour in range(24):
+                eventsInHour = list(filter(lambda event: int(datetime.fromtimestamp(event.timestamp).strftime("%H")) == hour, allEventsLast24hsByClass[eventsByClass]))
 
-                dailyReportsRowsToAdd.append(
-                    DailyReport(day, events, detectedClassId))
+                if len(eventsInHour) > 0:
+                    events = len(eventsInHour)
+                    day = datetime.fromtimestamp(eventsInHour[0].timestamp).strftime("%Y-%m-%d %H:00:00")
+                    detectedClassId = eventsInHour[0].detectedClassId
+
+                    dailyReportsRowsToAdd.append(DailyReport(day, events, detectedClassId))
 
         saveBatch(session, dailyReportsRowsToAdd)
 
-        print('DailyReport sync finished - Amount updated rows: ',
-              leng(dailyReportsRowsToAdd))
+        print('DailyReport sync finished')

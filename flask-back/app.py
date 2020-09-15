@@ -53,11 +53,10 @@ scheduler = BackgroundScheduler()
 
 print('Starting daily report cron')
 
-# scheduler.add_job(DailyReport.runSync, 'cron', hour=00, args=[db, session])
-# scheduler.start()
+scheduler.add_job(DailyReport.runSync, 'cron', hour=00, args=[db, session])
+scheduler.start()
 
-DailyReport.runSync(db, session)
-print('Daily report cron successfully started')
+print('Daily report cron successfully started running everyday at 00h')
 
 @socketIo.on('connect')
 def handle_connect():
