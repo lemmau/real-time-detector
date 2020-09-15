@@ -141,7 +141,6 @@ export const StatisticsScreen = () => {
 
   const monthlyOptions = ["Primer dia del mes", "Ultimo dia del mes"];
 
-  const classes = useStyles();
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);

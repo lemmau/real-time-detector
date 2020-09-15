@@ -60,14 +60,6 @@ export const Navbar = () => {
           >
             Configuración
           </NavLink>
-                    <NavLink 
-                        activeClassName="active"
-                        className="nav-item nav-link" 
-                        exact
-                        to="/configuration"
-                    >
-                        Configuración
-                    </NavLink>
           <NavLink
             activeClassName="active"
             className="nav-item nav-link"
