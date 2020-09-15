@@ -14,6 +14,7 @@ from src.Video import Video
 from src.EmailSender import EmailSender
 from src.Cron import Cron
 from src.DBHelper import *
+from src.DailyReport import DailyReport
 from datetime import datetime
 
 app = Flask(__name__)
@@ -50,6 +51,13 @@ app.app_context().push()
 
 scheduler = BackgroundScheduler()
 
+print('Starting daily report cron')
+
+scheduler.add_job(DailyReport.runSync, 'cron', hour=00)
+scheduler.start()
+
+print('Daily report cron successfully started')
+
 @socketIo.on('connect')
 def handle_connect():
     app.config["clients"].append(request.sid)
@@ -62,7 +70,6 @@ def handle_disconnect():
 #     soundAlarmOn = app.config['soundAlarm']
 #     for client in app.config["clients"]:
 #         socketIo.emit('alarm', {'audio': soundAlarmOn}, room=client)
-
 
 @app.route('/video_feed')
 def video():

@@ -1,5 +1,7 @@
-from app import db
 from src.DetectedClass import DetectedClass
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 class DailyReport(db.Model):
 
@@ -11,4 +13,7 @@ class DailyReport(db.Model):
     events = db.Column(db.Integer, nullable=False)
     detectedClassId = db.relationship('DetectedClass')
     isDeleted = db.Column(db.Boolean, default=False)
-   
+
+    @staticmethod
+    def runSync():
+        print('Run dailyReport sync triggered')
