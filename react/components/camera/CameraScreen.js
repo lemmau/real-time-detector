@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 //import {Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -24,9 +24,10 @@ const useStyles = makeStyles((theme) => ({
 export const CameraScreen = () => {
     const classes = useStyles();
   const [camara, setCamara] = React.useState('');
-
+  const saveButton=useRef();
   const handleChange = (event) => {
     setCamara(event.target.value);
+    console.log(event.target.value);
   };
 
   const [deviceId, setDeviceId] = React.useState({});
@@ -50,6 +51,31 @@ export const CameraScreen = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const handleChangeDevice = (e) => {
+    console.log(e);
+    setCamara(e.label);
+  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if(camara!==""){
+      handleClose();
+    }
+
+    // TODO API para pasarle los datos al back
+    // async function setStatisticsConfiguration() {
+    //   const requestOptions = {
+    //     method: "GET",
+    //   };
+
+    //   const response = await fetch(
+    //     Config.backendEndpoint + "/configuration"+ periodicidad + hora + propiedadAdicional,
+    //     requestOptions
+    //   );
+    //   const data = await response.json();
+    // }
+    // setStatisticsConfiguration();
+  };
+
   return (
     <>
       <Modal isOpen show={show} onHide={handleClose}>
@@ -67,12 +93,12 @@ export const CameraScreen = () => {
             <em>None</em>
           </MenuItem>
           
-          {devices.map((device, key) => (<MenuItem value={key}>{device.label || `Device ${key + 1}`}</MenuItem>))}
+          {devices.map((device, key) => (<MenuItem value={key} key={key} onClick={handleChangeDevice}>{device.label || `Device ${key + 1}`}</MenuItem>))}
           
         </Select>
       </FormControl></Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleClose} href="/configuration">
+          <Button variant="primary" ref={saveButton} onClick={handleSubmit} type="submit">
             Guardar
           </Button>
         </Modal.Footer>
