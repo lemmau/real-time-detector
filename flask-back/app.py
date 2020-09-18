@@ -67,7 +67,7 @@ def handle_disconnect():
 
 @app.route('/video_feed')
 def video():
-    elementsConfig = json.loads(getConfiguration().get_data().decode("utf-8"))
+    elementsConfig = app.config['objectDetection']
     return Response(Video.getFrame(model=realTimeDetector, elementsConfiguration=elementsConfig, app=app), mimetype = "multipart/x-mixed-replace; boundary=frame")
 
 @app.route('/configuration', methods=['GET'])
