@@ -17,6 +17,48 @@ import { FixedSizeList } from "react-window";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Config from "Config";
 
+const useStyles = makeStyles((theme) => ({
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 200,
+      minHeight: 50,
+      marginLeft: 100,
+      marginRight: 50,
+    },
+    hourControl: {
+      margin: theme.spacing(1),
+      minWidth: 100,
+      minHeight: 50,
+      marginLeft: 100,
+      marginRight: 50,
+    },
+    selectEmpty: {
+      marginTop: theme.spacing(2),
+    },
+    root: {
+      width: "100%",
+      height: 400,
+      maxWidth: 300,
+      backgroundColor: theme.palette.background.paper,
+    },
+    center: {
+      justifyContent: "center",
+      alignItems: "center",
+      verticalAlign: "middle",
+      marginRight: 50,
+      marginLeft: 20,
+    },
+    savebutton: {
+      position: "absolute",
+      right: 150,
+    },
+    topcorner: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+    },
+  }));
+
 const hours = [
   "00",
   "01",
@@ -108,48 +150,6 @@ export const SendStatsEmails = () => {
     index: PropTypes.number.isRequired,
     style: PropTypes.object.isRequired,
   };
-
-  const useStyles = makeStyles((theme) => ({
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 200,
-      minHeight: 50,
-      marginLeft: 100,
-      marginRight: 50,
-    },
-    hourControl: {
-      margin: theme.spacing(1),
-      minWidth: 100,
-      minHeight: 50,
-      marginLeft: 100,
-      marginRight: 50,
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2),
-    },
-    root: {
-      width: "100%",
-      height: 400,
-      maxWidth: 300,
-      backgroundColor: theme.palette.background.paper,
-    },
-    center: {
-      justifyContent: "center",
-      alignItems: "center",
-      verticalAlign: "middle",
-      marginRight: 50,
-      marginLeft: 20,
-    },
-    savebutton: {
-      position: "absolute",
-      right: 150,
-    },
-    topcorner: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-    },
-  }));
 
   const classes = useStyles();
 
