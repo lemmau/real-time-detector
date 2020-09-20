@@ -145,3 +145,7 @@ def getStatisticOfToday(day):
         jsonObject[className]['y'].append(row['events'])
 
     return jsonify(list(jsonObject.values()))
+
+@app.route('/emails', methods=['GET'])
+def getEmails():
+    return jsonify(list(getAllEmails(session, app)))
