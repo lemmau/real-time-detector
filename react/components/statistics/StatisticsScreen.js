@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./StatisticsScreen.css";
 import Button from "react-bootstrap/Button";
 import "react-datepicker/dist/react-datepicker.css";
@@ -57,9 +57,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const StatisticsContext = React.createContext({
-  'periodicidad': '',
-  'hora': '',
-  'propiedadAdicional': ''
+  periodicidad: "",
+  hora: "",
+  propiedadAdicional: "",
+  emailsList: [],
 });
 
 export const StatisticsScreen = () => {
@@ -74,17 +75,64 @@ export const StatisticsScreen = () => {
   const handleClose = () => setShowStatics(false);
   const handleShow = () => setShowStatics(true);
 
+  useEffect(() => {
+    async function loadEmails() {
+      if (StatisticsContext._currentValue.emailsList.length == 0) {
+        console.log("Loading emails from useEffect");
+        const emails = await loadEmailsList();
+        StatisticsContext._currentValue.emailsList = emails;
+      }
+  
+      console.log("Emails loaded from useEffect");
+    }
+
+    loadEmails();
+  });
+
+  const handleClickSendEmails = async () => {
+    setSendEmails(!sendEmails);
+
+    if (StatisticsContext._currentValue.emailsList.length == 0) {
+      const emails = await loadEmailsList();
+      StatisticsContext._currentValue.emailsList = emails;
+    }
+  };
+
+  async function loadEmailsList() {
+    console.log("Loading emails from DB");
+
+    const requestOptions = {
+      method: "GET",
+    };
+
+    const emails = await fetch(
+      Config.backendEndpoint + "/emails",
+      requestOptions
+    );
+
+    const parsedEmails = await emails.json();
+    console.log("Emails loaded: ", parsedEmails);
+
+    return parsedEmails;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("SendEmails: ", sendEmails);
 
     if (sendEmails) {
-      console.log("StatisticsContext._currentValue: ", StatisticsContext._currentValue);
+      const frecuency = {
+        hora: StatisticsContext._currentValue.hora,
+        periodicidad: StatisticsContext._currentValue.periodicidad,
+        propiedadAdicional: StatisticsContext._currentValue.propiedadAdicional,
+      };
+
+      console.log("Frecuency options: ", frecuency);
 
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(StatisticsContext._currentValue),
+        body: JSON.stringify(frecuency),
       };
 
       await fetch(Config.backendEndpoint + "/loadCron", requestOptions);
@@ -102,55 +150,47 @@ export const StatisticsScreen = () => {
       <form onSubmit={handleSubmit}>
         <h1>Estadísticas</h1>
         <hr />
-        <div id="header">
-          <tr>
-            <td>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">
-                  <b></b>
-                </FormLabel>
-                <FormGroup aria-label="position" row></FormGroup>
-                <FormControlLabel
-                  value="Enviar estadísticas por email"
-                  control={<Checkbox color="primary" />}
-                  label="Enviar estadísticas por email"
-                  checked={sendEmails}
-                  onClick={() => setSendEmails(!sendEmails)}
-                />
-              </FormControl>
-            </td>
-            <td>
-              <p></p>
-            </td>
-            <td className="align-middle">
-              <Button variant="primary" onClick={handleShow}>
-                Consultar Estadísticas
-              </Button>
+        <table id="header">
+          <tbody>
+            <tr>
+              <td>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">
+                    <b></b>
+                  </FormLabel>
+                  <FormGroup aria-label="position" row></FormGroup>
+                  <FormControlLabel
+                    value="Enviar estadísticas por email"
+                    control={<Checkbox color="primary" />}
+                    label="Enviar estadísticas por email"
+                    checked={sendEmails}
+                    onClick={handleClickSendEmails}
+                  />
+                </FormControl>
+              </td>
+              <td className="align-middle">
+                <Button variant="primary" onClick={handleShow}>
+                  Consultar Estadísticas
+                </Button>
 
-              <Modal size="lg" show={showReviewStatics} onHide={handleClose}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Estadísticas</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <ModalGraph />
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="primary" onClick={handleClose}>
-                    Cerrar
-                  </Button>
-                </Modal.Footer>
-              </Modal>
-            </td>
-          </tr>
-          <p></p>
-
-          <div>
-              {
-                  sendEmails? <SendStatsEmails/> : null
-              }
-          </div>
-
-        </div>
+                <Modal size="lg" show={showReviewStatics} onHide={handleClose}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Estadísticas</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <ModalGraph />
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                      Cerrar
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
+              </td>
+            </tr>
+            {sendEmails ? <SendStatsEmails /> : null}
+          </tbody>
+        </table>
         <hr />
         <div>
           <Button className={classes.savebutton} type="submit" color="primary">

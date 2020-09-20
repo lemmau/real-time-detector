@@ -13,8 +13,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import PropTypes from "prop-types";
-import { FixedSizeList } from "react-window";
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { StatisticsContext } from "./StatisticsScreen";
@@ -106,16 +104,18 @@ const weekDays = [
 
 const monthlyOptions = ["Primer dia del mes", "Ultimo dia del mes"];
 
-export const SendStatsEmails = (props) => {
+export const SendStatsEmails = () => {
   const [showAddNewEmail, setShowD] = useState(false);
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
   const [periodicidad, setFrequency] = useState("diaria");
-  const [hora, setHour] = useState('');
-  const [propiedadAdicional, setAditionalProperty] = useState('');
+  const [hora, setHour] = useState("");
+  const [propiedadAdicional, setAditionalProperty] = useState("");
   const [saveNewEmailDisabled, setsaveNewEmailDisabled] = useState(true);
   const [newEmailError, setNewEmailError] = useState(false);
-  const [emailsList, setEmailsList] = useState(["test@1234.com"]);
+  const [emailsList, setEmailsList] = useState(
+    StatisticsContext._currentValue.emailsList
+  );
 
   const handleCloseNewEmail = () => setShowD(false);
   const handleAddNewEmail = () => setShowD(true);
@@ -225,9 +225,10 @@ export const SendStatsEmails = (props) => {
           </Modal>
         </td>
       </tr>
-      <p></p>
       <tr>
-        <h3>Periodicidad</h3>
+        <th>
+          <h3>Periodicidad</h3>
+        </th>
       </tr>
       <tr>
         <td>
@@ -239,6 +240,7 @@ export const SendStatsEmails = (props) => {
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
               label="Frecuencia"
+              value=""
             >
               <MenuItem value={"diaria"} onClick={clickDay}>
                 Diaria
@@ -262,9 +264,11 @@ export const SendStatsEmails = (props) => {
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 label="Enviar el día"
+                value=""
               >
                 {weekDays.map((day) => (
                   <MenuItem
+                    key={day}
                     value={day}
                     onClick={() => setAditionalProperty(day)}
                   >
@@ -285,11 +289,13 @@ export const SendStatsEmails = (props) => {
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 label="Enviar el día"
+                value=""
               >
                 {monthlyOptions.map((monthlyOption) => (
                   <MenuItem
+                    key={monthlyOption}
                     value={monthlyOption}
-                    onClick={(e) => setAditionalProperty(monthlyOption)}
+                    onClick={() => setAditionalProperty(monthlyOption)}
                   >
                     {monthlyOption}
                   </MenuItem>
@@ -305,9 +311,11 @@ export const SendStatsEmails = (props) => {
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
               label="Hora"
+              value=""
             >
               {hours.map((hour) => (
                 <MenuItem
+                  key={hour}
                   value={hour}
                   onClick={() => {
                     setHour(hour);
