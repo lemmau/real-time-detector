@@ -56,11 +56,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export const StatisticsContext = React.createContext({
+  'periodicidad': '',
+  'hora': '',
+  'propiedadAdicional': ''
+});
+
 export const StatisticsScreen = () => {
   // const [startDate, setStartDate] = useState(new Date());
   const [showReviewStatics, setShowStatics] = useState(false);
   const [sendEmails, setSendEmails] = useState(false);
-
+  const [periodicidad, setFrequency] = useState("diaria");
+  const [hora, setHour] = useState("");
+  const [propiedadAdicional, setAditionalProperty] = useState("");
   const classes = useStyles();
 
   const handleClose = () => setShowStatics(false);
@@ -71,20 +79,12 @@ export const StatisticsScreen = () => {
     console.log("SendEmails: ", sendEmails);
 
     if (sendEmails) {
-      // console.log("SendStatsEmails.hora: ", SendStatsEmails.hora);
-      // console.log("SendStatsEmails.periodicidad: ", SendStatsEmails.periodicidad);
-      // console.log("SendStatsEmails.propiedadAdicional: ", SendStatsEmails.propiedadAdicional);
-
-      const frecuency = {
-        hora: 'SendStatsEmails.hora',
-        periodicidad: 'SendStatsEmails.periodicidad',
-        propiedadAdicional: 'SendStatsEmails.propiedadAdicional',
-      };
+      console.log("StatisticsContext._currentValue: ", StatisticsContext._currentValue);
 
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(frecuency),
+        body: JSON.stringify(StatisticsContext._currentValue),
       };
 
       await fetch(Config.backendEndpoint + "/loadCron", requestOptions);
@@ -146,7 +146,7 @@ export const StatisticsScreen = () => {
 
           <div>
               {
-                  sendEmails? <SendStatsEmails /> : null
+                  sendEmails? <SendStatsEmails/> : null
               }
           </div>
 
