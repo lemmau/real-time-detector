@@ -10,10 +10,12 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import "react-datepicker/dist/react-datepicker.css";
+import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import PropTypes from "prop-types";
 import { FixedSizeList } from "react-window";
+import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { StatisticsContext } from "./StatisticsScreen";
 
@@ -56,6 +58,12 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: 0,
     right: 0,
+  },
+  demo: {
+    backgroundColor: theme.palette.background.paper,
+  },
+  title: {
+    margin: theme.spacing(4, 0, 2),
   },
 }));
 
@@ -103,8 +111,11 @@ export const SendStatsEmails = (props) => {
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
   const [periodicidad, setFrequency] = useState("diaria");
-  const [hora, setHour] = useState("");
-  const [propiedadAdicional, setAditionalProperty] = useState("");
+  const [hora, setHour] = useState('');
+  const [propiedadAdicional, setAditionalProperty] = useState('');
+  const [saveNewEmailDisabled, setsaveNewEmailDisabled] = useState(true);
+  const [newEmailError, setNewEmailError] = useState(false);
+  const [emailsList, setEmailsList] = useState(["test@1234.com"]);
 
   const handleCloseNewEmail = () => setShowD(false);
   const handleAddNewEmail = () => setShowD(true);
@@ -131,6 +142,7 @@ export const SendStatsEmails = (props) => {
     StatisticsContext._currentValue.periodicidad = periodicidad;
     StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
   }
+
   function clickMonthDay() {
     setFrequency("mensual");
     setAditionalProperty("");
@@ -140,42 +152,44 @@ export const SendStatsEmails = (props) => {
     StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
   }
 
-  function renderRow(props) {
-    const { index, style } = props;
-
-    return (
-      <>
-        <ListItem button style={style} key={index}>
-          <ListItemText primary={`a${index + 1}@hotmail.com`} />
-          <DeleteIcon />
-        </ListItem>
-      </>
+  function validateEmail(email) {
+    const pattern = new RegExp(
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
-  }
+    const emailValue = email.target.value;
+    console.log("email: ", emailValue);
 
-  renderRow.propTypes = {
-    index: PropTypes.number.isRequired,
-    style: PropTypes.object.isRequired,
-  };
+    if (!pattern.test(emailValue)) {
+      console.log("Invalid email");
+      setsaveNewEmailDisabled(true);
+      setNewEmailError(true);
+    } else {
+      console.log("Valid email");
+      setNewEmailError(false);
+      setsaveNewEmailDisabled(false);
+    }
+  }
 
   const classes = useStyles();
 
   return (
     <>
       <tr>
-        <h3>Destinatarios</h3>
-      </tr>
-      <tr>
         <td>
           <div className={classes.center}>
-            <FixedSizeList
-              height={250}
-              width={300}
-              itemSize={46}
-              itemCount={10}
-            >
-              {renderRow}
-            </FixedSizeList>
+            <Typography variant="h6" className={classes.title}>
+              Destinatarios
+            </Typography>
+            <div className={classes.demo}>
+              <List>
+                {emailsList.map((email) => (
+                  <ListItem button key={email}>
+                    <ListItemText primary={email} />
+                    <DeleteIcon />
+                  </ListItem>
+                ))}
+              </List>
+            </div>
           </div>
         </td>
         <td className="align-top">
@@ -194,11 +208,17 @@ export const SendStatsEmails = (props) => {
                   id="outlined-basic"
                   label="Ingresar email"
                   variant="outlined"
+                  onChange={validateEmail}
+                  error={newEmailError}
                 />
               </form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" onClick={handleClose}>
+              <Button
+                variant="primary"
+                disabled={saveNewEmailDisabled}
+                onClick={handleClose}
+              >
                 Guardar
               </Button>
             </Modal.Footer>
@@ -287,12 +307,15 @@ export const SendStatsEmails = (props) => {
               label="Hora"
             >
               {hours.map((hour) => (
-                <MenuItem value={hour} onClick={() => {
+                <MenuItem
+                  value={hour}
+                  onClick={() => {
                     setHour(hour);
                     StatisticsContext._currentValue.hora = hour;
                     StatisticsContext._currentValue.periodicidad = periodicidad;
-                    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;   
-                }}>
+                    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
+                  }}
+                >
                   {hour}
                 </MenuItem>
               ))}
