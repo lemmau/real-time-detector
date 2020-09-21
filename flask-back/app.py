@@ -21,6 +21,7 @@ app = Flask(__name__)
 socketIo = SocketIO(app, cors_allowed_origins='*')
 app.config["socketIo"] = socketIo
 app.config["clients"] = []
+app.config['JSON_SORT_KEYS'] = False
 # TODO: set cors properly
 cors = CORS(app)
 
@@ -59,11 +60,6 @@ def handle_connect():
 def handle_disconnect():
     app.config["clients"].remove(request.sid)
 
-# def throwAlarm():
-#     soundAlarmOn = app.config['soundAlarm']
-#     for client in app.config["clients"]:
-#         socketIo.emit('alarm', {'audio': soundAlarmOn}, room=client)
-
 
 @app.route('/video_feed')
 def video():
@@ -82,23 +78,12 @@ def getConfiguration():
     elements["Proteccion ocular"]['isDisabled'] = shouldDisableGlassesAndMask
     elements["Mascara"]['isDisabled'] = shouldDisableFaceMask
 
-    return jsonify(list(elements.values()))
+    return jsonify(elements)
 
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
     requestData = request.json
-    print(requestData)
-
-    if 'element' not in requestData or 'enable' not in requestData:
-        return jsonify('{"status":"error, "message": "\'element\' or \'enable\' not property not found"}')
-
-    element = requestData['element']
-    enable = requestData['enable']
-
-    if element not in app.config['possibleElements']:
-        return jsonify('{"status":"error, "message": "Element is not allowed"}')
-
-    app.config['objectDetection'][element] = bool(enable)
+    app.config['objectDetection'] = requestData
 
     return jsonify('{"status":"ok, "message": "Configuration Changed"}')
 
