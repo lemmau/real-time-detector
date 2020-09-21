@@ -13,19 +13,7 @@ const ElementDetectionCheckbox = (props) => {
 
   async function checkboxClicked() {
     setChecked(!checked);
-    await setConfiguration(+!checked);
-    props.onChange();
-
-  }
-
-  async function setConfiguration(isEnable) {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 'element': props.value, 'enable': isEnable }),
-    };
-
-    await fetch(Config.backendEndpoint + "/configuration", requestOptions);
+    props.onChange(props.value, !checked);
   }
 
   return (
@@ -58,9 +46,15 @@ ElementDetectionCheckbox.defaultProps = {
 
 export const ConfigurationScreen = () => {
   const [elementsCheckboxs, setElementsCheckboxs] = useState([]);
+  const [buttonDisable, setButtonDisable] = useState(true);
+  const [originalConfig, setOriginalConfig] = useState();
 
   useEffect(() => {
-    getElementsCheckbox();
+    async function componentMount(){
+      let checkboxConfig = await getElementsCheckbox();
+      setOriginalConfig(checkboxConfig);
+    }
+    componentMount();
   }, []);
 
   async function getElementsCheckbox() {
@@ -74,11 +68,43 @@ export const ConfigurationScreen = () => {
     );
     const data = await response.json();
     setElementsCheckboxs(data);
-    console.log(data);
+
+    return data;
   }
 
-  function checkboxUpdated(){
-    getElementsCheckbox();
+  function checkboxUpdated(key, checkboxValue){
+    let config = JSON.parse(JSON.stringify(elementsCheckboxs)); //deep copy
+    console.log(key)
+    config[key]['isChecked'] = checkboxValue;
+
+    const shouldDisableFaceMask = config['Barbijo']['isChecked'] || config['Proteccion ocular']['isChecked'];
+    const shouldDisableGlassesAndMask = config['Mascara']['isChecked'];
+
+    config["Barbijo"]['isDisabled'] = shouldDisableGlassesAndMask;
+    config["Proteccion ocular"]['isDisabled'] = shouldDisableGlassesAndMask;
+    config["Mascara"]['isDisabled'] = shouldDisableFaceMask;
+    console.log(config)
+    setButtonDisable(JSON.stringify(config) === JSON.stringify(originalConfig));
+
+    setElementsCheckboxs(config);
+  }
+
+  async function saveConfig(){
+
+    const configToSave = {};
+    Object.entries(elementsCheckboxs).map(([key, value]) => {
+      configToSave[key] = value['isChecked'];
+    });
+
+    console.log(configToSave);
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(configToSave),
+    };
+
+    await fetch(Config.backendEndpoint + "/configuration", requestOptions);
   }
 
   return (
@@ -89,8 +115,8 @@ export const ConfigurationScreen = () => {
         </FormLabel>
         <FormGroup aria-label="position" row></FormGroup>
 
-        {[...elementsCheckboxs].map((check) => (
-          <ElementDetectionCheckbox value={check['elementName']} checked={check['isChecked']} disable={check['isDisabled']} key={check['elementName']} onChange={checkboxUpdated}/>
+        {Object.entries(elementsCheckboxs).map(([key, check]) => (
+          <ElementDetectionCheckbox value={check['elementName']} checked={check['isChecked']} disable={check['isDisabled']} key={key} onChange={checkboxUpdated}/>
         ))}
 
         <FormLabel component="legend">
@@ -105,7 +131,7 @@ export const ConfigurationScreen = () => {
       </FormControl>
 
       <hr />
-      <Button className="right" color="primary" href="/statistics">
+      <Button className="right" color="primary" href='/statistics' disabled={buttonDisable} onClick={saveConfig}>
         Guardar
       </Button>
       <hr />
