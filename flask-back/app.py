@@ -7,13 +7,14 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, send
 from IAModel import IAModel
 from PredictedClass import ClassList
-from core.definitions import CHECKPOINT_NEW as modelPath
+from core.definitions import CHECKPOINT_NEW as modelPath, EMAIL_SENDER_CRON_ID
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from src.Video import Video
 from src.EmailSender import EmailSender
 from src.Cron import Cron
 from src.DBHelper import *
+from src.DailyReport import DailyReport
 from datetime import datetime
 
 app = Flask(__name__)
@@ -50,6 +51,13 @@ app.app_context().push()
 
 scheduler = BackgroundScheduler()
 
+print('Starting daily report cron')
+
+scheduler.add_job(DailyReport.runSync, 'cron', hour=00, args=[db, session])
+scheduler.start()
+
+print('Daily report cron successfully started running everyday at 00h')
+
 @socketIo.on('connect')
 def handle_connect():
     app.config["clients"].append(request.sid)
@@ -62,7 +70,6 @@ def handle_disconnect():
 #     soundAlarmOn = app.config['soundAlarm']
 #     for client in app.config["clients"]:
 #         socketIo.emit('alarm', {'audio': soundAlarmOn}, room=client)
-
 
 @app.route('/video_feed')
 def video():
@@ -97,13 +104,11 @@ def setCron():
     frequency = request.json
     print(frequency)
 
-    scheduler = BackgroundScheduler()
-
     selectedDayOfWeek = Cron.translateDayOfWeek(frequency['propiedadAdicional']) or '*'
     selectedDayOfMonth = Cron.calculateDayOfMonth(frequency['propiedadAdicional']) or '*'
     cron = Cron(date=datetime.today().strftime("%Y-%m-%d"), day_of_week=selectedDayOfWeek, day=selectedDayOfMonth, hour=frequency['hora'], isDeleted=False)
 
-    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', day=selectedDayOfMonth, day_of_week=selectedDayOfWeek, hour=frequency['hora'], args=[frequency, datetime.today(), db, app])
+    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', day=selectedDayOfMonth, day_of_week=selectedDayOfWeek, hour=frequency['hora'], args=[frequency, datetime.today(), db, app], id=EMAIL_SENDER_CRON_ID)
 
     save(session, cron)
 
@@ -118,7 +123,7 @@ def setCron():
 
 @app.route('/removeCron', methods=['GET'])
 def removeCron():
-    scheduler.remove_all_jobs()
+    scheduler.remove_job(EMAIL_SENDER_CRON_ID)
     app.config["sendEmails"] = "false"
 
     return jsonify('{"status":"ok, "message": "Cron successfully removed"}')
