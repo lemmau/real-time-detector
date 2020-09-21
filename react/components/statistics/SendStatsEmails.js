@@ -16,6 +16,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { StatisticsContext } from "./StatisticsScreen";
+import Config from "Config";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -105,7 +106,7 @@ const weekDays = [
 const monthlyOptions = ["Primer dia del mes", "Ultimo dia del mes"];
 
 export const SendStatsEmails = () => {
-  const [showAddNewEmail, setShowD] = useState(false);
+  const [showAddNewEmail, setShowAddNewEmailModal] = useState(false);
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
   const [periodicidad, setFrequency] = useState("diaria");
@@ -116,14 +117,56 @@ export const SendStatsEmails = () => {
   const [emailsList, setEmailsList] = useState(
     StatisticsContext._currentValue.emailsList
   );
+  const [newEmail, setNewEmail] = useState("");
 
-  const handleCloseNewEmail = () => setShowD(false);
-  const handleAddNewEmail = () => setShowD(true);
+  const handleAddNewEmail = () => setShowAddNewEmailModal(true);
   const handleCloseWeekDay = () => setShowWeekDay(false);
   const handleShowWeekDay = () => setShowWeekDay(true);
   const handleCloseMonthDay = () => setShowMonthDay(false);
   const handleShowMonthDay = () => setShowMonthDay(true);
-  const handleClose = () => setShowStatics(false);
+
+  function handleDeleteEmail(email) {
+    console.log("Email to delete: ", email);
+
+    // const requestOptions = {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(newEmail),
+    // };
+
+    // // await fetch(Config.backendEndpoint + "/email", requestOptions);
+    console.log(
+      "StatisticsContext._currentValue.emailsList before: ",
+      StatisticsContext._currentValue.emailsList
+    );
+    removeItem(StatisticsContext._currentValue.emailsList, email);
+    console.log(
+      "StatisticsContext._currentValue.emailsList after: ",
+      StatisticsContext._currentValue.emailsList
+    );
+    // setShowAddNewEmailModal(false);
+  }
+
+  function removeItem(arr, item) {
+    var index = arr.indexOf(item);
+    if (index > -1) {
+      arr.splice(index, 1);
+    }
+  }
+
+  function handleSaveNewEmail() {
+    console.log("New email to save: ", newEmail);
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newEmail),
+    };
+
+    // await fetch(Config.backendEndpoint + "/email", requestOptions);
+    StatisticsContext._currentValue.emailsList.push(newEmail);
+    setShowAddNewEmailModal(false);
+  }
 
   function clickDay() {
     setFrequency("diaria");
@@ -167,10 +210,26 @@ export const SendStatsEmails = () => {
       console.log("Valid email");
       setNewEmailError(false);
       setsaveNewEmailDisabled(false);
+      setNewEmail(emailValue);
     }
   }
 
   const classes = useStyles();
+
+  const EmailList = () => {
+    return (
+      <>
+        <List>
+          {emailsList.map((email) => (
+            <ListItem button key={email}>
+              <ListItemText primary={email} />
+              <DeleteIcon onClick={() => handleDeleteEmail(email)} />
+            </ListItem>
+          ))}
+        </List>
+      </>
+    );
+  };
 
   return (
     <>
@@ -181,14 +240,7 @@ export const SendStatsEmails = () => {
               Destinatarios
             </Typography>
             <div className={classes.demo}>
-              <List>
-                {emailsList.map((email) => (
-                  <ListItem button key={email}>
-                    <ListItemText primary={email} />
-                    <DeleteIcon />
-                  </ListItem>
-                ))}
-              </List>
+              <EmailList />
             </div>
           </div>
         </td>
@@ -197,7 +249,7 @@ export const SendStatsEmails = () => {
             Agregar nuevo destinatario
           </Button>
 
-          <Modal show={showAddNewEmail} onHide={handleCloseNewEmail}>
+          <Modal show={showAddNewEmail}>
             <Modal.Header closeButton>
               <Modal.Title>Nuevo destinatario</Modal.Title>
             </Modal.Header>
@@ -217,7 +269,7 @@ export const SendStatsEmails = () => {
               <Button
                 variant="primary"
                 disabled={saveNewEmailDisabled}
-                onClick={handleClose}
+                onClick={handleSaveNewEmail}
               >
                 Guardar
               </Button>
