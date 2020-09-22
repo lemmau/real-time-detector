@@ -86,7 +86,7 @@ def setConfiguration():
     requestData = request.json
 
     app.config['soundAlarm'] = requestData['soundAlarm']
-    del requestData['soundAlarm']
+    del requestData['soundAlarm'soundAlarm]
     app.config['objectDetection'] = requestData
 
     return jsonify('{"status":"ok, "message": "Configuration Changed"}')
