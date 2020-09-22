@@ -125,26 +125,19 @@ export const SendStatsEmails = () => {
   const handleCloseMonthDay = () => setShowMonthDay(false);
   const handleShowMonthDay = () => setShowMonthDay(true);
 
-  function handleDeleteEmail(email) {
+  async function handleDeleteEmail(email) {
     console.log("Email to delete: ", email);
 
-    // const requestOptions = {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(newEmail),
-    // };
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(email),
+    };
 
-    // // await fetch(Config.backendEndpoint + "/email", requestOptions);
-    console.log(
-      "StatisticsContext._currentValue.emailsList before: ",
-      StatisticsContext._currentValue.emailsList
-    );
+    await fetch(Config.backendEndpoint + "/removeEmail", requestOptions);
+
     removeItem(StatisticsContext._currentValue.emailsList, email);
-    console.log(
-      "StatisticsContext._currentValue.emailsList after: ",
-      StatisticsContext._currentValue.emailsList
-    );
-    // setShowAddNewEmailModal(false);
+    setEmailsList(StatisticsContext._currentValue.emailsList);
   }
 
   function removeItem(arr, item) {
@@ -154,7 +147,7 @@ export const SendStatsEmails = () => {
     }
   }
 
-  function handleSaveNewEmail() {
+  async function handleSaveNewEmail() {
     console.log("New email to save: ", newEmail);
 
     const requestOptions = {
@@ -163,8 +156,9 @@ export const SendStatsEmails = () => {
       body: JSON.stringify(newEmail),
     };
 
-    // await fetch(Config.backendEndpoint + "/email", requestOptions);
+    await fetch(Config.backendEndpoint + "/emails", requestOptions);
     StatisticsContext._currentValue.emailsList.push(newEmail);
+    setEmailsList(StatisticsContext._currentValue.emailsList);
     setShowAddNewEmailModal(false);
   }
 
@@ -216,11 +210,14 @@ export const SendStatsEmails = () => {
 
   const classes = useStyles();
 
-  const EmailList = () => {
+  const EmailList = (props) => {
+    const list = props.list;
+    console.log("props.list", props.list);
+
     return (
       <>
         <List>
-          {emailsList.map((email) => (
+          {list.map((email) => (
             <ListItem button key={email}>
               <ListItemText primary={email} />
               <DeleteIcon onClick={() => handleDeleteEmail(email)} />
@@ -240,7 +237,7 @@ export const SendStatsEmails = () => {
               Destinatarios
             </Typography>
             <div className={classes.demo}>
-              <EmailList />
+              <EmailList list={emailsList} />
             </div>
           </div>
         </td>
