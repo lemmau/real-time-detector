@@ -77,12 +77,16 @@ def getConfiguration():
     elements["Barbijo"]['isDisabled'] = shouldDisableGlassesAndMask
     elements["Proteccion ocular"]['isDisabled'] = shouldDisableGlassesAndMask
     elements["Mascara"]['isDisabled'] = shouldDisableFaceMask
+    elements["soundAlarm"] = app.config['soundAlarm']
 
     return jsonify(elements)
 
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
     requestData = request.json
+
+    app.config['soundAlarm'] = requestData['soundAlarm']
+    del requestData['soundAlarm']
     app.config['objectDetection'] = requestData
 
     return jsonify('{"status":"ok, "message": "Configuration Changed"}')
