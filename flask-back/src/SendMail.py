@@ -1,8 +1,6 @@
 import os
 import json
 import smtplib, ssl
-# from flask import app
-# from app import app
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText

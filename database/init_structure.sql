@@ -55,12 +55,11 @@ CREATE TABLE IF NOT EXISTS `Email`(
 CREATE TABLE IF NOT EXISTS `DailyReport`(
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     day DATETIME NOT NULL,
-    infractions INT UNSIGNED NOT NULL,
     events INT UNSIGNED NOT NULL,
     detectedClassId INT UNSIGNED NOT NULL,
     isDeleted bool NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
-    CONSTRAINT `DailyReport_DetectedClass_fk`
-        FOREIGN KEY (`detectedClassId`) REFERENCES DetectedClass(id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+    -- CONSTRAINT `DailyReport_DetectedClass_fk`
+    --     FOREIGN KEY (`detectedClassId`) REFERENCES DetectedClass(id)
+    --     ON DELETE CASCADE ON UPDATE CASCADE
 );
