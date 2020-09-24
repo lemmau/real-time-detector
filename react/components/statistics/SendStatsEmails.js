@@ -23,15 +23,13 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 200,
     minHeight: 50,
-    marginLeft: 100,
-    marginRight: 50,
+    marginRight: 10,
   },
   hourControl: {
     margin: theme.spacing(1),
     minWidth: 100,
     minHeight: 50,
-    marginLeft: 100,
-    marginRight: 50,
+    marginRight: 10,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -63,6 +61,15 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     margin: theme.spacing(4, 0, 2),
+  },
+  td: {
+    width: 1,
+    "white-space": "nowrap",
+  },
+  sep: {
+    position: "relative",
+    overflow: "hidden",
+    height: "1em",
   },
 }));
 
@@ -162,6 +169,10 @@ export const SendStatsEmails = () => {
     setShowAddNewEmailModal(false);
   }
 
+  function handleCloseAddNewEmail() {
+    setShowAddNewEmailModal(false);
+  }
+
   function clickDay() {
     setFrequency("diaria");
     setAditionalProperty("");
@@ -230,6 +241,11 @@ export const SendStatsEmails = () => {
 
   return (
     <>
+      <tr className={classes.sep}>
+        <td colSpan="3">
+          <hr />
+        </td>
+      </tr>
       <tr>
         <td>
           <div className={classes.center}>
@@ -241,7 +257,7 @@ export const SendStatsEmails = () => {
             </div>
           </div>
         </td>
-        <td className="align-top">
+        <td className="makeStyles-center-22">
           <Button variant="primary" onClick={handleAddNewEmail}>
             Agregar nuevo destinatario
           </Button>
@@ -263,15 +279,23 @@ export const SendStatsEmails = () => {
               </form>
             </Modal.Body>
             <Modal.Footer>
+              <Button variant="primary" onClick={handleCloseAddNewEmail}>
+                Me arrepenti
+              </Button>
               <Button
                 variant="primary"
                 disabled={saveNewEmailDisabled}
                 onClick={handleSaveNewEmail}
               >
-                Guardar
+                Agregar!
               </Button>
             </Modal.Footer>
           </Modal>
+        </td>
+      </tr>
+      <tr className={classes.sep}>
+        <td colSpan="3">
+          <hr />
         </td>
       </tr>
       <tr>
@@ -280,7 +304,7 @@ export const SendStatsEmails = () => {
         </th>
       </tr>
       <tr>
-        <td>
+        <td className={classes.td}>
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="demo-simple-select-outlined-label">
               Frecuencia
@@ -303,57 +327,7 @@ export const SendStatsEmails = () => {
             </Select>
           </FormControl>
         </td>
-        <td>
-          {showWeekDay && (
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-outlined-label">
-                Enviar el día
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-outlined-label"
-                id="demo-simple-select-outlined"
-                label="Enviar el día"
-                value=""
-              >
-                {weekDays.map((day) => (
-                  <MenuItem
-                    key={day}
-                    value={day}
-                    onClick={() => setAditionalProperty(day)}
-                  >
-                    {day}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        </td>
-        <td>
-          {showMonthDay && (
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-outlined-label">
-                Enviar el día
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-outlined-label"
-                id="demo-simple-select-outlined"
-                label="Enviar el día"
-                value=""
-              >
-                {monthlyOptions.map((monthlyOption) => (
-                  <MenuItem
-                    key={monthlyOption}
-                    value={monthlyOption}
-                    onClick={() => setAditionalProperty(monthlyOption)}
-                  >
-                    {monthlyOption}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        </td>
-        <td>
+        <td className={classes.td}>
           <FormControl variant="outlined" className={classes.hourControl}>
             <InputLabel id="demo-simple-select-outlined-label">Hora</InputLabel>
             <Select
@@ -378,6 +352,56 @@ export const SendStatsEmails = () => {
               ))}
             </Select>
           </FormControl>
+        </td>
+        <td className={classes.td}>
+          {showWeekDay && (
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-outlined-label">
+                Enviar el día
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                label="Enviar el día"
+                value=""
+              >
+                {weekDays.map((day) => (
+                  <MenuItem
+                    key={day}
+                    value={day}
+                    onClick={() => setAditionalProperty(day)}
+                  >
+                    {day}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        </td>
+        <td className={classes.td}>
+          {showMonthDay && (
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-outlined-label">
+                Enviar el día
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                label="Enviar el día"
+                value=""
+              >
+                {monthlyOptions.map((monthlyOption) => (
+                  <MenuItem
+                    key={monthlyOption}
+                    value={monthlyOption}
+                    onClick={() => setAditionalProperty(monthlyOption)}
+                  >
+                    {monthlyOption}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </td>
       </tr>
     </>
