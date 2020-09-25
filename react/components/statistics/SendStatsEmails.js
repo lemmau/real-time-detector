@@ -144,7 +144,7 @@ export const SendStatsEmails = () => {
     await fetch(Config.backendEndpoint + "/removeEmail", requestOptions);
 
     removeItem(StatisticsContext._currentValue.emailsList, email);
-    setEmailsList(StatisticsContext._currentValue.emailsList);
+    setEmailsList([...StatisticsContext._currentValue.emailsList]);
   }
 
   function removeItem(arr, item) {
