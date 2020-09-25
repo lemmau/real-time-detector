@@ -16,11 +16,13 @@ from src.Cron import Cron
 from src.DBHelper import *
 from src.DailyReport import DailyReport
 from datetime import datetime
+from collections import OrderedDict
 
 app = Flask(__name__)
 socketIo = SocketIO(app, cors_allowed_origins='*')
 app.config["socketIo"] = socketIo
 app.config["clients"] = []
+app.config['JSON_SORT_KEYS'] = False
 # TODO: set cors properly
 cors = CORS(app)
 
@@ -66,10 +68,6 @@ def handle_connect():
 def handle_disconnect():
     app.config["clients"].remove(request.sid)
 
-# def throwAlarm():
-#     soundAlarmOn = app.config['soundAlarm']
-#     for client in app.config["clients"]:
-#         socketIo.emit('alarm', {'audio': soundAlarmOn}, room=client)
 
 @app.route('/video_feed')
 def video():
@@ -78,24 +76,26 @@ def video():
 
 @app.route('/configuration', methods=['GET'])
 def getConfiguration():
-    objectDetectionConfig = app.config['objectDetection']
-    return jsonify(objectDetectionConfig)
+    objectDetectionConfig = OrderedDict(app.config['objectDetection'])
+
+    shouldDisableFaceMask = objectDetectionConfig['Barbijo'] or objectDetectionConfig['Proteccion ocular']
+    shouldDisableGlassesAndMask = objectDetectionConfig['Mascara']
+
+    elements = OrderedDict({key: {'elementName': key, 'isChecked': value} for key, value in objectDetectionConfig.items()})
+    elements["Barbijo"]['isDisabled'] = shouldDisableGlassesAndMask
+    elements["Proteccion ocular"]['isDisabled'] = shouldDisableGlassesAndMask
+    elements["Mascara"]['isDisabled'] = shouldDisableFaceMask
+    elements["soundAlarm"] = app.config['soundAlarm']
+
+    return jsonify(elements)
 
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
     requestData = request.json
-    print(requestData)
 
-    if 'element' not in requestData or 'enable' not in requestData:
-        return jsonify('{"status":"error, "message": "\'element\' or \'enable\' not property not found"}')
-
-    element = requestData['element']
-    enable = requestData['enable']
-
-    if element not in app.config['possibleElements']:
-        return jsonify('{"status":"error, "message": "Element is not allowed"}')
-
-    app.config['objectDetection'][element] = bool(enable)
+    app.config['soundAlarm'] = requestData['soundAlarm']
+    del requestData['soundAlarm']
+    app.config['objectDetection'] = requestData
 
     return jsonify('{"status":"ok, "message": "Configuration Changed"}')
 
