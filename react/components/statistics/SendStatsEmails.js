@@ -116,7 +116,7 @@ export const SendStatsEmails = () => {
   const [showAddNewEmail, setShowAddNewEmailModal] = useState(false);
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
-  const [periodicidad, setFrequency] = useState("diaria");
+  const [periodicidad, setFrequency] = useState("");
   const [hora, setHour] = useState("");
   const [propiedadAdicional, setAditionalProperty] = useState("");
   const [saveNewEmailDisabled, setsaveNewEmailDisabled] = useState(true);
@@ -313,7 +313,7 @@ export const SendStatsEmails = () => {
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
               label="Frecuencia"
-              value=""
+              value={periodicidad}
             >
               <MenuItem value={"diaria"} onClick={clickDay}>
                 Diaria
@@ -334,7 +334,7 @@ export const SendStatsEmails = () => {
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
               label="Hora"
-              value=""
+              value={hora}
             >
               {hours.map((hour) => (
                 <MenuItem
@@ -363,7 +363,7 @@ export const SendStatsEmails = () => {
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 label="Enviar el día"
-                value=""
+                value={propiedadAdicional}
               >
                 {weekDays.map((day) => (
                   <MenuItem
@@ -388,7 +388,7 @@ export const SendStatsEmails = () => {
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 label="Enviar el día"
-                value=""
+                value={propiedadAdicional}
               >
                 {monthlyOptions.map((monthlyOption) => (
                   <MenuItem
