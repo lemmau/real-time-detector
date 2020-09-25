@@ -64,7 +64,6 @@ export const StatisticsContext = React.createContext({
 });
 
 export const StatisticsScreen = () => {
-  // const [startDate, setStartDate] = useState(new Date());
   const [showReviewStatics, setShowStatics] = useState(false);
   const [sendEmails, setSendEmails] = useState(false);
   const [periodicidad, setFrequency] = useState("diaria");
@@ -82,7 +81,7 @@ export const StatisticsScreen = () => {
         const emails = await loadEmailsList();
         StatisticsContext._currentValue.emailsList = emails;
       }
-  
+
       console.log("Emails loaded from useEffect");
     }
 
@@ -193,7 +192,11 @@ export const StatisticsScreen = () => {
         </table>
         <hr />
         <div>
-          <Button className={classes.savebutton} type="submit" color="primary">
+          <Button
+            className="right"
+            type="submit"
+            color="primary"
+          >
             Guardar
           </Button>
         </div>
