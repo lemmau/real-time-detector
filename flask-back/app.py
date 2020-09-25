@@ -150,3 +150,33 @@ def getStatisticOfToday(day):
         jsonObject[className]['y'].append(row['events'])
 
     return jsonify(list(jsonObject.values()))
+
+@app.route('/emails', methods=['GET'])
+def getEmails():
+    return jsonify(list(getAllEmailsAvailables(session, app)))
+
+@app.route('/emails', methods=['POST'])
+def saveNewEmail():
+    currentEmails = list(getAllEmails(session, app))
+    email = request.json
+    print(email)
+
+    if any(e.email == email for e in currentEmails):
+        restoreEmail(session, email)
+
+        return jsonify('{"status":"ok, "message": "{email} sucessfully restored"}')
+    else:
+        emailObject = Email(email)
+        save(session, emailObject)
+
+        return jsonify('{"status":"ok, "message": "{email} sucessfully saved"}')
+
+@app.route('/removeEmail', methods=['POST'])
+def deleteEmails():
+    email = request.json
+    print(email)
+    # emailObject = Email(email, True)
+
+    deleteEmail(session, email)
+    
+    return jsonify('{"status":"ok, "message": "{email} sucessfully deleted"}')
