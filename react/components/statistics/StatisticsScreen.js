@@ -29,12 +29,34 @@ export const StatisticsContext = React.createContext({
 
 export const StatisticsScreen = () => {
   const [showReviewStatics, setShowStatics] = useState(false);
-  const [sendEmails, setSendEmails] = useState(false);
+  const [sendEmails, setSendEmails] = useState(StatisticsContext._currentValue.sendEmails);
 
   const handleClose = () => setShowStatics(false);
   const handleShow = () => setShowStatics(true);
 
   useEffect(() => {
+    async function loadDefaultDataConfig() {
+      const requestOptions = {
+        method: "GET",
+      };
+
+      const response = await fetch(
+        Config.backendEndpoint + "/configuration/stats",
+        requestOptions
+      );
+
+      const config = await response.json();
+
+      console.log('config["frequency"]["periodicidad"]', config["frequency"]["periodicidad"]);
+      console.log('config["frequency"]["hora"]', config["frequency"]["hora"]);
+      console.log('config["frequency"]["propiedadAdicional"]', config["frequency"]["propiedadAdicional"]);
+
+      StatisticsContext._currentValue.periodicidad = config["frequency"]["periodicidad"];
+      StatisticsContext._currentValue.hora = config["frequency"]["hora"];
+      StatisticsContext._currentValue.propiedadAdicional = config["frequency"]["propiedadAdicional"];
+      setSendEmails(config["sendEmails"]);
+    }
+
     async function loadEmails() {
       if (StatisticsContext._currentValue.emailsList.length == 0) {
         console.log("Loading emails from useEffect");
@@ -44,9 +66,9 @@ export const StatisticsScreen = () => {
 
       console.log("Emails loaded from useEffect");
     }
-
+    loadDefaultDataConfig();
     loadEmails();
-  });
+  }, []);
 
   const handleClickSendEmails = async () => {
     setSendEmails(!sendEmails);
@@ -102,14 +124,39 @@ export const StatisticsScreen = () => {
 
       await fetch(Config.backendEndpoint + "/removeCron", requestOptions);
     }
+
+    updateConfig();
   };
+
+  async function updateConfig() {
+    const configToSave = {};
+    configToSave["frequency"] = {};
+    
+    console.log('StatisticsContext._currentValue.periodicidad', StatisticsContext._currentValue.periodicidad);
+    console.log('StatisticsContext._currentValue.hora', StatisticsContext._currentValue.hora);
+    console.log('StatisticsContext._currentValue.propiedadAdicional', StatisticsContext._currentValue.propiedadAdicional);
+
+    configToSave['sendEmails'] = sendEmails;
+    configToSave["frequency"]["periodicidad"] = StatisticsContext._currentValue.periodicidad;
+    configToSave["frequency"]["hora"] = StatisticsContext._currentValue.hora;
+    configToSave["frequency"]["propiedadAdicional"] = StatisticsContext._currentValue.propiedadAdicional;
+    console.log('Config to save', configToSave);
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(configToSave),
+    };
+
+    await fetch(Config.backendEndpoint + "/configuration/stats", requestOptions);
+  }
 
   return (
     <>
       <form onSubmit={handleSubmit}>
         <h1>Estadísticas</h1>
         <hr />
-        
+
         <StatisticsWrapper>
           <FormControl component="fieldset">
             <FormLabel component="legend">
@@ -144,15 +191,11 @@ export const StatisticsScreen = () => {
           </Modal.Footer>
         </Modal>
 
-            {sendEmails ? <SendStatsEmails /> : null}
+        {sendEmails ? <SendStatsEmails /> : null}
 
         <hr />
         <div>
-          <Button
-            className="right"
-            type="submit"
-            color="primary"
-          >
+          <Button className="right" type="submit" color="primary">
             Guardar
           </Button>
         </div>

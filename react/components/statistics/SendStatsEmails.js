@@ -132,14 +132,12 @@ export const SendStatsEmails = () => {
   const [showAddNewEmail, setShowAddNewEmailModal] = useState(false);
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
-  const [periodicidad, setFrequency] = useState("");
-  const [hora, setHour] = useState("");
-  const [propiedadAdicional, setAditionalProperty] = useState("");
+  const [periodicidad, setFrequency] = useState(StatisticsContext._currentValue.periodicidad);
+  const [hora, setHour] = useState(StatisticsContext._currentValue.hora);
+  const [propiedadAdicional, setAditionalProperty] = useState(StatisticsContext._currentValue.propiedadAdicional);
   const [saveNewEmailDisabled, setsaveNewEmailDisabled] = useState(true);
   const [newEmailError, setNewEmailError] = useState(false);
-  const [emailsList, setEmailsList] = useState(
-    StatisticsContext._currentValue.emailsList
-  );
+  const [emailsList, setEmailsList] = useState(StatisticsContext._currentValue.emailsList);
   const [newEmail, setNewEmail] = useState("");
 
   const handleAddNewEmail = () => setShowAddNewEmailModal(true);
@@ -190,7 +188,7 @@ export const SendStatsEmails = () => {
   }
 
   function clickDay() {
-    setFrequency("diaria");
+    setFrequency("Diaria");
     setAditionalProperty("");
     handleCloseWeekDay();
     handleCloseMonthDay();
@@ -199,7 +197,7 @@ export const SendStatsEmails = () => {
   }
 
   function clickWeekDay() {
-    setFrequency("semanal");
+    setFrequency("Semanal");
     setAditionalProperty("");
     handleShowWeekDay();
     handleCloseMonthDay();
@@ -208,7 +206,7 @@ export const SendStatsEmails = () => {
   }
 
   function clickMonthDay() {
-    setFrequency("mensual");
+    setFrequency("Mensual");
     setAditionalProperty("");
     handleCloseWeekDay();
     handleShowMonthDay();
@@ -245,7 +243,7 @@ export const SendStatsEmails = () => {
       <>
         <List>
           {list.map((email) => (
-            <ListItem button key={email} class={classes.emailItemList}>
+            <ListItem button key={email} className={classes.emailItemList}>
               <ListItemText primary={email} />
               <DeleteIcon onClick={() => handleDeleteEmail(email)} />
             </ListItem>
@@ -261,10 +259,10 @@ export const SendStatsEmails = () => {
           <div className={classes.center}>
             
             <div className={classes.destinaries}>
-              <h3 class={classes.destinataryTitle}>Destinatarios</h3>
+              <h3 className={classes.destinataryTitle}>Destinatarios</h3>
         
               <Button onClick={handleAddNewEmail} >
-                <b class={classes.addDestinataryText}>+</b>
+                <b className={classes.addDestinataryText}>+</b>
               </Button>
 
             </div>
@@ -320,13 +318,13 @@ export const SendStatsEmails = () => {
                 label="Frecuencia"
                 value={periodicidad}
               >
-                <MenuItem value={"diaria"} onClick={clickDay}>
+                <MenuItem value={"Diaria"} onClick={clickDay}>
                   Diaria
                 </MenuItem>
-                <MenuItem value={"semanal"} onClick={clickWeekDay}>
+                <MenuItem value={"Semanal"} onClick={clickWeekDay}>
                   Semanal
                 </MenuItem>
-                <MenuItem value={"mensual"} onClick={clickMonthDay}>
+                <MenuItem value={"Mensual"} onClick={clickMonthDay}>
                   Mensual
                 </MenuItem>
               </Select>
