@@ -13,7 +13,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { StatisticsContext } from "./StatisticsScreen";
 import Config from "Config";
@@ -71,6 +70,23 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     height: "1em",
   },
+  destinaries: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  destinataryTitle: {
+    paddingRight: "10px",
+  },
+  addDestinataryText: {
+    fontSize: "20px",
+  },
+  emailItemList: {
+    width: "35%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  }
 }));
 
 const hours = [
@@ -229,7 +245,7 @@ export const SendStatsEmails = () => {
       <>
         <List>
           {list.map((email) => (
-            <ListItem button key={email}>
+            <ListItem button key={email} class={classes.emailItemList}>
               <ListItemText primary={email} />
               <DeleteIcon onClick={() => handleDeleteEmail(email)} />
             </ListItem>
@@ -241,28 +257,27 @@ export const SendStatsEmails = () => {
 
   return (
     <>
-      <tr className={classes.sep}>
-        <td colSpan="3">
-          <hr />
-        </td>
-      </tr>
-      <tr>
-        <td>
+     <hr/>
           <div className={classes.center}>
-            <Typography variant="h6" className={classes.title}>
-              Destinatarios
-            </Typography>
+            
+            <div className={classes.destinaries}>
+              <h3 class={classes.destinataryTitle}>Destinatarios</h3>
+        
+              <Button onClick={handleAddNewEmail} >
+                <b class={classes.addDestinataryText}>+</b>
+              </Button>
+
+            </div>
+
             <div className={classes.demo}>
               <EmailList list={emailsList} />
             </div>
-          </div>
-        </td>
-        <td className="makeStyles-center-22">
-          <Button variant="primary" onClick={handleAddNewEmail}>
-            Agregar nuevo destinatario
-          </Button>
 
-          <Modal show={showAddNewEmail}>
+          </div>
+
+          <hr/>
+
+          <Modal show={showAddNewEmail} onHide={handleCloseAddNewEmail}>
             <Modal.Header closeButton>
               <Modal.Title>Nuevo destinatario</Modal.Title>
             </Modal.Header>
@@ -291,119 +306,107 @@ export const SendStatsEmails = () => {
               </Button>
             </Modal.Footer>
           </Modal>
-        </td>
-      </tr>
-      <tr className={classes.sep}>
-        <td colSpan="3">
-          <hr />
-        </td>
-      </tr>
-      <tr>
-        <th>
-          <h3>Periodicidad</h3>
-        </th>
-      </tr>
-      <tr>
-        <td className={classes.td}>
-          <FormControl variant="outlined" className={classes.formControl}>
-            <InputLabel id="demo-simple-select-outlined-label">
-              Frecuencia
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              label="Frecuencia"
-              value={periodicidad}
-            >
-              <MenuItem value={"diaria"} onClick={clickDay}>
-                Diaria
-              </MenuItem>
-              <MenuItem value={"semanal"} onClick={clickWeekDay}>
-                Semanal
-              </MenuItem>
-              <MenuItem value={"mensual"} onClick={clickMonthDay}>
-                Mensual
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </td>
-        <td className={classes.td}>
-          <FormControl variant="outlined" className={classes.hourControl}>
-            <InputLabel id="demo-simple-select-outlined-label">Hora</InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              label="Hora"
-              value={hora}
-            >
-              {hours.map((hour) => (
-                <MenuItem
-                  key={hour}
-                  value={hour}
-                  onClick={() => {
-                    setHour(hour);
-                    StatisticsContext._currentValue.hora = hour;
-                    StatisticsContext._currentValue.periodicidad = periodicidad;
-                    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
-                  }}
-                >
-                  {hour}
+
+          <div className={classes.center}>
+            <h3>Periodicidad</h3>
+    
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-outlined-label">
+                Frecuencia
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                label="Frecuencia"
+                value={periodicidad}
+              >
+                <MenuItem value={"diaria"} onClick={clickDay}>
+                  Diaria
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </td>
-        <td className={classes.td}>
-          {showWeekDay && (
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-outlined-label">
-                Enviar el día
-              </InputLabel>
+                <MenuItem value={"semanal"} onClick={clickWeekDay}>
+                  Semanal
+                </MenuItem>
+                <MenuItem value={"mensual"} onClick={clickMonthDay}>
+                  Mensual
+                </MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl variant="outlined" className={classes.hourControl}>
+              <InputLabel id="demo-simple-select-outlined-label">Hora</InputLabel>
               <Select
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
-                label="Enviar el día"
-                value={propiedadAdicional}
+                label="Hora"
+                value={hora}
               >
-                {weekDays.map((day) => (
+                {hours.map((hour) => (
                   <MenuItem
-                    key={day}
-                    value={day}
-                    onClick={() => setAditionalProperty(day)}
+                    key={hour}
+                    value={hour}
+                    onClick={() => {
+                      setHour(hour);
+                      StatisticsContext._currentValue.hora = hour;
+                      StatisticsContext._currentValue.periodicidad = periodicidad;
+                      StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
+                    }}
                   >
-                    {day}
+                    {hour}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
-          )}
-        </td>
-        <td className={classes.td}>
-          {showMonthDay && (
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-outlined-label">
-                Enviar el día
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-outlined-label"
-                id="demo-simple-select-outlined"
-                label="Enviar el día"
-                value={propiedadAdicional}
-              >
-                {monthlyOptions.map((monthlyOption) => (
-                  <MenuItem
-                    key={monthlyOption}
-                    value={monthlyOption}
-                    onClick={() => setAditionalProperty(monthlyOption)}
-                  >
-                    {monthlyOption}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        </td>
-      </tr>
+
+
+            {showWeekDay && (
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel id="demo-simple-select-outlined-label">
+                  Enviar el día
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="demo-simple-select-outlined"
+                  label="Enviar el día"
+                  value={propiedadAdicional}
+                >
+                  {weekDays.map((day) => (
+                    <MenuItem
+                      key={day}
+                      value={day}
+                      onClick={() => setAditionalProperty(day)}
+                    >
+                      {day}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+
+            {showMonthDay && (
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel id="demo-simple-select-outlined-label">
+                  Enviar el día
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="demo-simple-select-outlined"
+                  label="Enviar el día"
+                  value={propiedadAdicional}
+                >
+                  {monthlyOptions.map((monthlyOption) => (
+                    <MenuItem
+                      key={monthlyOption}
+                      value={monthlyOption}
+                      onClick={() => setAditionalProperty(monthlyOption)}
+                    >
+                      {monthlyOption}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          </div>
+
     </>
   );
 };

@@ -8,53 +8,17 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
-import { makeStyles } from "@material-ui/core/styles";
 import "react-datepicker/dist/react-datepicker.css";
 import { ModalGraph } from "./StatisticGraphModal";
 import { SendStatsEmails } from "./SendStatsEmails";
+import styled from "styled-components";
 import Config from "Config";
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 200,
-    minHeight: 50,
-    marginLeft: 100,
-    marginRight: 50,
-  },
-  hourControl: {
-    margin: theme.spacing(1),
-    minWidth: 100,
-    minHeight: 50,
-    marginLeft: 100,
-    marginRight: 50,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
-  root: {
-    width: "100%",
-    height: 400,
-    maxWidth: 300,
-    backgroundColor: theme.palette.background.paper,
-  },
-  center: {
-    justifyContent: "center",
-    alignItems: "center",
-    verticalAlign: "middle",
-    marginRight: 50,
-    marginLeft: 20,
-  },
-  savebutton: {
-    position: "absolute",
-    right: 150,
-  },
-  topcorner: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-  },
-}));
+const StatisticsWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+`;
 
 export const StatisticsContext = React.createContext({
   periodicidad: "",
@@ -66,10 +30,6 @@ export const StatisticsContext = React.createContext({
 export const StatisticsScreen = () => {
   const [showReviewStatics, setShowStatics] = useState(false);
   const [sendEmails, setSendEmails] = useState(false);
-  const [periodicidad, setFrequency] = useState("diaria");
-  const [hora, setHour] = useState("");
-  const [propiedadAdicional, setAditionalProperty] = useState("");
-  const classes = useStyles();
 
   const handleClose = () => setShowStatics(false);
   const handleShow = () => setShowStatics(true);
@@ -149,47 +109,43 @@ export const StatisticsScreen = () => {
       <form onSubmit={handleSubmit}>
         <h1>Estadísticas</h1>
         <hr />
-        <table id="header">
-          <tbody>
-            <tr>
-              <td>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">
-                    <b></b>
-                  </FormLabel>
-                  <FormGroup aria-label="position" row></FormGroup>
-                  <FormControlLabel
-                    value="Enviar estadísticas por email"
-                    control={<Checkbox color="primary" />}
-                    label="Enviar estadísticas por email"
-                    checked={sendEmails}
-                    onClick={handleClickSendEmails}
-                  />
-                </FormControl>
-              </td>
-              <td className="align-middle">
-                <Button variant="primary" onClick={handleShow}>
-                  Consultar Estadísticas
-                </Button>
+        
+        <StatisticsWrapper>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">
+              <b></b>
+            </FormLabel>
+            <FormGroup aria-label="position" row></FormGroup>
+            <FormControlLabel
+              value="Mostrar Opciones Estadísticas por Email"
+              control={<Checkbox color="primary" />}
+              label="Mostrar Opciones Estadísticas por Email"
+              checked={sendEmails}
+              onClick={handleClickSendEmails}
+            />
+          </FormControl>
 
-                <Modal size="lg" show={showReviewStatics} onHide={handleClose}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Estadísticas</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <ModalGraph />
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                      Cerrar
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-              </td>
-            </tr>
+          <Button variant="primary" onClick={handleShow}>
+            Consultar Estadísticas
+          </Button>
+        </StatisticsWrapper>
+
+        <Modal size="lg" show={showReviewStatics} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Estadísticas</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <ModalGraph />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleClose}>
+              Cerrar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
             {sendEmails ? <SendStatsEmails /> : null}
-          </tbody>
-        </table>
+
         <hr />
         <div>
           <Button
