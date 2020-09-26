@@ -43,7 +43,6 @@ ElementDetectionCheckbox.defaultProps = {
   disable: false,
 };
 
-
 export const ConfigurationScreen = () => {
   const [elementsCheckboxs, setElementsCheckboxs] = useState([]);
   const [buttonDisable, setButtonDisable] = useState(true);
