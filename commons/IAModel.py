@@ -6,7 +6,7 @@ from PIL import Image
 from ElementDrawer import ElementDrawer
 from PredictedClass import ClassList
 from src.Event import Event
-from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD
+from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD, WITH_FACE_SHIELD_RGB, INFRACTION_ID
 
 class IAModel():
     def __init__(self, modelPath: str):
@@ -15,7 +15,8 @@ class IAModel():
         classes.addClass(1, 'with_mask', WITH_MASK_RGB)
         classes.addClass(2, 'with_glasses', WITH_GLASSES_RGB)
         classes.addClass(3, 'with_mask_and_glasses', WITH_MASK_AND_GLASSES_RGB)
-        classes.addClass(4, 'clean', CLEAN_RGB)
+        classes.addClass(4, 'with_face_shield', WITH_FACE_SHIELD_RGB)
+        classes.addClass(5, 'clean', CLEAN_RGB)
         
         self.modelPath = modelPath
         self.model = torch.load(self.modelPath, map_location='cpu')
@@ -85,9 +86,9 @@ class IAModel():
         if (len(self.detectedClassesPrevious) >= len(currentDetectedClasses)):
             return False
         else:
-            # 4 represent the 'clean' class
-            previousInfractions = list(filter(lambda detectedClass: detectedClass.id == 4, self.detectedClassesPrevious))
-            currentInfractions = list(filter(lambda detectedClass: detectedClass.id == 4, currentDetectedClasses))
+            # INFRACTION_ID represent the 'clean' class
+            previousInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, self.detectedClassesPrevious))
+            currentInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, currentDetectedClasses))
 
             if(len(currentInfractions) > len(previousInfractions)):
                 return True
@@ -104,17 +105,16 @@ class IAModel():
                 return None
         elif (not maskEnable):
             if(prediction.id == 1):
-                return self.classes.getClassByPredictedId(4)
+                return self.classes.getClassByPredictedId(INFRACTION_ID)
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(2)
         elif (not glassesEnable):
             if(prediction.id == 2):
-                return self.classes.getClassByPredictedId(4)
+                return self.classes.getClassByPredictedId(INFRACTION_ID)
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(1)
-        #TODO: Add support for face shield configuration
-        # elif (not faceShieldEnable):
-            # if(prediction.id == 5):
-            #     return False
+        elif (not faceShieldEnable):
+            if(prediction.id == 4):
+                return self.classes.getClassByPredictedId(INFRACTION_ID)
         
         return prediction
