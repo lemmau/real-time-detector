@@ -20,16 +20,11 @@ const StatisticsWrapper = styled.div`
   flex-direction: row;
 `;
 
-export const StatisticsContext = React.createContext({
-  periodicidad: "",
-  hora: "",
-  propiedadAdicional: "",
-  emailsList: [],
-});
-
 export const StatisticsScreen = () => {
   const [showReviewStatics, setShowStatics] = useState(false);
-  const [sendEmails, setSendEmails] = useState(StatisticsContext._currentValue.sendEmails);
+  const [showSendEmails, setShowSendEmails] = useState(false);
+  const [originalConfig, setOriginalConfig] = useState();
+  const [actualConfig, setActualConfig] = useState();
 
   const handleClose = () => setShowStatics(false);
   const handleShow = () => setShowStatics(true);
@@ -47,40 +42,30 @@ export const StatisticsScreen = () => {
 
       const config = await response.json();
 
-      console.log('config["frequency"]["periodicidad"]', config["frequency"]["periodicidad"]);
-      console.log('config["frequency"]["hora"]', config["frequency"]["hora"]);
-      console.log('config["frequency"]["propiedadAdicional"]', config["frequency"]["propiedadAdicional"]);
+      const emails = await loadEmailsList();
 
-      StatisticsContext._currentValue.periodicidad = config["frequency"]["periodicidad"];
-      StatisticsContext._currentValue.hora = config["frequency"]["hora"];
-      StatisticsContext._currentValue.propiedadAdicional = config["frequency"]["propiedadAdicional"];
-      setSendEmails(config["sendEmails"]);
+      //console.log('config["frequency"]["periodicidad"]', config["frequency"]["periodicidad"]);
+      //console.log('config["frequency"]["hora"]', config["frequency"]["hora"]);
+      //console.log('config["frequency"]["propiedadAdicional"]', config["frequency"]["propiedadAdicional"]);
+
+      const screenConfig = {
+        periodicidad: config["frequency"]["periodicidad"],
+        hora: config["frequency"]["hora"],
+        propiedadAdicional: config["frequency"]["propiedadAdicional"],
+        emailsList: emails,
+      };
+      setOriginalConfig(screenConfig);
+      setActualConfig(screenConfig);
     }
 
-    async function loadEmails() {
-      if (StatisticsContext._currentValue.emailsList.length == 0) {
-        console.log("Loading emails from useEffect");
-        const emails = await loadEmailsList();
-        StatisticsContext._currentValue.emailsList = emails;
-      }
-
-      console.log("Emails loaded from useEffect");
-    }
     loadDefaultDataConfig();
-    loadEmails();
   }, []);
 
   const handleClickSendEmails = async () => {
-    setSendEmails(!sendEmails);
-
-    if (StatisticsContext._currentValue.emailsList.length == 0) {
-      const emails = await loadEmailsList();
-      StatisticsContext._currentValue.emailsList = emails;
-    }
+    setShowSendEmails(!showSendEmails);
   };
 
   async function loadEmailsList() {
-    console.log("Loading emails from DB");
 
     const requestOptions = {
       method: "GET",
@@ -93,19 +78,18 @@ export const StatisticsScreen = () => {
 
     const parsedEmails = await emails.json();
     console.log("Emails loaded: ", parsedEmails);
-
     return parsedEmails;
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("SendEmails: ", sendEmails);
+    //console.log("SendEmails: ", sendEmails);
 
-    if (sendEmails) {
+    if (actualConfig["emailsList"].lenght) {
       const frecuency = {
-        hora: StatisticsContext._currentValue.hora,
-        periodicidad: StatisticsContext._currentValue.periodicidad,
-        propiedadAdicional: StatisticsContext._currentValue.propiedadAdicional,
+        hora: actualConfig['hora'],
+        periodicidad: actualConfig['periodicidad'],
+        propiedadAdicional: actualConfig['propiedadAdicional'],
       };
 
       console.log("Frecuency options: ", frecuency);
@@ -132,14 +116,14 @@ export const StatisticsScreen = () => {
     const configToSave = {};
     configToSave["frequency"] = {};
     
-    console.log('StatisticsContext._currentValue.periodicidad', StatisticsContext._currentValue.periodicidad);
-    console.log('StatisticsContext._currentValue.hora', StatisticsContext._currentValue.hora);
-    console.log('StatisticsContext._currentValue.propiedadAdicional', StatisticsContext._currentValue.propiedadAdicional);
+    // console.log('StatisticsContext._currentValue.periodicidad', StatisticsContext._currentValue.periodicidad);
+    // console.log('StatisticsContext._currentValue.hora', StatisticsContext._currentValue.hora);
+    // console.log('StatisticsContext._currentValue.propiedadAdicional', StatisticsContext._currentValue.propiedadAdicional);
 
-    configToSave['sendEmails'] = sendEmails;
-    configToSave["frequency"]["periodicidad"] = StatisticsContext._currentValue.periodicidad;
-    configToSave["frequency"]["hora"] = StatisticsContext._currentValue.hora;
-    configToSave["frequency"]["propiedadAdicional"] = StatisticsContext._currentValue.propiedadAdicional;
+    configToSave['sendEmails'] = actualConfig['emailsList'];
+    configToSave["frequency"]["periodicidad"] = actualConfig['hora'];
+    configToSave["frequency"]["hora"] = actualConfig['configToSave'];
+    configToSave["frequency"]["propiedadAdicional"] = actualConfig['configToSave'];
     console.log('Config to save', configToSave);
 
     const requestOptions = {
@@ -164,10 +148,11 @@ export const StatisticsScreen = () => {
             </FormLabel>
             <FormGroup aria-label="position" row></FormGroup>
             <FormControlLabel
-              value="Mostrar Opciones Estadísticas por Email"
-              control={<Checkbox color="primary" />}
               label="Mostrar Opciones Estadísticas por Email"
-              checked={sendEmails}
+              control={<Checkbox
+                color="primary"
+                checked={showSendEmails}
+               />}
               onClick={handleClickSendEmails}
             />
           </FormControl>
@@ -191,7 +176,9 @@ export const StatisticsScreen = () => {
           </Modal.Footer>
         </Modal>
 
-        {sendEmails ? <SendStatsEmails /> : null}
+        {showSendEmails ? 
+          <SendStatsEmails params={actualConfig}/>
+        : null}
 
         <hr />
         <div>

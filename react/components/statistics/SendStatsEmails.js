@@ -14,7 +14,6 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { StatisticsContext } from "./StatisticsScreen";
 import Config from "Config";
 
 const useStyles = makeStyles((theme) => ({
@@ -128,16 +127,16 @@ const weekDays = [
 
 const monthlyOptions = ["Primer dia del mes", "Ultimo dia del mes"];
 
-export const SendStatsEmails = () => {
+export const SendStatsEmails = (props) => {
   const [showAddNewEmail, setShowAddNewEmailModal] = useState(false);
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
-  const [periodicidad, setFrequency] = useState(StatisticsContext._currentValue.periodicidad);
-  const [hora, setHour] = useState(StatisticsContext._currentValue.hora);
-  const [propiedadAdicional, setAditionalProperty] = useState(StatisticsContext._currentValue.propiedadAdicional);
+  const [periodicidad, setFrequency] = useState(props.params['periodicidad']);
+  const [hora, setHour] = useState(props.params['hora']);
+  const [propiedadAdicional, setAditionalProperty] = useState(props.params['propiedadAdicional']);
   const [saveNewEmailDisabled, setsaveNewEmailDisabled] = useState(true);
   const [newEmailError, setNewEmailError] = useState(false);
-  const [emailsList, setEmailsList] = useState(StatisticsContext._currentValue.emailsList);
+  const [emailsList, setEmailsList] = useState(props.params['emailsList']);
   const [newEmail, setNewEmail] = useState("");
 
   const handleAddNewEmail = () => setShowAddNewEmailModal(true);
@@ -157,8 +156,8 @@ export const SendStatsEmails = () => {
 
     await fetch(Config.backendEndpoint + "/removeEmail", requestOptions);
 
-    removeItem(StatisticsContext._currentValue.emailsList, email);
-    setEmailsList([...StatisticsContext._currentValue.emailsList]);
+    removeItem(emailsList, email);
+    setEmailsList([...emailsList]);
   }
 
   function removeItem(arr, item) {
@@ -178,8 +177,8 @@ export const SendStatsEmails = () => {
     };
 
     await fetch(Config.backendEndpoint + "/emails", requestOptions);
-    StatisticsContext._currentValue.emailsList.push(newEmail);
-    setEmailsList(StatisticsContext._currentValue.emailsList);
+    emailsList.push(newEmail);
+    setEmailsList([...emailsList]);
     setShowAddNewEmailModal(false);
   }
 
@@ -192,8 +191,6 @@ export const SendStatsEmails = () => {
     setAditionalProperty("");
     handleCloseWeekDay();
     handleCloseMonthDay();
-    StatisticsContext._currentValue.periodicidad = periodicidad;
-    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
   }
 
   function clickWeekDay() {
@@ -201,8 +198,6 @@ export const SendStatsEmails = () => {
     setAditionalProperty("");
     handleShowWeekDay();
     handleCloseMonthDay();
-    StatisticsContext._currentValue.periodicidad = periodicidad;
-    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
   }
 
   function clickMonthDay() {
@@ -210,8 +205,6 @@ export const SendStatsEmails = () => {
     setAditionalProperty("");
     handleCloseWeekDay();
     handleShowMonthDay();
-    StatisticsContext._currentValue.periodicidad = periodicidad;
-    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
   }
 
   function validateEmail(email) {
@@ -344,9 +337,6 @@ export const SendStatsEmails = () => {
                     value={hour}
                     onClick={() => {
                       setHour(hour);
-                      StatisticsContext._currentValue.hora = hour;
-                      StatisticsContext._currentValue.periodicidad = periodicidad;
-                      StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
                     }}
                   >
                     {hour}
