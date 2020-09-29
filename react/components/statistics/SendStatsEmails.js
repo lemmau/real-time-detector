@@ -14,6 +14,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ToggleSendEmail from './ToggleSendEmail';
 import Config from "Config";
 
 const useStyles = makeStyles((theme) => ({
@@ -138,6 +139,7 @@ export const SendStatsEmails = (props) => {
   const [newEmailError, setNewEmailError] = useState(false);
   const [emailsList, setEmailsList] = useState(props.params['emailsList']);
   const [newEmail, setNewEmail] = useState("");
+  
 
   const handleAddNewEmail = () => setShowAddNewEmailModal(true);
   const handleCloseWeekDay = () => setShowWeekDay(false);
@@ -189,6 +191,7 @@ export const SendStatsEmails = (props) => {
   function clickDay() {
     setFrequency("Diaria");
     setAditionalProperty("");
+    props.onPropertyChange({"periodicidad": "Diaria", "propiedadAdicional": ""});
     handleCloseWeekDay();
     handleCloseMonthDay();
   }
@@ -196,6 +199,7 @@ export const SendStatsEmails = (props) => {
   function clickWeekDay() {
     setFrequency("Semanal");
     setAditionalProperty("");
+    props.onPropertyChange({"periodicidad": "Semanal", "propiedadAdicional": ""});
     handleShowWeekDay();
     handleCloseMonthDay();
   }
@@ -203,8 +207,13 @@ export const SendStatsEmails = (props) => {
   function clickMonthDay() {
     setFrequency("Mensual");
     setAditionalProperty("");
+    props.onPropertyChange({"periodicidad": "Mensual", "propiedadAdicional": ""});
     handleCloseWeekDay();
     handleShowMonthDay();
+  }
+
+  function handleToggleSendMail(value){
+    props.onPropertyChange({"sendEmails": value});
   }
 
   function validateEmail(email) {
@@ -251,6 +260,8 @@ export const SendStatsEmails = (props) => {
      <hr/>
           <div className={classes.center}>
             
+            <ToggleSendEmail onToggle={handleToggleSendMail} toggled={props.params["sendEmails"]}/>
+
             <div className={classes.destinaries}>
               <h3 className={classes.destinataryTitle}>Destinatarios</h3>
         
@@ -337,6 +348,7 @@ export const SendStatsEmails = (props) => {
                     value={hour}
                     onClick={() => {
                       setHour(hour);
+                      props.onPropertyChange({"hora": hour});
                     }}
                   >
                     {hour}
@@ -361,7 +373,10 @@ export const SendStatsEmails = (props) => {
                     <MenuItem
                       key={day}
                       value={day}
-                      onClick={() => setAditionalProperty(day)}
+                      onClick={() => {
+                        setAditionalProperty(day);
+                        props.onPropertyChange({"propiedadAdicional": day});
+                      }}
                     >
                       {day}
                     </MenuItem>
@@ -385,7 +400,10 @@ export const SendStatsEmails = (props) => {
                     <MenuItem
                       key={monthlyOption}
                       value={monthlyOption}
-                      onClick={() => setAditionalProperty(monthlyOption)}
+                      onClick={() => {
+                        setAditionalProperty(monthlyOption);
+                        props.onPropertyChange({"propiedadAdicional": monthlyOption});
+                      }}
                     >
                       {monthlyOption}
                     </MenuItem>

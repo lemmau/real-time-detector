@@ -3,11 +3,7 @@ import "./StatisticsScreen.css";
 import Button from "react-bootstrap/Button";
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from "react-bootstrap/Modal";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
+import Loader from 'react-loader-spinner';
 import "react-datepicker/dist/react-datepicker.css";
 import { ModalGraph } from "./StatisticGraphModal";
 import { SendStatsEmails } from "./SendStatsEmails";
@@ -23,8 +19,10 @@ const StatisticsWrapper = styled.div`
 export const StatisticsScreen = () => {
   const [showReviewStatics, setShowStatics] = useState(false);
   const [showSendEmails, setShowSendEmails] = useState(false);
-  const [originalConfig, setOriginalConfig] = useState();
-  const [actualConfig, setActualConfig] = useState();
+  const [originalConfig, setOriginalConfig] = useState({});
+  const [actualConfig, setActualConfig] = useState({});
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [buttonDisable, setButtonDisable] = useState(true);
 
   const handleClose = () => setShowStatics(false);
   const handleShow = () => setShowStatics(true);
@@ -44,18 +42,18 @@ export const StatisticsScreen = () => {
 
       const emails = await loadEmailsList();
 
-      //console.log('config["frequency"]["periodicidad"]', config["frequency"]["periodicidad"]);
-      //console.log('config["frequency"]["hora"]', config["frequency"]["hora"]);
-      //console.log('config["frequency"]["propiedadAdicional"]', config["frequency"]["propiedadAdicional"]);
-
       const screenConfig = {
+        sendEmails: config["sendEmails"],
         periodicidad: config["frequency"]["periodicidad"],
         hora: config["frequency"]["hora"],
         propiedadAdicional: config["frequency"]["propiedadAdicional"],
         emailsList: emails,
       };
+
       setOriginalConfig(screenConfig);
       setActualConfig(screenConfig);
+      setIsDataLoaded(true);
+
     }
 
     loadDefaultDataConfig();
@@ -85,7 +83,7 @@ export const StatisticsScreen = () => {
     e.preventDefault();
     //console.log("SendEmails: ", sendEmails);
 
-    if (actualConfig["emailsList"].lenght) {
+    if (actualConfig["sendEmails"]) {
       const frecuency = {
         hora: actualConfig['hora'],
         periodicidad: actualConfig['periodicidad'],
@@ -115,10 +113,6 @@ export const StatisticsScreen = () => {
   async function updateConfig() {
     const configToSave = {};
     configToSave["frequency"] = {};
-    
-    // console.log('StatisticsContext._currentValue.periodicidad', StatisticsContext._currentValue.periodicidad);
-    // console.log('StatisticsContext._currentValue.hora', StatisticsContext._currentValue.hora);
-    // console.log('StatisticsContext._currentValue.propiedadAdicional', StatisticsContext._currentValue.propiedadAdicional);
 
     configToSave['sendEmails'] = actualConfig['emailsList'];
     configToSave["frequency"]["periodicidad"] = actualConfig['hora'];
@@ -135,6 +129,20 @@ export const StatisticsScreen = () => {
     await fetch(Config.backendEndpoint + "/configuration/stats", requestOptions);
   }
 
+  function statsEmailsOnChange(newProperties){
+    const config = {...actualConfig};
+    
+    for (var [key, value] of Object.entries(newProperties)) {
+      config[key] = value;
+    }
+
+    setActualConfig(config);
+    console.log(config);
+
+    const shouldDisableSaveButton = JSON.stringify(config) === JSON.stringify(originalConfig);
+    setButtonDisable(shouldDisableSaveButton);
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -142,21 +150,6 @@ export const StatisticsScreen = () => {
         <hr />
 
         <StatisticsWrapper>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">
-              <b></b>
-            </FormLabel>
-            <FormGroup aria-label="position" row></FormGroup>
-            <FormControlLabel
-              label="Mostrar Opciones Estadísticas por Email"
-              control={<Checkbox
-                color="primary"
-                checked={showSendEmails}
-               />}
-              onClick={handleClickSendEmails}
-            />
-          </FormControl>
-
           <Button variant="primary" onClick={handleShow}>
             Consultar Estadísticas
           </Button>
@@ -176,13 +169,13 @@ export const StatisticsScreen = () => {
           </Modal.Footer>
         </Modal>
 
-        {showSendEmails ? 
-          <SendStatsEmails params={actualConfig}/>
-        : null}
-
+        {isDataLoaded? 
+        <SendStatsEmails params={actualConfig} onPropertyChange={statsEmailsOnChange}/>
+        : <Loader type="ThreeDots" color="#2326CF" height="100" width="100"/>
+        }
         <hr />
         <div>
-          <Button className="right" type="submit" color="primary">
+          <Button className="right" type="submit" color="primary" disabled={buttonDisable}>
             Guardar
           </Button>
         </div>
