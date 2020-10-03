@@ -89,6 +89,22 @@ def getConfiguration():
 
     return jsonify(elements)
 
+@app.route('/configuration/stats', methods=['GET'])
+def getConfigurationStats():
+    config = OrderedDict()
+    config['sendEmails'] = app.config['sendEmails']
+    config['frequency'] = app.config['frequency']
+    
+    return jsonify(config)
+
+@app.route('/configuration/stats', methods=['POST'])
+def setConfigurationStats():
+    requestData = request.json
+    app.config['sendEmails'] = requestData['sendEmails']
+    app.config['frequency'] = requestData['frequency']
+
+    return jsonify('{"status":"ok, "message": "Stats Configuration Updated"}')
+
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
     requestData = request.json

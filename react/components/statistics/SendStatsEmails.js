@@ -14,7 +14,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { StatisticsContext } from "./StatisticsScreen";
+import ToggleSendEmail from './ToggleSendEmail';
 import Config from "Config";
 
 const useStyles = makeStyles((theme) => ({
@@ -128,19 +128,18 @@ const weekDays = [
 
 const monthlyOptions = ["Primer dia del mes", "Ultimo dia del mes"];
 
-export const SendStatsEmails = () => {
+export const SendStatsEmails = (props) => {
   const [showAddNewEmail, setShowAddNewEmailModal] = useState(false);
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
-  const [periodicidad, setFrequency] = useState("");
-  const [hora, setHour] = useState("");
-  const [propiedadAdicional, setAditionalProperty] = useState("");
+  const [periodicidad, setFrequency] = useState(props.params['periodicidad']);
+  const [hora, setHour] = useState(props.params['hora']);
+  const [propiedadAdicional, setAditionalProperty] = useState(props.params['propiedadAdicional']);
   const [saveNewEmailDisabled, setsaveNewEmailDisabled] = useState(true);
   const [newEmailError, setNewEmailError] = useState(false);
-  const [emailsList, setEmailsList] = useState(
-    StatisticsContext._currentValue.emailsList
-  );
+  const [emailsList, setEmailsList] = useState(props.params['emailsList']);
   const [newEmail, setNewEmail] = useState("");
+  
 
   const handleAddNewEmail = () => setShowAddNewEmailModal(true);
   const handleCloseWeekDay = () => setShowWeekDay(false);
@@ -159,8 +158,8 @@ export const SendStatsEmails = () => {
 
     await fetch(Config.backendEndpoint + "/removeEmail", requestOptions);
 
-    removeItem(StatisticsContext._currentValue.emailsList, email);
-    setEmailsList([...StatisticsContext._currentValue.emailsList]);
+    removeItem(emailsList, email);
+    setEmailsList([...emailsList]);
   }
 
   function removeItem(arr, item) {
@@ -180,8 +179,8 @@ export const SendStatsEmails = () => {
     };
 
     await fetch(Config.backendEndpoint + "/emails", requestOptions);
-    StatisticsContext._currentValue.emailsList.push(newEmail);
-    setEmailsList(StatisticsContext._currentValue.emailsList);
+    emailsList.push(newEmail);
+    setEmailsList([...emailsList]);
     setShowAddNewEmailModal(false);
   }
 
@@ -190,30 +189,31 @@ export const SendStatsEmails = () => {
   }
 
   function clickDay() {
-    setFrequency("diaria");
+    setFrequency("Diaria");
     setAditionalProperty("");
+    props.onPropertyChange({"periodicidad": "Diaria", "propiedadAdicional": ""});
     handleCloseWeekDay();
     handleCloseMonthDay();
-    StatisticsContext._currentValue.periodicidad = periodicidad;
-    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
   }
 
   function clickWeekDay() {
-    setFrequency("semanal");
+    setFrequency("Semanal");
     setAditionalProperty("");
+    props.onPropertyChange({"periodicidad": "Semanal", "propiedadAdicional": ""});
     handleShowWeekDay();
     handleCloseMonthDay();
-    StatisticsContext._currentValue.periodicidad = periodicidad;
-    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
   }
 
   function clickMonthDay() {
-    setFrequency("mensual");
+    setFrequency("Mensual");
     setAditionalProperty("");
+    props.onPropertyChange({"periodicidad": "Mensual", "propiedadAdicional": ""});
     handleCloseWeekDay();
     handleShowMonthDay();
-    StatisticsContext._currentValue.periodicidad = periodicidad;
-    StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
+  }
+
+  function handleToggleSendMail(value){
+    props.onPropertyChange({"sendEmails": value});
   }
 
   function validateEmail(email) {
@@ -245,7 +245,7 @@ export const SendStatsEmails = () => {
       <>
         <List>
           {list.map((email) => (
-            <ListItem button key={email} class={classes.emailItemList}>
+            <ListItem button key={email} className={classes.emailItemList}>
               <ListItemText primary={email} />
               <DeleteIcon onClick={() => handleDeleteEmail(email)} />
             </ListItem>
@@ -260,11 +260,13 @@ export const SendStatsEmails = () => {
      <hr/>
           <div className={classes.center}>
             
+            <ToggleSendEmail onToggle={handleToggleSendMail} toggled={props.params["sendEmails"]}/>
+
             <div className={classes.destinaries}>
-              <h3 class={classes.destinataryTitle}>Destinatarios</h3>
+              <h3 className={classes.destinataryTitle}>Destinatarios</h3>
         
               <Button onClick={handleAddNewEmail} >
-                <b class={classes.addDestinataryText}>+</b>
+                <b className={classes.addDestinataryText}>+</b>
               </Button>
 
             </div>
@@ -320,13 +322,13 @@ export const SendStatsEmails = () => {
                 label="Frecuencia"
                 value={periodicidad}
               >
-                <MenuItem value={"diaria"} onClick={clickDay}>
+                <MenuItem value={"Diaria"} onClick={clickDay}>
                   Diaria
                 </MenuItem>
-                <MenuItem value={"semanal"} onClick={clickWeekDay}>
+                <MenuItem value={"Semanal"} onClick={clickWeekDay}>
                   Semanal
                 </MenuItem>
-                <MenuItem value={"mensual"} onClick={clickMonthDay}>
+                <MenuItem value={"Mensual"} onClick={clickMonthDay}>
                   Mensual
                 </MenuItem>
               </Select>
@@ -346,9 +348,7 @@ export const SendStatsEmails = () => {
                     value={hour}
                     onClick={() => {
                       setHour(hour);
-                      StatisticsContext._currentValue.hora = hour;
-                      StatisticsContext._currentValue.periodicidad = periodicidad;
-                      StatisticsContext._currentValue.propiedadAdicional = propiedadAdicional;
+                      props.onPropertyChange({"hora": hour});
                     }}
                   >
                     {hour}
@@ -373,7 +373,10 @@ export const SendStatsEmails = () => {
                     <MenuItem
                       key={day}
                       value={day}
-                      onClick={() => setAditionalProperty(day)}
+                      onClick={() => {
+                        setAditionalProperty(day);
+                        props.onPropertyChange({"propiedadAdicional": day});
+                      }}
                     >
                       {day}
                     </MenuItem>
@@ -397,7 +400,10 @@ export const SendStatsEmails = () => {
                     <MenuItem
                       key={monthlyOption}
                       value={monthlyOption}
-                      onClick={() => setAditionalProperty(monthlyOption)}
+                      onClick={() => {
+                        setAditionalProperty(monthlyOption);
+                        props.onPropertyChange({"propiedadAdicional": monthlyOption});
+                      }}
                     >
                       {monthlyOption}
                     </MenuItem>
