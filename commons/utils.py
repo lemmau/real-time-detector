@@ -480,24 +480,20 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
     return average_precisions, mean_average_precision 	
 
 def plotConfMatrix(det_labels, true_labels):
-    voc_labels = ['with_mask', 'with_glasses', 'with_mask_and_glasses', 'with_face_shield' ,'clean']
-    # detMapped = np.concatenate(det_labels, axis=0)
-    # trueMapped = np.concatenate(true_labels, axis=0)
-    
-    # print('detMapped', detMapped)
-    # print('trueMapped', trueMapped)
+    voc_labels = ['BARBIJO', 'ANTEOJOS', 'BARBIJO+ANTEOJOS', 'MASCARA' ,'LIMPIO']
 
     cn_matrix = confusion_matrix(
         y_true=true_labels,
         y_pred=det_labels,
-        # labels=voc_labels,
         normalize="true",
     )
 
-    ConfusionMatrixDisplay(cn_matrix).plot(
+    ConfusionMatrixDisplay(cn_matrix, display_labels=voc_labels).plot(
         include_values=False, xticks_rotation="vertical"
     )
     plt.title("RTD")
+    plt.ylabel('PREDICCION')
+    plt.xlabel('VALOR ESPERADO')
     plt.tight_layout()
     plt.show()
 
