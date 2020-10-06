@@ -4,8 +4,13 @@ import torch
 import random
 import xml.etree.ElementTree as ET
 import torchvision.transforms.functional as FT
+import matplotlib.pyplot as plt
 from os import listdir
 from os.path import isfile, join
+from sklearn.metrics import (
+    confusion_matrix,
+    ConfusionMatrixDisplay
+)
 
 device = torch.device('cpu')
 
@@ -19,7 +24,7 @@ rev_label_map = {v: k for k, v in label_map.items()}  # Inverse mapping
 distinct_colors = ['#FFFFFF', '#3cb44b', '#3BF7F7', '#00F218', '#3BA6F7', '#F30B0B']
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
 
-images_to_train = 700
+images_to_train = 1550
 
 def find_intersection(set_1, set_2):
     lower_bounds = torch.max(set_1[:, :2].unsqueeze(1), set_2[:, :2].unsqueeze(0))  # (n1, n2, 2)
@@ -196,7 +201,7 @@ def photometric_distort(image):
 
     for d in distortions:
         if random.random() < 0.5:
-            if d.__name__ is 'adjust_hue':
+            if d.__name__ == 'adjust_hue':
                 # Caffe repo uses a 'hue_delta' of 18 - we divide by 255 because PyTorch needs a normalized value
                 adjust_factor = random.uniform(-18 / 255., 18 / 255.)
             else:
@@ -384,6 +389,7 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
     det_labels = torch.cat(det_labels, dim=0)	
     det_scores = torch.cat(det_scores, dim=0)	
 
+    plotConfMatrix(det_labels, true_labels)
     assert det_images.size(0) == det_boxes.size(0) == det_labels.size(0) == det_scores.size(0)	
 
     # Calculate APs for each class (except background)	
@@ -472,6 +478,28 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
     average_precisions = {rev_label_map[c + 1]: v for c, v in enumerate(average_precisions.tolist())}	
 
     return average_precisions, mean_average_precision 	
+
+def plotConfMatrix(det_labels, true_labels):
+    voc_labels = ['with_mask', 'with_glasses', 'with_mask_and_glasses', 'with_face_shield' ,'clean']
+    # detMapped = np.concatenate(det_labels, axis=0)
+    # trueMapped = np.concatenate(true_labels, axis=0)
+    
+    # print('detMapped', detMapped)
+    # print('trueMapped', trueMapped)
+
+    cn_matrix = confusion_matrix(
+        y_true=true_labels,
+        y_pred=det_labels,
+        # labels=voc_labels,
+        normalize="true",
+    )
+
+    ConfusionMatrixDisplay(cn_matrix).plot(
+        include_values=False, xticks_rotation="vertical"
+    )
+    plt.title("RTD")
+    plt.tight_layout()
+    plt.show()
 
 def adjust_learning_rate(optimizer, scale):
     """

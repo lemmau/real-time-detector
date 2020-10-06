@@ -8,9 +8,9 @@ TEST_DATA_PATH = CORE_PATH + '/data/test_data/'
 COLAB_REPO = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/'
 
 # dataset relative paths
-KAGGLE_PATH = './core/data/masks_and_glasses'
-OUTPUT_PATH = './core/data/masks_and_glasses'
-LOG_PATH = './core/data/log-masks_and_glasses.txt'
+KAGGLE_PATH = './core/data/all'
+OUTPUT_PATH = './core/data/all'
+LOG_PATH = './core/data/log-complete.txt'
 
 # RGB Colors for classes
 BACKGROUND_RGB = '#FFFFFF'

@@ -1,16 +1,24 @@
-from utils import *
+import commons.model
+import torch
+import matplotlib.pyplot as plt
+import numpy as np
+from commons.utils import *
 from .datasets import PascalVOCDataset
 from tqdm import tqdm
 from pprint import PrettyPrinter
+from sklearn.metrics import (
+    confusion_matrix,
+    ConfusionMatrixDisplay
+)
 
 pp = PrettyPrinter()
-data_folder = './core/data/kaggle-masks/'  # folder with images
+data_folder = './core/data/all/'  # folder with images
 keep_difficult = True  # difficult ground truth objects must always be considered in mAP calculation, because these objects DO exist!
 batch_size = 64
 workers = 4
 device = torch.device('cpu')
 # checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar' # 5693
-checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth(31-07 0718PM).tar' # 6228
+checkpoint = 'core\models\checkpoint_ssd300_complete.pth.tar(E1000).tar' # 6228
 # checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth.tar'
 
 checkpoint = torch.load(checkpoint, map_location='cpu')
@@ -40,7 +48,7 @@ def evaluatemAP(test_loader, model):
             predicted_locs, predicted_scores = model(images)
 
             det_boxes_batch, det_labels_batch, det_scores_batch = model.detect_objects(predicted_locs, predicted_scores,
-                                                                                       min_score=0.01, max_overlap=0.45,
+                                                                                       min_score=0.3, max_overlap=0.45,
                                                                                        top_k=200)
 
             # Store this batch's results for mAP calculation
@@ -63,5 +71,5 @@ def evaluatemAP(test_loader, model):
 
     print('\nMean Average Precision (mAP): %.3f' % mAP)
 
-if __name__ == '__main__':
+def runMain():
     evaluatemAP(test_loader, model)
