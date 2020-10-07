@@ -27,8 +27,8 @@ const ToggleSendEmail = (props) =>{
                 <h5>Envio de Estadisticas por Mail</h5>
             </TextWrapper>
             <ToggleButton
-                inactiveLabel="Off"
-                activeLabel="On"
+                inactiveLabel="No"
+                activeLabel="Si"
                 colors={{
                 activeThumb: {
                     base: 'rgb(62,130,247)',

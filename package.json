@@ -44,6 +44,7 @@
     "react-time-picker": "^4.0.1",
     "react-toast-notifications": "^2.4.0",
     "react-toggle-button": "^2.2.0",
+    "react-tooltip": "^4.2.10",
     "react-window": "^1.8.5",
     "reactstrap": "^8.5.1",
     "socket.io": "^2.3.0",

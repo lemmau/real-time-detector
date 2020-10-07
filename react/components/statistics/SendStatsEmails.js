@@ -14,6 +14,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ReactTooltip from 'react-tooltip';
 import ToggleSendEmail from './ToggleSendEmail';
 import Config from "Config";
 
@@ -44,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     verticalAlign: "middle",
     marginRight: 50,
-    marginLeft: 20,
   },
   savebutton: {
     position: "absolute",
@@ -54,9 +54,6 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: 0,
     right: 0,
-  },
-  demo: {
-    backgroundColor: theme.palette.background.paper,
   },
   title: {
     margin: theme.spacing(4, 0, 2),
@@ -72,20 +69,29 @@ const useStyles = makeStyles((theme) => ({
   },
   destinaries: {
     display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "column",
   },
   destinataryTitle: {
     paddingRight: "10px",
   },
   addDestinataryText: {
-    fontSize: "20px",
+    fontSize: "15px",
+  },
+  addDestinataryButton: {
+    width: "15%",
   },
   emailItemList: {
     width: "35%",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+  },
+  textItemList: {
+    borderStyle: "solid",
+    borderWidth: "5px",
+    borderRadius: "10px",
+    borderColor: "#5588e0",
+    padding: "10px",
   }
 }));
 
@@ -246,8 +252,11 @@ export const SendStatsEmails = (props) => {
         <List>
           {list.map((email) => (
             <ListItem button key={email} className={classes.emailItemList}>
-              <ListItemText primary={email} />
-              <DeleteIcon onClick={() => handleDeleteEmail(email)} />
+              
+                <ListItemText primary={email} className={classes.textItemList}/>
+                <ReactTooltip place="right" type="dark" effect="float"/>
+                <DeleteIcon onClick={() => handleDeleteEmail(email)} data-tip="Borrar Mail"/>
+               
             </ListItem>
           ))}
         </List>
@@ -262,16 +271,18 @@ export const SendStatsEmails = (props) => {
             
             <ToggleSendEmail onToggle={handleToggleSendMail} toggled={props.params["sendEmails"]}/>
 
+            <hr/>
+
             <div className={classes.destinaries}>
               <h3 className={classes.destinataryTitle}>Destinatarios</h3>
         
-              <Button onClick={handleAddNewEmail} >
-                <b className={classes.addDestinataryText}>+</b>
+              <Button onClick={handleAddNewEmail} className={classes.addDestinataryButton}>
+                <b className={classes.addDestinataryText}>Agregar +</b>
               </Button>
 
             </div>
 
-            <div className={classes.demo}>
+            <div>
               <EmailList list={emailsList} />
             </div>
 
