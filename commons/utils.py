@@ -2,6 +2,7 @@ import json
 import os
 import torch
 import random
+import numpy as np
 import xml.etree.ElementTree as ET
 import torchvision.transforms.functional as FT
 import matplotlib.pyplot as plt
@@ -24,7 +25,7 @@ rev_label_map = {v: k for k, v in label_map.items()}  # Inverse mapping
 distinct_colors = ['#FFFFFF', '#3cb44b', '#3BF7F7', '#00F218', '#3BA6F7', '#F30B0B']
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
 
-images_to_train = 1550
+images_to_train = 0
 
 def find_intersection(set_1, set_2):
     lower_bounds = torch.max(set_1[:, :2].unsqueeze(1), set_2[:, :2].unsqueeze(0))  # (n1, n2, 2)
@@ -389,7 +390,6 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
     det_labels = torch.cat(det_labels, dim=0)	
     det_scores = torch.cat(det_scores, dim=0)	
 
-    plotConfMatrix(det_labels, true_labels)
     assert det_images.size(0) == det_boxes.size(0) == det_labels.size(0) == det_scores.size(0)	
 
     # Calculate APs for each class (except background)	
@@ -471,6 +471,7 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
                 precisions[i] = 0.	
         average_precisions[c - 1] = precisions.mean()	
 
+    plotConfMatrix(det_labels, true_labels)
     # Calculate Mean Average Precision (mAP)	
     mean_average_precision = average_precisions.mean().item()	
 
@@ -480,11 +481,27 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
     return average_precisions, mean_average_precision 	
 
 def plotConfMatrix(det_labels, true_labels):
+    det = det_labels.numpy()
+    # det = [5 if x==0 else x for x in det]
+    true = true_labels.numpy()
+
+    if len(true) > len(det):
+        dif = len(true)-len(det)
+        cleans = listofzeros = [5] * dif
+        det = np.concatenate((det, cleans))
+        print('dif', dif)
+    
+    if len(det) > len(true):
+        dif = len(det)-len(true)
+        cleans = listofzeros = [5] * dif
+        true = np.concatenate((true, cleans))
+        print('dif', dif)
+
     voc_labels = ['BARBIJO', 'ANTEOJOS', 'BARBIJO+ANTEOJOS', 'MASCARA' ,'LIMPIO']
 
     cn_matrix = confusion_matrix(
-        y_true=true_labels,
-        y_pred=det_labels,
+        y_true=true,
+        y_pred=det,
         normalize="true",
     )
 
@@ -496,6 +513,28 @@ def plotConfMatrix(det_labels, true_labels):
     plt.xlabel('VALOR ESPERADO')
     plt.tight_layout()
     plt.show()
+
+# def plotConfMatrix():
+#     det_labels = [5, 3, 3, 5, 3, 3, 3, 2, 1, 5, 4, 2, 1, 2, 2, 2, 2, 1, 1, 3, 3, 5, 1, 5, 2, 3, 5, 5, 2, 5, 4, 1, 1, 4, 2, 3, 1, 1, 5, 4, 1, 1, 3, 5, 4, 4, 4, 2, 1, 2, 1, 4, 1, 1, 1, 3, 1, 3, 5, 5, 4, 4, 4, 5, 1, 2, 5, 2, 5, 5, 3, 3, 3, 3, 2, 1, 4, 2, 5, 1, 3, 4, 4, 4, 3, 2, 1, 4, 5, 1, 3, 4, 2, 5, 5, 4, 3, 5, 1, 3, 4, 1, 5, 4, 3, 3, 3, 2, 1, 5, 1, 1, 5, 5, 3, 2, 4, 4, 1, 1, 5, 1, 1, 2, 1, 3, 3, 4, 2, 4, 5, 5, 1, 1, 4, 4, 1, 1, 5, 4, 5, 1, 4, 4, 1, 2, 2, 3, 1]
+#     true_labels =[5, 3, 3, 5, 3, 3, 3, 2, 1, 5, 4, 2, 1, 2, 2, 2, 1, 1, 3, 3, 5, 1, 5, 2, 3, 5, 5, 2, 5, 4, 4, 1, 1, 2, 3, 1, 1, 5, 2, 1, 1, 3, 5, 4, 4, 4, 2, 1, 2, 1, 4, 1, 1, 1, 3, 1, 3, 5, 5, 4, 4, 4, 5, 1, 2, 5, 2, 5, 5, 3, 3, 3, 3, 2, 4, 2, 5, 3, 1, 4, 4, 4, 3, 2, 1, 4, 5, 3, 1, 4, 2, 5, 5, 4, 3, 2, 5, 1, 3, 4, 1, 5, 4, 3, 3, 3, 2, 1, 1, 1, 5, 5, 3, 2, 4, 4, 1, 1, 5, 1, 1, 2, 3, 3, 4, 2, 4, 5, 5, 1, 1, 4, 4, 1, 1, 5, 4, 5, 4, 4, 1, 1, 2, 2, 4, 1, 2, 3, 1]
+#     true_labels2 =[5, 1, 3, 5, 3, 3, 3, 2, 1, 5, 4, 2, 1, 2, 2, 2, 1, 1, 1, 3, 5, 1, 5, 2, 3, 5, 5, 2, 5, 4, 4, 1, 1, 2, 3, 1, 1, 5, 2, 1, 1, 3, 5, 4, 4, 4, 2, 1, 2, 1, 4, 1, 1, 1, 3, 1, 3, 5, 5, 4, 4, 4, 5, 1, 2, 5, 2, 5, 5, 3, 3, 3, 3, 2, 4, 2, 5, 3, 1, 4, 4, 4, 3, 2, 1, 4, 5, 3, 1, 4, 2, 5, 5, 4, 3, 2, 5, 1, 3, 4, 1, 5, 4, 3, 3, 3, 2, 1, 1, 1, 5, 5, 3, 2, 4, 4, 1, 1, 5, 1, 1, 2, 3, 3, 4, 2, 4, 5, 5, 1, 1, 4, 4, 1, 1, 5, 4, 5, 4, 4, 1, 1, 2, 2, 4, 1, 2, 3, 1]
+
+#     voc_labels = ['BARBIJO', 'ANTEOJOS', 'BARBIJO+ANTEOJOS', 'MASCARA' ,'LIMPIO']
+
+#     cn_matrix = confusion_matrix(
+#         y_true=true_labels,
+#         y_pred=det_labels,
+#         normalize="true",
+#     )
+
+#     ConfusionMatrixDisplay(cn_matrix, display_labels=voc_labels).plot(
+#         include_values=False, xticks_rotation="vertical"
+#     )
+#     plt.title("RTD")
+#     plt.ylabel('PREDICCION')
+#     plt.xlabel('VALOR ESPERADO')
+#     plt.tight_layout()
+#     plt.show()
 
 def adjust_learning_rate(optimizer, scale):
     """

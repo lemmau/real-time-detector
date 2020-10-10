@@ -2,14 +2,14 @@ import os
 
 # relative paths
 CORE_PATH = os.path.dirname(os.path.abspath(__file__))
-CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar'
+CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_complete.pth(E2000).tar'
 CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300-masks&glasses.pth(E5710).tar'
 TEST_DATA_PATH = CORE_PATH + '/data/test_data/'
 COLAB_REPO = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/'
 
 # dataset relative paths
-KAGGLE_PATH = './core/data/all'
-OUTPUT_PATH = './core/data/all'
+KAGGLE_PATH = './core/data/all-3x'
+OUTPUT_PATH = './core/data/all-3x'
 LOG_PATH = './core/data/log-complete.txt'
 
 # RGB Colors for classes

@@ -10,15 +10,16 @@ from sklearn.metrics import (
     confusion_matrix,
     ConfusionMatrixDisplay
 )
+from ..definitions import OUTPUT_PATH
 
 pp = PrettyPrinter()
-data_folder = './core/data/all/'  # folder with images
+data_folder = OUTPUT_PATH  # folder with images
 keep_difficult = True  # difficult ground truth objects must always be considered in mAP calculation, because these objects DO exist!
-batch_size = 64
+batch_size = 1
 workers = 4
 device = torch.device('cpu')
 # checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar' # 5693
-checkpoint = 'core\models\checkpoint_ssd300_complete.pth.tar(E1000).tar' # 6228
+checkpoint = 'core\models\checkpoint_ssd300_complete.pth(E2000).tar' # 6228
 # checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth.tar'
 
 checkpoint = torch.load(checkpoint, map_location='cpu')

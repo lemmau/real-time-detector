@@ -10,7 +10,7 @@ import argparse
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-d", "--detect", required=True, help="detect video or image")
+ap.add_argument("-d", "--detect", required=False, help="detect video or image", default="image")
 args = vars(ap.parse_args())
 
 # Load model checkpoint
@@ -18,9 +18,40 @@ model = IAModel(CHECKPOINT)
 
 # Use to run SSD300 on image
 if args["detect"] == "image":
-    img_path = TEST_DATA_PATH + '3.jpg'
+    img_path = TEST_DATA_PATH + '8.jpg'
     original_image = Image.open(img_path, mode='r')
-    result = model.detect(original_image, min_score=0.2, max_overlap=0.5, max_objects=200)
+    
+    config = {
+        "backendEndpoint": "http://localhost:5000",
+        "database": {
+            "host": "localhost",
+            "port": 3306,
+            "username": "root",
+            "password": "root",
+            "dbName": "real-time-detector" 
+        },
+        "email": {
+            "smptServer": "smtp.gmail.com",
+            "smptPort": 587,
+            "senderMail": "rtd.notifications@gmail.com",
+            "senderPassword": "rtdutn2020"
+        },
+        "possibleElements": ["Barbijo", "Proteccion ocular", "Mascara"],
+        "objectDetection": {
+            "Barbijo": "true",
+            "Proteccion ocular": "true",
+            "Mascara": "false"
+        },
+        "soundAlarm": "false",
+        "sendEmails": "true",
+        "frequency": {
+            "hora": "00",
+            "periodicidad": "Diaria",
+            "propiedadAdicional": ""
+        }
+    }
+
+    result = model.detect(original_image, min_score=0.2, max_overlap=0.5, max_objects=200, elementsConfiguration=config, app=None)
     result.show()
 
 # Use to run SSD300 on webcam

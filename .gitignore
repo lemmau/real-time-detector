@@ -9,3 +9,4 @@ core/models/*
 plot.png
 *.csv
 .vscode/*
+core/metrics/*
