@@ -104,7 +104,6 @@ export const ConfigurationScreen = () => {
   }
 
   async function saveConfig(){
-
     const configToSave = {};
     Object.entries(elementsCheckboxs).map(([key, value]) => {
       configToSave[key] = value['isChecked'];
