@@ -471,7 +471,8 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
                 precisions[i] = 0.	
         average_precisions[c - 1] = precisions.mean()	
 
-    plotConfMatrix(det_labels, true_labels)
+    # plotConfMatrix(det_labels, true_labels)
+    
     # Calculate Mean Average Precision (mAP)	
     mean_average_precision = average_precisions.mean().item()	
 

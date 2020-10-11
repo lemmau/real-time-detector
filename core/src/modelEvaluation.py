@@ -19,7 +19,7 @@ batch_size = 1
 workers = 4
 device = torch.device('cpu')
 # checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar' # 5693
-checkpoint = 'core\models\checkpoint_ssd300_complete.pth(E2000).tar' # 6228
+checkpoint = 'core\models\checkpoint_ssd300_complete.pth(E3000).tar' # 6228
 # checkpoint = 'core\models\checkpoint_ssd300_kaggle.pth.tar'
 
 checkpoint = torch.load(checkpoint, map_location='cpu')

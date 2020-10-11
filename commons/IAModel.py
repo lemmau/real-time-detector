@@ -3,9 +3,11 @@ import json
 from datetime import datetime
 from torchvision import transforms
 from PIL import Image
-from ElementDrawer import ElementDrawer
-from PredictedClass import ClassList
-from src.Event import Event
+from commons.ElementDrawer import ElementDrawer
+from commons.PredictedClass import ClassList
+from commons.utils import *
+from commons.model import *
+# from src.Event import Event
 from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD, WITH_FACE_SHIELD_RGB, INFRACTION_ID
 
 class IAModel():
@@ -71,12 +73,12 @@ class IAModel():
             text = predictedClass.label.upper()+ " " + "{:.2%}".format(score)
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
 
-        Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, datetime.timestamp(datetime.now()), app)
+        # Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, datetime.timestamp(datetime.now()), app)
 
-        if self.shouldThrowAlarm(currentDetectedClasses):
-            soundAlarmOn = app.config['soundAlarm']
-            for client in app.config["clients"]:
-                app.config["socketIo"].emit('alarm', {'audio': soundAlarmOn}, room=client)
+        # if self.shouldThrowAlarm(currentDetectedClasses):
+        #     soundAlarmOn = app.config['soundAlarm']
+        #     for client in app.config["clients"]:
+        #         app.config["socketIo"].emit('alarm', {'audio': soundAlarmOn}, room=client)
 
         self.detectedClassesPrevious = currentDetectedClasses
 
@@ -96,6 +98,7 @@ class IAModel():
         return False
     
     def evaluateElementsConfiguration(self, prediction, elementsDict):
+        return prediction
         maskEnable = elementsDict[MASK]
         glassesEnable = elementsDict[GLASSES]
         faceShieldEnable = elementsDict[FACE_SHIELD]
