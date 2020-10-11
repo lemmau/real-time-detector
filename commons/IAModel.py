@@ -11,12 +11,18 @@ from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSE
 class IAModel():
     def __init__(self, modelPath: str):
         classes = ClassList()
+        # classes.addClass(0, 'background', BACKGROUND_RGB)
+        # classes.addClass(1, 'with_mask', WITH_MASK_RGB)
+        # classes.addClass(2, 'with_glasses', WITH_GLASSES_RGB)
+        # classes.addClass(3, 'with_mask_and_glasses', WITH_MASK_AND_GLASSES_RGB)
+        # classes.addClass(4, 'with_face_shield', WITH_FACE_SHIELD_RGB)
+        # classes.addClass(5, 'clean', CLEAN_RGB)
         classes.addClass(0, 'background', BACKGROUND_RGB)
-        classes.addClass(1, 'with_mask', WITH_MASK_RGB)
-        classes.addClass(2, 'with_glasses', WITH_GLASSES_RGB)
-        classes.addClass(3, 'with_mask_and_glasses', WITH_MASK_AND_GLASSES_RGB)
-        classes.addClass(4, 'with_face_shield', WITH_FACE_SHIELD_RGB)
-        classes.addClass(5, 'clean', CLEAN_RGB)
+        classes.addClass(1, 'BARBIJO', WITH_MASK_RGB)
+        classes.addClass(2, 'ANTEOJOS', WITH_GLASSES_RGB)
+        classes.addClass(3, 'BARBIJO+ANTEOJOS', WITH_MASK_AND_GLASSES_RGB)
+        classes.addClass(4, 'MASCARA FACIAL', WITH_FACE_SHIELD_RGB)
+        classes.addClass(5, 'INFRACCION', CLEAN_RGB)
         
         self.modelPath = modelPath
         self.model = torch.load(self.modelPath, map_location='cpu')
@@ -68,7 +74,7 @@ class IAModel():
             score = round(score.item(), 4)
 
             ElementDrawer.drawRectangule(annotated_image, boxLimits, predictedClass.color)
-            text = predictedClass.label.upper()+ " " + "{:.2%}".format(score)
+            text = predictedClass.label.upper()+ " " + "{:.0%}".format(score)
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
 
         Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, datetime.timestamp(datetime.now()), app)
