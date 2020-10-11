@@ -73,8 +73,9 @@ class IAModel():
 
         Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, datetime.timestamp(datetime.now()), app)
 
-        if self.shouldThrowAlarm(currentDetectedClasses):
-            soundAlarmOn = app.config['soundAlarm']
+        soundAlarmOn = app.config['soundAlarm']
+
+        if soundAlarmOn and self.shouldThrowAlarm(currentDetectedClasses):
             for client in app.config["clients"]:
                 app.config["socketIo"].emit('alarm', {'audio': soundAlarmOn}, room=client)
 
@@ -96,13 +97,13 @@ class IAModel():
         return False
     
     def evaluateElementsConfiguration(self, prediction, elementsDict):
-        maskEnable = elementsDict[MASK]
-        glassesEnable = elementsDict[GLASSES]
-        faceShieldEnable = elementsDict[FACE_SHIELD]
+        maskEnable = elementsDict[MASK]["isChecked"]
+        glassesEnable = elementsDict[GLASSES]["isChecked"]
+        faceShieldEnable = elementsDict[FACE_SHIELD]["isChecked"]
 
         if (not maskEnable and not glassesEnable):
             if(prediction.id == 1 or prediction.id == 2 or prediction.id == 3):
-                return None
+                return self.classes.getClassByPredictedId(INFRACTION_ID)
         elif (not maskEnable):
             if(prediction.id == 1):
                 return self.classes.getClassByPredictedId(INFRACTION_ID)
