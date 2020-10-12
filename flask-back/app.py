@@ -124,11 +124,12 @@ def setCron():
     selectedDayOfMonth = Cron.calculateDayOfMonth(frequency['propiedadAdicional']) or '*'
     cron = Cron(date=datetime.today().strftime("%Y-%m-%d"), day_of_week=selectedDayOfWeek, day=selectedDayOfMonth, hour=frequency['hora'], isDeleted=False)
 
+    if scheduler.get_job(EMAIL_SENDER_CRON_ID):
+        scheduler.remove_job(EMAIL_SENDER_CRON_ID)
+        
     scheduler.add_job(EmailSender.triggerEmailSender, 'cron', day=selectedDayOfMonth, day_of_week=selectedDayOfWeek, hour=frequency['hora'], args=[frequency, datetime.today(), db, app], id=EMAIL_SENDER_CRON_ID)
 
     save(session, cron)
-
-    scheduler.start()
 
     app.config["sendEmails"] = "true"
 
