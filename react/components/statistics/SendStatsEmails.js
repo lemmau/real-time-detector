@@ -273,7 +273,7 @@ export const SendStatsEmails = (props) => {
 
             <hr/>
 
-            <div className={classes.destinaries}>
+            <div style={!props.params["sendEmails"] ? {pointerEvents: "none", opacity: "0.4"} : {}} className={classes.destinaries}>
               <h3 className={classes.destinataryTitle}>Destinatarios</h3>
         
               <Button onClick={handleAddNewEmail} className={classes.addDestinataryButton}>
@@ -282,7 +282,7 @@ export const SendStatsEmails = (props) => {
 
             </div>
 
-            <div>
+            <div style={!props.params["sendEmails"] ? {pointerEvents: "none", opacity: "0.4"} : {}}>
               <EmailList list={emailsList} />
             </div>
 
@@ -320,7 +320,7 @@ export const SendStatsEmails = (props) => {
             </Modal.Footer>
           </Modal>
 
-          <div className={classes.center}>
+          <div style={!props.params["sendEmails"] ? {pointerEvents: "none", opacity: "0.4"} : {}} className={classes.center}>
             <h3>Periodicidad</h3>
     
             <FormControl variant="outlined" className={classes.formControl}>
