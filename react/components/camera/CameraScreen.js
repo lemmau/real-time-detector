@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  errorMessage: {
+    marginTop: theme.spacing(2),
+    color:"red"
+  },
 }));
 
 export const CameraScreen = () => {
@@ -76,6 +80,7 @@ export const CameraScreen = () => {
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
               label="Cámara"
+              error={devices.length == 0}
             >
               {devices.map((device, key) => (
                 <MenuItem value={key} key={key} onClick={handleChangeDevice}>
@@ -84,6 +89,10 @@ export const CameraScreen = () => {
               ))}
             </Select>
           </FormControl>
+          {devices.length == 0 ?
+            <div className={classes.errorMessage}>
+              No se han detectado cámaras. Por favor verifique la conexión de las mismas"
+            </div> : ""}
         </Modal.Body>
         <Modal.Footer>
           <Button
