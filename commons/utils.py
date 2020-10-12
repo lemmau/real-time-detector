@@ -7,7 +7,7 @@ import torchvision.transforms.functional as FT
 from os import listdir
 from os.path import isfile, join
 
-device = torch.device('cuda')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 checkpoint_name = 'checkpoint_ssd300_complete.pth.tar'
 

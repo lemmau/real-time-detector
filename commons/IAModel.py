@@ -24,12 +24,12 @@ class IAModel():
         classes.addClass(4, 'MASCARA FACIAL', WITH_FACE_SHIELD_RGB)
         classes.addClass(5, 'INFRACCION', CLEAN_RGB)
         
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.modelPath = modelPath
         self.model = torch.load(self.modelPath)
         print('\nLoaded checkpoint from epoch %d.\n' % (self.model['epoch'] + 1))
-        self.model = self.model['model'].to(torch.device('cuda')).eval()
+        self.model = self.model['model'].to(torch.device(self.device)).eval()
         self.classes = classes
-        self.device = torch.device('cuda')
         self.detectedClassesPrevious = []
 
     def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str, app) -> Image:
@@ -47,9 +47,9 @@ class IAModel():
         det_boxes, det_labels, det_scores = self.model.detect_objects(predicted_locs, predicted_scores, min_score=min_score,
                                                                     max_overlap=max_overlap, top_k=max_objects)
 
-        det_boxes = det_boxes[0].to('cuda')
-        det_labels = det_labels[0].to('cuda').tolist() # returns list of ints
-        det_scores = det_scores[0].to('cuda')
+        det_boxes = det_boxes[0].to('cpu')
+        det_labels = det_labels[0].to('cpu').tolist() # returns list of ints
+        det_scores = det_scores[0].to('cpu')
 
         # Transform back to original image dimensions
         original_dims = torch.FloatTensor(
