@@ -286,6 +286,11 @@ class SSD300(nn.Module):
     The SSD300 network - encapsulates the base VGG network, auxiliary, and prediction convolutions.
     """
 
+    x_left = 0
+    y_left = 1
+    x_right = 2
+    y_right = 3
+
     def __init__(self, n_classes):
         super(SSD300, self).__init__()
 
@@ -304,6 +309,8 @@ class SSD300(nn.Module):
         self.priors_cxcy = self.create_prior_boxes()
 
         self.summary()
+
+        # for boxes coordinates index
 
     def forward(self, image):
         """
@@ -384,20 +391,34 @@ class SSD300(nn.Module):
 
         return prior_boxes
 
-    def rectangles_overlaps(self, x_left, y_left, x_right, y_right, x_left_2, y_left_2, x_right_2, y_right_2):
-        print(x_left, y_left, x_right, y_right, x_left_2, y_left_2, x_right_2, y_right_2)
-        return not (x_right <= x_left_2 or  # left
-                    y_right <= y_left_2 or  # bottom
-                    x_left >= x_right_2 or  # right
-                    y_left >= y_right_2)    # top
+
+    def are_boxes_overlaping(self, box, another_box):
+
+        return not (box[self.x_right] <= another_box[self.x_left] or  # left
+                    box[self.y_right] <= another_box[self.y_left] or  # bottom
+                    box[self.x_left] >= another_box[self.x_right] or  # right
+                    box[self.y_left] >= another_box[self.y_right])    # top
     
+    def my_custom_jaccard_value(self, box, another_box):
+
+        x_left = max(box[self.x_left], another_box[self.x_left])
+        y_top = max(box[self.y_left], another_box[self.y_left])
+        x_right = max(box[self.x_right], another_box[self.x_right])
+        y_bottom = max(box[self.y_right], another_box[self.y_right])
+
+        if x_right < x_left or y_bottom < y_top:
+            return 0.0
+
+        intersection_area = (x_right - x_left) * (y_bottom - y_top)
+
+        box_area = (box[self.x_right] - box[self.x_left]) * (box[self.y_right] - box[self.y_left])
+        another_box_area = (another_box[self.x_right] - another_box[self.x_left]) * (another_box[self.y_right] - another_box[self.y_left])
+
+        iou = intersection_area / float(box_area + another_box_area - intersection_area)
+
+        return iou
 
     def filter_boxes_custom_jaccard(self, all_images_boxes, all_images_labels, all_images_scores):
-
-        x_left = 0
-        y_left = 1
-        x_right = 2
-        y_right = 3
 
         final_boxes = []
         final_labels = []
@@ -407,35 +428,29 @@ class SSD300(nn.Module):
         labels = [label.item() for label in all_images_labels[0]]
         scores = [score.item() for score in all_images_scores[0]]
 
-        i = 0
         processed_indexes = []
 
-        for box, label, score in zip(boxes, labels, scores):
+        for index, detection in enumerate(zip(boxes, labels, scores)):
 
-            if i in processed_indexes:
-                i += 1
+            box, label, score = detection
+
+            if index in processed_indexes:
                 continue
 
             boxes_touching = []
-            e = i+1
-            for box2, label2, score2 in zip(boxes[e:], labels[e:], scores[e:]):
+            
+            for e, box2 in enumerate(boxes[index+1:], start=index+1):
 
-                if self.rectangles_overlaps(box[x_left], box[y_left], box[x_right], box[y_right], box2[x_left], box2[y_left], box2[x_right], box2[y_right]):
+                if self.are_boxes_overlaping(box, box2) and self.my_custom_jaccard_value(box, box2) > 0.5:
                     boxes_touching.append(e)
 
-                e += 1
 
             if boxes_touching:
-                boxes_touching.append(i)
+                boxes_touching.append(index)
                 processed_indexes.extend(boxes_touching)
 
-                max_score = 0
-                max_score_index = 0
-
-                for index in boxes_touching:
-                    if scores[index] > max_score:
-                        max_score = scores[index]
-                        max_score_index = index
+                max_score_overlaping_boxes = max([score for score in scores if scores.index(score) in boxes_touching])
+                max_score_index = scores.index(max_score_overlaping_boxes) 
 
                 final_boxes.append(boxes[max_score_index])
                 final_labels.append(labels[max_score_index])
@@ -446,9 +461,8 @@ class SSD300(nn.Module):
                 final_labels.append(label)
                 final_scores.append(score)
 
-            i += 1
 
-        print([torch.Tensor(final_boxes)], [torch.Tensor(final_labels)], [torch.Tensor(final_scores)])
+        #print([torch.Tensor(final_boxes)], [torch.Tensor(final_labels)], [torch.Tensor(final_scores)])
         return [torch.Tensor(final_boxes)], [torch.Tensor(final_labels)], [torch.Tensor(final_scores)]
 
 
