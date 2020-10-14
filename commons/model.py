@@ -417,7 +417,7 @@ class SSD300(nn.Module):
 
         return iou
 
-    def filter_boxes_custom_jaccard(self, all_images_boxes, all_images_labels, all_images_scores):
+    def filter_boxes_custom_jaccard(self, all_images_boxes, all_images_labels, all_images_scores, max_overlap):
 
         final_boxes = []
         final_labels = []
@@ -440,7 +440,7 @@ class SSD300(nn.Module):
             
             for e, box2 in enumerate(boxes[index+1:], start=index+1):
 
-                if self.are_boxes_overlaping(box, box2) and self.my_custom_jaccard_value(box, box2) > 0.5:
+                if self.are_boxes_overlaping(box, box2) and self.my_custom_jaccard_value(box, box2) > max_overlap:
                     boxes_touching.append(e)
 
 
@@ -568,7 +568,7 @@ class SSD300(nn.Module):
             all_images_labels.append(image_labels)
             all_images_scores.append(image_scores)
 
-        return self.filter_boxes_custom_jaccard(all_images_boxes, all_images_labels, all_images_scores)  # lists of length batch_size
+        return self.filter_boxes_custom_jaccard(all_images_boxes, all_images_labels, all_images_scores, max_overlap)  # lists of length batch_size
 
 
 class MultiBoxLoss(nn.Module):
