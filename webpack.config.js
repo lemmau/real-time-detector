@@ -34,6 +34,9 @@ module.exports = {
     },
     devServer: {
         historyApiFallback: true,
+        public: "real-time-detector.com",
+        port: 8080,
+        https: true
     },
     plugins: [
         new HtmlWebpackPlugin({
