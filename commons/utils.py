@@ -9,16 +9,17 @@ from os.path import isfile, join
 
 device = torch.device('cpu')
 
-voc_labels = ('with_mask', 'with_glasses', 'with_mask_and_glasses', 'clean')
+checkpoint_name = 'checkpoint_ssd300_complete.pth.tar'
+
+voc_labels = ('with_mask', 'with_glasses', 'with_mask_and_glasses', 'with_face_shield' ,'clean')
 label_map = {k: v + 1 for v, k in enumerate(voc_labels)}
 label_map['background'] = 0
 rev_label_map = {v: k for k, v in label_map.items()}  # Inverse mapping
 
-distinct_colors = ['#3cb44b', '#092FEB', '#FFF926', '#e6194B', '#ffffff']
+distinct_colors = ['#FFFFFF', '#3cb44b', '#3BF7F7', '#00F218', '#3BA6F7', '#F30B0B']
 label_color_map = {k: distinct_colors[i] for i, k in enumerate(label_map.keys())}
 
 images_to_train = 700
-checkpoint_name = 'checkpoint_ssd300-masks.pth.tar'
 
 def find_intersection(set_1, set_2):
     lower_bounds = torch.max(set_1[:, :2].unsqueeze(1), set_2[:, :2].unsqueeze(0))  # (n1, n2, 2)
@@ -48,7 +49,12 @@ def create_data_lists(kaggle_path, output_folder):
     train_objects = list()
     n_objects = 0
 
-    ids = listdir(os.path.join(kaggle_path, 'images'))[:images_to_train]
+    allIds = listdir(os.path.join(kaggle_path, 'images'))
+
+    random.shuffle(allIds)
+    
+    ids = allIds[:images_to_train]
+    
     ids = [f.split('.')[0] for f in ids]
     # ids = [".".join(f.split(".")[:-1]) for f in os.listdir(os.path.join(kaggle_path, 'images')) if os.path.isfile(f)][:700]
 
@@ -80,7 +86,7 @@ def create_data_lists(kaggle_path, output_folder):
 
     # with open(os.path.join(kaggle_path, 'ImageSets/Main/test.txt')) as f:
     #     ids = f.read().splitlines()
-    ids = listdir(os.path.join(kaggle_path, 'images'))[images_to_train:]
+    ids = allIds[images_to_train:]
     ids = [f.split('.')[0] for f in ids]
 
     for id in ids:
@@ -190,7 +196,7 @@ def photometric_distort(image):
 
     for d in distortions:
         if random.random() < 0.5:
-            if d.__name__ == 'adjust_hue':
+            if d.__name__ is 'adjust_hue':
                 # Caffe repo uses a 'hue_delta' of 18 - we divide by 255 because PyTorch needs a normalized value
                 adjust_factor = random.uniform(-18 / 255., 18 / 255.)
             else:
@@ -347,8 +353,7 @@ def save_checkpoint(epoch, model, optimizer):
     state = {'epoch': epoch,
              'model': model,
              'optimizer': optimizer}
-    # filename = 'checkpoint_ssd300.pth.tar' # Ensure filename is right 
-
+    
     if epoch%500 != 0:
       filename = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/' + checkpoint_name # Ensure filename is right 
     else:
@@ -467,4 +472,14 @@ def calculate_mAP(det_boxes, det_labels, det_scores, true_boxes, true_labels, tr
     average_precisions = {rev_label_map[c + 1]: v for c, v in enumerate(average_precisions.tolist())}	
 
     return average_precisions, mean_average_precision 	
+
+def adjust_learning_rate(optimizer, scale):
+    """
+    Scale learning rate by a specified factor.
+    :param optimizer: optimizer whose learning rate must be shrunk.
+    :param scale: factor to multiply learning rate with.
+    """
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = param_group['lr'] * scale
+    print("DECAYING learning rate.\n The new LR is %f\n" % (optimizer.param_groups[1]['lr'],))
  

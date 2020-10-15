@@ -6,16 +6,23 @@ from PIL import Image
 from ElementDrawer import ElementDrawer
 from PredictedClass import ClassList
 from src.Event import Event
-from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD
+from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD, WITH_FACE_SHIELD_RGB, INFRACTION_ID
 
 class IAModel():
     def __init__(self, modelPath: str):
         classes = ClassList()
+        # classes.addClass(0, 'background', BACKGROUND_RGB)
+        # classes.addClass(1, 'with_mask', WITH_MASK_RGB)
+        # classes.addClass(2, 'with_glasses', WITH_GLASSES_RGB)
+        # classes.addClass(3, 'with_mask_and_glasses', WITH_MASK_AND_GLASSES_RGB)
+        # classes.addClass(4, 'with_face_shield', WITH_FACE_SHIELD_RGB)
+        # classes.addClass(5, 'clean', CLEAN_RGB)
         classes.addClass(0, 'background', BACKGROUND_RGB)
-        classes.addClass(1, 'with_mask', WITH_MASK_RGB)
-        classes.addClass(2, 'with_glasses', WITH_GLASSES_RGB)
-        classes.addClass(3, 'with_mask_and_glasses', WITH_MASK_AND_GLASSES_RGB)
-        classes.addClass(4, 'clean', CLEAN_RGB)
+        classes.addClass(1, 'BARBIJO', WITH_MASK_RGB)
+        classes.addClass(2, 'ANTEOJOS', WITH_GLASSES_RGB)
+        classes.addClass(3, 'BARBIJO+ANTEOJOS', WITH_MASK_AND_GLASSES_RGB)
+        classes.addClass(4, 'MASCARA FACIAL', WITH_FACE_SHIELD_RGB)
+        classes.addClass(5, 'INFRACCION', CLEAN_RGB)
         
         self.modelPath = modelPath
         self.model = torch.load(self.modelPath, map_location='cpu')
@@ -67,13 +74,14 @@ class IAModel():
             score = round(score.item(), 4)
 
             ElementDrawer.drawRectangule(annotated_image, boxLimits, predictedClass.color)
-            text = predictedClass.label.upper()+ " " + "{:.2%}".format(score)
+            text = predictedClass.label.upper()+ " " + "{:.0%}".format(score)
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
 
         Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, datetime.timestamp(datetime.now()), app)
 
-        if self.shouldThrowAlarm(currentDetectedClasses):
-            soundAlarmOn = app.config['soundAlarm']
+        soundAlarmOn = app.config['soundAlarm']
+
+        if soundAlarmOn and self.shouldThrowAlarm(currentDetectedClasses):
             for client in app.config["clients"]:
                 app.config["socketIo"].emit('alarm', {'audio': soundAlarmOn}, room=client)
 
@@ -85,9 +93,9 @@ class IAModel():
         if (len(self.detectedClassesPrevious) >= len(currentDetectedClasses)):
             return False
         else:
-            # 4 represent the 'clean' class
-            previousInfractions = list(filter(lambda detectedClass: detectedClass.id == 4, self.detectedClassesPrevious))
-            currentInfractions = list(filter(lambda detectedClass: detectedClass.id == 4, currentDetectedClasses))
+            # INFRACTION_ID represent the 'clean' class
+            previousInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, self.detectedClassesPrevious))
+            currentInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, currentDetectedClasses))
 
             if(len(currentInfractions) > len(previousInfractions)):
                 return True
@@ -95,26 +103,25 @@ class IAModel():
         return False
     
     def evaluateElementsConfiguration(self, prediction, elementsDict):
-        maskEnable = elementsDict[MASK]
-        glassesEnable = elementsDict[GLASSES]
-        faceShieldEnable = elementsDict[FACE_SHIELD]
+        maskEnable = elementsDict[MASK]["isChecked"]
+        glassesEnable = elementsDict[GLASSES]["isChecked"]
+        faceShieldEnable = elementsDict[FACE_SHIELD]["isChecked"]
 
         if (not maskEnable and not glassesEnable):
             if(prediction.id == 1 or prediction.id == 2 or prediction.id == 3):
-                return None
+                return self.classes.getClassByPredictedId(INFRACTION_ID)
         elif (not maskEnable):
             if(prediction.id == 1):
-                return self.classes.getClassByPredictedId(4)
+                return self.classes.getClassByPredictedId(INFRACTION_ID)
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(2)
         elif (not glassesEnable):
             if(prediction.id == 2):
-                return self.classes.getClassByPredictedId(4)
+                return self.classes.getClassByPredictedId(INFRACTION_ID)
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(1)
-        #TODO: Add support for face shield configuration
-        # elif (not faceShieldEnable):
-            # if(prediction.id == 5):
-            #     return False
+        elif (not faceShieldEnable):
+            if(prediction.id == 4):
+                return self.classes.getClassByPredictedId(INFRACTION_ID)
         
         return prediction
