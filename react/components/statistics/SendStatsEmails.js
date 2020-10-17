@@ -307,15 +307,15 @@ export const SendStatsEmails = (props) => {
               </form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" onClick={handleCloseAddNewEmail}>
-                Me arrepenti
-              </Button>
-              <Button
+            <Button
                 variant="primary"
                 disabled={saveNewEmailDisabled}
                 onClick={handleSaveNewEmail}
               >
-                Agregar!
+                Aceptar
+              </Button>
+              <Button variant="primary" onClick={handleCloseAddNewEmail}>
+                Cancelar
               </Button>
             </Modal.Footer>
           </Modal>
