@@ -22,7 +22,7 @@ const Graph = (props) => {
 
 Graph.propTypes = {
   date: PropTypes.string.isRequired,
-  graphData: PropTypes.object.isRequired,
+  graphData: PropTypes.array.isRequired,
 };
 
 const NotFoundWrapper = styled.div`
@@ -49,14 +49,15 @@ export const ModalGraph = () => {
         Config.backendEndpoint + "/statistic/" + date,
         requestOptions
       );
-      const data = await response.json();
+      const graphData = await response.json();
 
-      for (var element in data) {
-        data[element].type = "bar";
+      for (var element of graphData) {
+        element.type = "bar";
+        element.marker = {'color': element.color};
       }
 
-      setGraphData(data);
-      setHasDataAvailable(Object.entries(data).length !== 0);
+      setGraphData(graphData);
+      setHasDataAvailable(Object.entries(graphData).length !== 0);
     }
 
     getStatistics();
