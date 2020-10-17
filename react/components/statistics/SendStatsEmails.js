@@ -166,6 +166,7 @@ export const SendStatsEmails = (props) => {
 
     removeItem(emailsList, email);
     setEmailsList([...emailsList]);
+    props.onPropertyChange({"emailsList": emailsList});
   }
 
   function removeItem(arr, item) {
@@ -187,6 +188,7 @@ export const SendStatsEmails = (props) => {
     await fetch(Config.backendEndpoint + "/emails", requestOptions);
     emailsList.push(newEmail);
     setEmailsList([...emailsList]);
+    props.onPropertyChange({"emailsList": emailsList});
     setShowAddNewEmailModal(false);
   }
 
