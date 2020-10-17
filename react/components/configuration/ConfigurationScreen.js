@@ -101,22 +101,22 @@ export const ConfigurationScreen = () => {
   }
 
   function shouldDisableSaveButton(elementsCheckboxs, soundAlarm) {
+    
     const shouldDisableSaveButton =
-      JSON.stringify(elementsCheckboxs) === JSON.stringify(originalConfig) &&
-      soundAlarm === originalSoundConfig;
+      (JSON.stringify(elementsCheckboxs) === JSON.stringify(originalConfig) &&
+      soundAlarm === originalSoundConfig) ||
+      Object.entries(elementsCheckboxs).every(([_, value]) => !value["isChecked"]);
+
     setButtonDisable(shouldDisableSaveButton);
   }
 
   async function saveConfig(e) {
-    console.log("Saving config");
     e.preventDefault();
     const configToSave = {};
     Object.entries(elementsCheckboxs).map(([key, value]) => {
       configToSave[key] = value["isChecked"];
     });
     configToSave["soundAlarm"] = soundAlarm;
-
-    console.log(configToSave);
 
     const requestOptions = {
       method: "POST",

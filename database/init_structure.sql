@@ -12,11 +12,11 @@ CREATE TABLE IF NOT EXISTS `DetectedClass`(
 );
 
 INSERT INTO `DetectedClass` (`name`, `description`) VALUES
-    ("Limpio", "Cara Limpia, la persona no usa elementos en su rostro"),
     ("Barbijo", "Barbijo"),
     ("Protección ocular", "gafas, lentes u otro element que proteja ojos"),
+    ("Barbijo y Protección ocular", "Barbijo y gafas, lentes u otro element que proteja ojos"),
     ("Mascara Facial", "mascaras que cumbre todo el rostro"),
-    ("Barbijo y Protección ocular", "Barbijo y gafas, lentes u otro element que proteja ojos");
+    ("Infraccion", "Cara Limpia, la persona no usa elementos en su rostro");
 
 
 CREATE TABLE IF NOT EXISTS `Event`(

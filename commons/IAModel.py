@@ -111,12 +111,12 @@ class IAModel():
             if(prediction.id == 1 or prediction.id == 2 or prediction.id == 3):
                 return self.classes.getClassByPredictedId(INFRACTION_ID)
         elif (not maskEnable):
-            if(prediction.id == 1):
+            if(prediction.id == 1 or prediction.id == 4):
                 return self.classes.getClassByPredictedId(INFRACTION_ID)
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(2)
         elif (not glassesEnable):
-            if(prediction.id == 2):
+            if(prediction.id == 2 or prediction.id == 4):
                 return self.classes.getClassByPredictedId(INFRACTION_ID)
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(1)

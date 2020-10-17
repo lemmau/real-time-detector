@@ -57,6 +57,28 @@ def getEventsByClass(db, startTime, endTime):
 
     return dbInfo
 
+def getStatisticsOfToday(dbContext):
+
+    sql = f"""SELECT date_format(from_unixtime(e.timestamp), '%%H') hour, dc.name, count(*) events FROM Event e
+                JOIN DetectedClass dc ON dc.id = e.detectedClassId
+                WHERE date_format(from_unixtime(e.timestamp), '%%Y-%%m-%%d') = CURDATE() AND e.isDeleted = 0
+                GROUP BY date_format(from_unixtime(e.timestamp), '%%H'), dc.name
+            """
+
+    return dbContext.engine.execute(sql)
+
+def getStatisticsByDate(dbContext, date):
+
+    if date == datetime.today().strftime('%Y-%m-%d'):
+        return getStatisticsOfToday(dbContext)
+    else:
+        sql = f"""SELECT date_format(dr.day, '%%H') hour, dc.name, dr.events FROM DailyReport dr
+                JOIN DetectedClass dc ON dc.id = dr.detectedClassId
+                WHERE date_format(dr.day, '%%Y-%%m-%%d') = '{date}'
+                ORDER BY dr.day"""
+
+    return dbContext.engine.execute(sql)
+
 def saveBatch(session, elementsToSave):
     session.add_all(elementsToSave)
     session.commit()

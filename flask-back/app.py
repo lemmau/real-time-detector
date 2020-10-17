@@ -145,19 +145,14 @@ def removeCron():
 
     return jsonify('{"status":"ok, "message": "Cron successfully removed"}')
 
-@app.route('/statistic/<day>', methods=['GET'])
-def getStatisticOfToday(day):
+@app.route('/statistic/<date>', methods=['GET'])
+def getStatistic(date):
 
-    sql = f"""SELECT date_format(dr.day, '%%H') hour, dc.name, dr.events FROM DailyReport dr
-              JOIN DetectedClass dc ON dc.id = dr.detectedClassId
-              WHERE date_format(dr.day, '%%Y-%%m-%%d') = '{day}'
-              ORDER BY dr.day"""
-
-    queryResult = db.engine.execute(sql)
+    statisticsData = getStatisticsByDate(db, date)
 
     jsonObject = {}
 
-    for row in queryResult:
+    for row in statisticsData:
         className = row['name']
 
         if className not in jsonObject:
