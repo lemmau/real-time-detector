@@ -2,8 +2,8 @@ import os
 
 # relative paths
 CORE_PATH = os.path.dirname(os.path.abspath(__file__))
-CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar'
-CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300-masks&glasses.pth(E5710).tar'
+CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_complete.pth.tar'
+CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300_complete.pth.tar'
 TEST_DATA_PATH = CORE_PATH + '/data/test_data/'
 COLAB_REPO = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/'
 
@@ -22,9 +22,19 @@ WITH_FACE_SHIELD_RGB = '#3BA6F7' #TODO
 #CONFIG_PATH = os.path.join(ROOT_DIR, 'config.json')  # requires `import os`
 
 # Objects
+CLEAN = 'Limpio'
 MASK = 'Barbijo'
-GLASSES = 'Proteccion ocular'
-FACE_SHIELD = 'Mascara'
+GLASSES = 'Protección ocular'
+FACE_SHIELD = 'Mascara Facial'
+GLASSES_AND_MASK = 'Barbijo y Protección ocular'
+
+OBJECT_COLOR_DICT = {
+    CLEAN: CLEAN_RGB,
+    MASK: WITH_MASK_RGB,
+    GLASSES: WITH_GLASSES_RGB,
+    FACE_SHIELD: WITH_FACE_SHIELD_RGB,
+    GLASSES_AND_MASK: WITH_MASK_AND_GLASSES_RGB,
+}
 
 INFRACTION_ID = 5
 
