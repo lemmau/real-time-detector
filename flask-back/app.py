@@ -7,7 +7,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, send
 from IAModel import IAModel
 from PredictedClass import ClassList
-from core.definitions import CHECKPOINT_NEW as modelPath, EMAIL_SENDER_CRON_ID
+from core.definitions import CHECKPOINT_NEW as modelPath, EMAIL_SENDER_CRON_ID, OBJECT_COLOR_DICT
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from src.Video import Video
@@ -156,7 +156,7 @@ def getStatistic(date):
         className = row['name']
 
         if className not in jsonObject:
-            jsonObject[className] = {'x': [], 'y': [], 'name': className}
+            jsonObject[className] = {'x': [], 'y': [], 'name': className, 'color': OBJECT_COLOR_DICT[className]}
 
         jsonObject[className]['x'].append(row['hour'])
         jsonObject[className]['y'].append(row['events'])
