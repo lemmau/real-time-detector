@@ -8,6 +8,7 @@ from flask_socketio import SocketIO, send
 from IAModel import IAModel
 from PredictedClass import ClassList
 from core.definitions import CHECKPOINT_NEW as modelPath, EMAIL_SENDER_CRON_ID, OBJECT_COLOR_DICT
+from core.definitions import CLEAN, MASK, GLASSES, FACE_SHIELD, GLASSES_AND_MASK
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from src.Video import Video
@@ -78,14 +79,14 @@ def video():
 def getConfiguration():
     objectDetectionConfig = OrderedDict(app.config['objectDetection'])
 
-    shouldDisableFaceMask = objectDetectionConfig['Barbijo'] or objectDetectionConfig['Proteccion ocular']
-    shouldDisableGlassesAndMask = objectDetectionConfig['Mascara']
+    shouldDisableFaceMask = objectDetectionConfig[MASK] or objectDetectionConfig[GLASSES]
+    shouldDisableGlassesAndMask = objectDetectionConfig[FACE_SHIELD]
 
     elements = OrderedDict({key: {'elementName': key, 'isChecked': value} for key, value in objectDetectionConfig.items()})
-    elements["Barbijo"]['isDisabled'] = shouldDisableGlassesAndMask
-    elements["Proteccion ocular"]['isDisabled'] = shouldDisableGlassesAndMask
-    elements["Mascara"]['isDisabled'] = shouldDisableFaceMask
-    elements["soundAlarm"] = app.config['soundAlarm']
+    elements[MASK]['isDisabled'] = shouldDisableGlassesAndMask
+    elements[GLASSES]['isDisabled'] = shouldDisableGlassesAndMask
+    elements[FACE_SHIELD]['isDisabled'] = shouldDisableFaceMask
+    elements['soundAlarm'] = app.config['soundAlarm']
 
     return jsonify(elements)
 
