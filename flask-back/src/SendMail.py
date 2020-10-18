@@ -1,6 +1,7 @@
 import os
 import json
 import smtplib, ssl
+import base64
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -27,7 +28,8 @@ class SendMail():
 		self.server.ehlo()
 		self.server.starttls(context=self.context)
 		self.server.ehlo()
-		self.server.login(self.mailSender, self.config['email']['senderPassword'])
+		decryptedPassword = base64.b64decode(self.config['email']['senderPassword']).decode('utf-8')
+		self.server.login(self.mailSender, decryptedPassword)
 
 	def send(self, listMails: list, subject: str, message: str, attachments: list):
 		msg = MIMEMultipart()
