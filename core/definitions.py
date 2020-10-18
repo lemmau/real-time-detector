@@ -2,8 +2,8 @@ import os
 
 # relative paths
 CORE_PATH = os.path.dirname(os.path.abspath(__file__))
-CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_kaggle.pth(31-07 1149AM).tar'
-CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300-masks&glasses.pth(E5710).tar'
+CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_complete.pth.tar'
+CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300_complete.pth.tar'
 TEST_DATA_PATH = CORE_PATH + '/data/test_data/'
 COLAB_REPO = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/'
 
@@ -14,11 +14,11 @@ LOG_PATH = './core/data/log-masks_and_glasses.txt'
 
 # RGB Colors for classes
 BACKGROUND_RGB = '#FFFFFF'
-WITH_MASK_RGB = '#3cb44b'
-WITH_GLASSES_RGB = '#3BF7F7'
-WITH_MASK_AND_GLASSES_RGB = '#00F218'
+WITH_MASK_RGB = '#0B24F3'
+WITH_GLASSES_RGB = '#F3C90B'
+WITH_MASK_AND_GLASSES_RGB = '#0BF319'
 CLEAN_RGB = '#F30B0B'
-WITH_FACE_SHIELD_RGB = '#3BA6F7' #TODO 
+WITH_FACE_SHIELD_RGB = '#F37F0B' #TODO 
 #CONFIG_PATH = os.path.join(ROOT_DIR, 'config.json')  # requires `import os`
 
 # Objects
