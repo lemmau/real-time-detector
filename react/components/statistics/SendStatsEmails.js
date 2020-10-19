@@ -138,7 +138,7 @@ export const SendStatsEmails = (props) => {
   const [showAddNewEmail, setShowAddNewEmailModal] = useState(false);
   const [showWeekDay, setShowWeekDay] = useState(false);
   const [showMonthDay, setShowMonthDay] = useState(false);
-  const [periodicidad, setFrequency] = useState(props.params['periodicidad']);
+  const [periodicidad, setPeriodicidad] = useState(props.params['periodicidad']);
   const [hora, setHour] = useState(props.params['hora']);
   const [propiedadAdicional, setAditionalProperty] = useState(props.params['propiedadAdicional']);
   const [saveNewEmailDisabled, setsaveNewEmailDisabled] = useState(true);
@@ -197,7 +197,7 @@ export const SendStatsEmails = (props) => {
   }
 
   function clickDay() {
-    setFrequency("Diaria");
+    setPeriodicidad("Diaria");
     setAditionalProperty("");
     props.onPropertyChange({"periodicidad": "Diaria", "propiedadAdicional": ""});
     handleCloseWeekDay();
@@ -205,17 +205,17 @@ export const SendStatsEmails = (props) => {
   }
 
   function clickWeekDay() {
-    setFrequency("Semanal");
-    setAditionalProperty("");
-    props.onPropertyChange({"periodicidad": "Semanal", "propiedadAdicional": ""});
+    setPeriodicidad("Semanal");
+    setAditionalProperty("Lunes");
+    props.onPropertyChange({"periodicidad": "Semanal", "propiedadAdicional": "Lunes"});
     handleShowWeekDay();
     handleCloseMonthDay();
   }
 
   function clickMonthDay() {
-    setFrequency("Mensual");
-    setAditionalProperty("");
-    props.onPropertyChange({"periodicidad": "Mensual", "propiedadAdicional": ""});
+    setPeriodicidad("Mensual");
+    setAditionalProperty("Primer dia del mes");
+    props.onPropertyChange({"periodicidad": "Mensual", "propiedadAdicional": "Primer dia del mes"});
     handleCloseWeekDay();
     handleShowMonthDay();
   }
@@ -333,6 +333,7 @@ export const SendStatsEmails = (props) => {
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 label="Frecuencia"
+                defaultValue="Diaria"
                 value={periodicidad}
               >
                 <MenuItem value={"Diaria"} onClick={clickDay}>
@@ -353,6 +354,7 @@ export const SendStatsEmails = (props) => {
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 label="Hora"
+                defaultValue="00"
                 value={hora}
               >
                 {hours.map((hour) => (
@@ -380,6 +382,7 @@ export const SendStatsEmails = (props) => {
                   labelId="demo-simple-select-outlined-label"
                   id="demo-simple-select-outlined"
                   label="Enviar el día"
+                  defaultValue="Lunes"
                   value={propiedadAdicional}
                 >
                   {weekDays.map((day) => (
@@ -407,6 +410,7 @@ export const SendStatsEmails = (props) => {
                   labelId="demo-simple-select-outlined-label"
                   id="demo-simple-select-outlined"
                   label="Enviar el día"
+                  defaultValue="Primer dia del mes"
                   value={propiedadAdicional}
                 >
                   {monthlyOptions.map((monthlyOption) => (

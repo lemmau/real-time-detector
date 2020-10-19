@@ -106,6 +106,7 @@ export const StatisticsScreen = () => {
     }
 
     updateConfig();
+    window.location.replace("/webcam");
   };
 
   async function updateConfig() {
@@ -113,10 +114,9 @@ export const StatisticsScreen = () => {
     configToSave["frequency"] = {};
 
     configToSave["sendEmails"] = actualConfig["sendEmails"];
-    configToSave["frequency"]["periodicidad"] = actualConfig["hora"];
-    configToSave["frequency"]["hora"] = actualConfig["configToSave"];
-    configToSave["frequency"]["propiedadAdicional"] =
-      actualConfig["configToSave"];
+    configToSave["frequency"]["periodicidad"] = actualConfig["periodicidad"];
+    configToSave["frequency"]["hora"] = actualConfig["hora"];
+    configToSave["frequency"]["propiedadAdicional"] = actualConfig["propiedadAdicional"];
     console.log("Config to save", configToSave);
 
     const requestOptions = {
