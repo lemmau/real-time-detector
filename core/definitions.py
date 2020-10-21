@@ -22,7 +22,7 @@ WITH_FACE_SHIELD_RGB = '#F37F0B' #TODO
 #CONFIG_PATH = os.path.join(ROOT_DIR, 'config.json')  # requires `import os`
 
 # Objects
-CLEAN = 'Limpio'
+CLEAN = 'Infraccion'
 MASK = 'Barbijo'
 GLASSES = 'Protección ocular'
 FACE_SHIELD = 'Mascara Facial'
