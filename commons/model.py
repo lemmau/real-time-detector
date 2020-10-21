@@ -1,5 +1,6 @@
 import sys
 sys.path.insert(0, 'commons')
+import torch
 from torch import nn
 from utils import *
 import torch.nn.functional as F
@@ -285,6 +286,12 @@ class SSD300(nn.Module):
     The SSD300 network - encapsulates the base VGG network, auxiliary, and prediction convolutions.
     """
 
+    # for boxes coordinates index
+    x_left = 0
+    y_left = 1
+    x_right = 2
+    y_right = 3
+
     def __init__(self, n_classes):
         super(SSD300, self).__init__()
 
@@ -382,6 +389,80 @@ class SSD300(nn.Module):
         prior_boxes.clamp_(0, 1)  # (8732, 4)
 
         return prior_boxes
+
+
+    def are_boxes_overlaping(self, box, another_box):
+
+        return not (box[self.x_right] <= another_box[self.x_left] or  # left
+                    box[self.y_right] <= another_box[self.y_left] or  # bottom
+                    box[self.x_left] >= another_box[self.x_right] or  # right
+                    box[self.y_left] >= another_box[self.y_right])    # top
+    
+    def my_custom_jaccard_value(self, box, another_box):
+
+        x_left = max(box[self.x_left], another_box[self.x_left])
+        y_top = max(box[self.y_left], another_box[self.y_left])
+        x_right = max(box[self.x_right], another_box[self.x_right])
+        y_bottom = max(box[self.y_right], another_box[self.y_right])
+
+        if x_right < x_left or y_bottom < y_top:
+            return 0.0
+
+        intersection_area = (x_right - x_left) * (y_bottom - y_top)
+
+        box_area = (box[self.x_right] - box[self.x_left]) * (box[self.y_right] - box[self.y_left])
+        another_box_area = (another_box[self.x_right] - another_box[self.x_left]) * (another_box[self.y_right] - another_box[self.y_left])
+
+        iou = intersection_area / float(box_area + another_box_area - intersection_area)
+
+        return iou
+
+    def filter_boxes_custom_jaccard(self, all_images_boxes, all_images_labels, all_images_scores, max_overlap):
+
+        final_boxes = []
+        final_labels = []
+        final_scores = []
+
+        boxes = [box.tolist() for box in all_images_boxes[0]]
+        labels = [label.item() for label in all_images_labels[0]]
+        scores = [score.item() for score in all_images_scores[0]]
+
+        processed_indexes = []
+
+        for index, detection in enumerate(zip(boxes, labels, scores)):
+
+            box, label, score = detection
+
+            if index in processed_indexes:
+                continue
+
+            boxes_touching = []
+            
+            for e, box2 in enumerate(boxes[index+1:], start=index+1):
+
+                if self.are_boxes_overlaping(box, box2) and self.my_custom_jaccard_value(box, box2) > max_overlap:
+                    boxes_touching.append(e)
+
+
+            if boxes_touching:
+                boxes_touching.append(index)
+                processed_indexes.extend(boxes_touching)
+
+                max_score_overlaping_boxes = max([score for score in scores if scores.index(score) in boxes_touching])
+                max_score_index = scores.index(max_score_overlaping_boxes) 
+
+                final_boxes.append(boxes[max_score_index])
+                final_labels.append(labels[max_score_index])
+                final_scores.append(scores[max_score_index])
+
+            else:
+                final_boxes.append(box)
+                final_labels.append(label)
+                final_scores.append(score)
+
+
+        return [torch.Tensor(final_boxes)], [torch.Tensor(final_labels)], [torch.Tensor(final_scores)]
+
 
     def detect_objects(self, predicted_locs, predicted_scores, min_score, max_overlap, top_k):
         """
@@ -487,7 +568,7 @@ class SSD300(nn.Module):
             all_images_labels.append(image_labels)
             all_images_scores.append(image_scores)
 
-        return all_images_boxes, all_images_labels, all_images_scores  # lists of length batch_size
+        return self.filter_boxes_custom_jaccard(all_images_boxes, all_images_labels, all_images_scores, max_overlap)  # lists of length batch_size
 
 
 class MultiBoxLoss(nn.Module):
