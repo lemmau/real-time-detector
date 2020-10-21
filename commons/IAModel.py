@@ -81,9 +81,9 @@ class IAModel():
 
         soundAlarmOn = app.config['soundAlarm']
 
-        if soundAlarmOn and self.shouldThrowAlarm(currentDetectedClasses):
+        if self.shouldThrowAlarm(currentDetectedClasses):
             for client in app.config["clients"]:
-                app.config["socketIo"].emit('alarm', {'audio': soundAlarmOn}, room=client)
+                app.config["socketIo"].emit('alarm', {'isAudioEnable': soundAlarmOn}, room=client)
 
         self.detectedClassesPrevious = currentDetectedClasses
 
