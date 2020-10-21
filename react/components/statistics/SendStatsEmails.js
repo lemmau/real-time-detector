@@ -136,22 +136,15 @@ const monthlyOptions = ["Primer dia del mes", "Ultimo dia del mes"];
 
 export const SendStatsEmails = (props) => {
   const [showAddNewEmail, setShowAddNewEmailModal] = useState(false);
-  const [showWeekDay, setShowWeekDay] = useState(false);
-  const [showMonthDay, setShowMonthDay] = useState(false);
-  const [periodicidad, setFrequency] = useState(props.params['periodicidad']);
+  const [periodicidad, setPeriodicidad] = useState(props.params['periodicidad']);
   const [hora, setHour] = useState(props.params['hora']);
   const [propiedadAdicional, setAditionalProperty] = useState(props.params['propiedadAdicional']);
   const [saveNewEmailDisabled, setsaveNewEmailDisabled] = useState(true);
   const [newEmailError, setNewEmailError] = useState(false);
   const [emailsList, setEmailsList] = useState(props.params['emailsList']);
   const [newEmail, setNewEmail] = useState("");
-  
 
   const handleAddNewEmail = () => setShowAddNewEmailModal(true);
-  const handleCloseWeekDay = () => setShowWeekDay(false);
-  const handleShowWeekDay = () => setShowWeekDay(true);
-  const handleCloseMonthDay = () => setShowMonthDay(false);
-  const handleShowMonthDay = () => setShowMonthDay(true);
 
   async function handleDeleteEmail(email) {
     console.log("Email to delete: ", email);
@@ -166,6 +159,7 @@ export const SendStatsEmails = (props) => {
 
     removeItem(emailsList, email);
     setEmailsList([...emailsList]);
+    props.onPropertyChange({"emailsList": emailsList});
   }
 
   function removeItem(arr, item) {
@@ -187,6 +181,7 @@ export const SendStatsEmails = (props) => {
     await fetch(Config.backendEndpoint + "/emails", requestOptions);
     emailsList.push(newEmail);
     setEmailsList([...emailsList]);
+    props.onPropertyChange({"emailsList": emailsList});
     setShowAddNewEmailModal(false);
   }
 
@@ -195,27 +190,21 @@ export const SendStatsEmails = (props) => {
   }
 
   function clickDay() {
-    setFrequency("Diaria");
+    setPeriodicidad("Diaria");
     setAditionalProperty("");
     props.onPropertyChange({"periodicidad": "Diaria", "propiedadAdicional": ""});
-    handleCloseWeekDay();
-    handleCloseMonthDay();
   }
 
   function clickWeekDay() {
-    setFrequency("Semanal");
-    setAditionalProperty("");
-    props.onPropertyChange({"periodicidad": "Semanal", "propiedadAdicional": ""});
-    handleShowWeekDay();
-    handleCloseMonthDay();
+    setPeriodicidad("Semanal");
+    setAditionalProperty("Lunes");
+    props.onPropertyChange({"periodicidad": "Semanal", "propiedadAdicional": "Lunes"});
   }
 
   function clickMonthDay() {
-    setFrequency("Mensual");
-    setAditionalProperty("");
-    props.onPropertyChange({"periodicidad": "Mensual", "propiedadAdicional": ""});
-    handleCloseWeekDay();
-    handleShowMonthDay();
+    setPeriodicidad("Mensual");
+    setAditionalProperty("Primer dia del mes");
+    props.onPropertyChange({"periodicidad": "Mensual", "propiedadAdicional": "Primer dia del mes"});
   }
 
   function handleToggleSendMail(value){
@@ -307,15 +296,15 @@ export const SendStatsEmails = (props) => {
               </form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" onClick={handleCloseAddNewEmail}>
-                Me arrepenti
-              </Button>
-              <Button
+            <Button
                 variant="primary"
                 disabled={saveNewEmailDisabled}
                 onClick={handleSaveNewEmail}
               >
-                Agregar!
+                Aceptar
+              </Button>
+              <Button variant="primary" onClick={handleCloseAddNewEmail}>
+                Cancelar
               </Button>
             </Modal.Footer>
           </Modal>
@@ -331,6 +320,7 @@ export const SendStatsEmails = (props) => {
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 label="Frecuencia"
+                defaultValue="Diaria"
                 value={periodicidad}
               >
                 <MenuItem value={"Diaria"} onClick={clickDay}>
@@ -351,6 +341,7 @@ export const SendStatsEmails = (props) => {
                 labelId="demo-simple-select-outlined-label"
                 id="demo-simple-select-outlined"
                 label="Hora"
+                defaultValue="00"
                 value={hora}
               >
                 {hours.map((hour) => (
@@ -369,7 +360,7 @@ export const SendStatsEmails = (props) => {
             </FormControl>
 
 
-            {showWeekDay && (
+            {periodicidad === 'Semanal' && (
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel id="demo-simple-select-outlined-label">
                   Enviar el día
@@ -378,6 +369,7 @@ export const SendStatsEmails = (props) => {
                   labelId="demo-simple-select-outlined-label"
                   id="demo-simple-select-outlined"
                   label="Enviar el día"
+                  defaultValue="Lunes"
                   value={propiedadAdicional}
                 >
                   {weekDays.map((day) => (
@@ -396,7 +388,7 @@ export const SendStatsEmails = (props) => {
               </FormControl>
             )}
 
-            {showMonthDay && (
+            {periodicidad === 'Mensual' && (
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel id="demo-simple-select-outlined-label">
                   Enviar el día
@@ -405,6 +397,7 @@ export const SendStatsEmails = (props) => {
                   labelId="demo-simple-select-outlined-label"
                   id="demo-simple-select-outlined"
                   label="Enviar el día"
+                  defaultValue="Primer dia del mes"
                   value={propiedadAdicional}
                 >
                   {monthlyOptions.map((monthlyOption) => (

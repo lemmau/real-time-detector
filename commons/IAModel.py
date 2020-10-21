@@ -7,6 +7,7 @@ from ElementDrawer import ElementDrawer
 from PredictedClass import ClassList
 from src.Event import Event
 from core.definitions import BACKGROUND_RGB, WITH_MASK_RGB, WITH_MASK_AND_GLASSES_RGB, WITH_GLASSES_RGB, CLEAN_RGB, MASK, GLASSES, FACE_SHIELD, WITH_FACE_SHIELD_RGB, INFRACTION_ID
+from core.definitions import MASK, GLASSES, FACE_SHIELD, GLASSES_AND_MASK
 
 class IAModel():
     def __init__(self, modelPath: str):
@@ -18,10 +19,10 @@ class IAModel():
         # classes.addClass(4, 'with_face_shield', WITH_FACE_SHIELD_RGB)
         # classes.addClass(5, 'clean', CLEAN_RGB)
         classes.addClass(0, 'background', BACKGROUND_RGB)
-        classes.addClass(1, 'BARBIJO', WITH_MASK_RGB)
-        classes.addClass(2, 'ANTEOJOS', WITH_GLASSES_RGB)
-        classes.addClass(3, 'BARBIJO+ANTEOJOS', WITH_MASK_AND_GLASSES_RGB)
-        classes.addClass(4, 'MASCARA FACIAL', WITH_FACE_SHIELD_RGB)
+        classes.addClass(1, MASK, WITH_MASK_RGB)
+        classes.addClass(2, GLASSES, WITH_GLASSES_RGB)
+        classes.addClass(3, GLASSES_AND_MASK, WITH_MASK_AND_GLASSES_RGB)
+        classes.addClass(4, FACE_SHIELD, WITH_FACE_SHIELD_RGB)
         classes.addClass(5, 'INFRACCION', CLEAN_RGB)
         
         self.modelPath = modelPath
@@ -81,9 +82,9 @@ class IAModel():
 
         soundAlarmOn = app.config['soundAlarm']
 
-        if soundAlarmOn and self.shouldThrowAlarm(currentDetectedClasses):
+        if self.shouldThrowAlarm(currentDetectedClasses):
             for client in app.config["clients"]:
-                app.config["socketIo"].emit('alarm', {'audio': soundAlarmOn}, room=client)
+                app.config["socketIo"].emit('alarm', {'isAudioEnable': soundAlarmOn}, room=client)
 
         self.detectedClassesPrevious = currentDetectedClasses
 
@@ -111,12 +112,12 @@ class IAModel():
             if(prediction.id == 1 or prediction.id == 2 or prediction.id == 3):
                 return self.classes.getClassByPredictedId(INFRACTION_ID)
         elif (not maskEnable):
-            if(prediction.id == 1):
+            if(prediction.id == 1 or prediction.id == 4):
                 return self.classes.getClassByPredictedId(INFRACTION_ID)
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(2)
         elif (not glassesEnable):
-            if(prediction.id == 2):
+            if(prediction.id == 2 or prediction.id == 4):
                 return self.classes.getClassByPredictedId(INFRACTION_ID)
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(1)

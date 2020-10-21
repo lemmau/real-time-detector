@@ -3,7 +3,13 @@ from PIL import Image, ImageDraw, ImageFont
 class ElementDrawer():
 
     @staticmethod
+    def fixRedBlueInvertion(color: str) -> str:
+        return '#' + color[5:7] + color[3:5] + color[1:3]
+
+    @staticmethod
     def drawRectangule(originalImage:Image, limits:list, color:str) -> Image:
+
+        color = ElementDrawer.fixRedBlueInvertion(color)
 
         editedImage = ImageDraw.Draw(originalImage)
         editedImage.rectangle(xy=limits, outline=color)
@@ -12,6 +18,8 @@ class ElementDrawer():
 
     @staticmethod
     def drawTextBox(originalImage:Image, txt:str, fontType:str, limits:list, color:str) -> Image:
+
+        color = ElementDrawer.fixRedBlueInvertion(color)
 
         font = ImageFont.truetype(fontType, 15)
         textSize = font.getsize(txt)

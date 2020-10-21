@@ -3,7 +3,7 @@ import "./StatisticsScreen.css";
 import Button from "react-bootstrap/Button";
 import "react-datepicker/dist/react-datepicker.css";
 import Modal from "react-bootstrap/Modal";
-import Loader from 'react-loader-spinner';
+import Loader from "react-loader-spinner";
 import "react-datepicker/dist/react-datepicker.css";
 import { ModalGraph } from "./StatisticGraphModal";
 import { SendStatsEmails } from "./SendStatsEmails";
@@ -53,7 +53,6 @@ export const StatisticsScreen = () => {
       setOriginalConfig(screenConfig);
       setActualConfig(screenConfig);
       setIsDataLoaded(true);
-
     }
 
     loadDefaultDataConfig();
@@ -64,7 +63,6 @@ export const StatisticsScreen = () => {
   };
 
   async function loadEmailsList() {
-
     const requestOptions = {
       method: "GET",
     };
@@ -85,9 +83,9 @@ export const StatisticsScreen = () => {
 
     if (actualConfig["sendEmails"]) {
       const frecuency = {
-        hora: actualConfig['hora'],
-        periodicidad: actualConfig['periodicidad'],
-        propiedadAdicional: actualConfig['propiedadAdicional'],
+        hora: actualConfig["hora"],
+        periodicidad: actualConfig["periodicidad"],
+        propiedadAdicional: actualConfig["propiedadAdicional"],
       };
 
       console.log("Frecuency options: ", frecuency);
@@ -108,17 +106,18 @@ export const StatisticsScreen = () => {
     }
 
     updateConfig();
+    window.location.replace("/webcam");
   };
 
   async function updateConfig() {
     const configToSave = {};
     configToSave["frequency"] = {};
 
-    configToSave['sendEmails'] = actualConfig['emailsList'];
-    configToSave["frequency"]["periodicidad"] = actualConfig['hora'];
-    configToSave["frequency"]["hora"] = actualConfig['configToSave'];
-    configToSave["frequency"]["propiedadAdicional"] = actualConfig['configToSave'];
-    console.log('Config to save', configToSave);
+    configToSave["sendEmails"] = actualConfig["sendEmails"];
+    configToSave["frequency"]["periodicidad"] = actualConfig["periodicidad"];
+    configToSave["frequency"]["hora"] = actualConfig["hora"];
+    configToSave["frequency"]["propiedadAdicional"] = actualConfig["propiedadAdicional"];
+    console.log("Config to save", configToSave);
 
     const requestOptions = {
       method: "POST",
@@ -126,12 +125,15 @@ export const StatisticsScreen = () => {
       body: JSON.stringify(configToSave),
     };
 
-    await fetch(Config.backendEndpoint + "/configuration/stats", requestOptions);
+    await fetch(
+      Config.backendEndpoint + "/configuration/stats",
+      requestOptions
+    );
   }
 
-  function statsEmailsOnChange(newProperties){
-    const config = {...actualConfig};
-    
+  function statsEmailsOnChange(newProperties) {
+    const config = { ...actualConfig };
+
     for (var [key, value] of Object.entries(newProperties)) {
       config[key] = value;
     }
@@ -139,8 +141,11 @@ export const StatisticsScreen = () => {
     setActualConfig(config);
     console.log(config);
 
-    const shouldDisableSaveButton = JSON.stringify(config) === JSON.stringify(originalConfig);
-    setButtonDisable(shouldDisableSaveButton);
+    const shouldDisableSaveButton =
+      JSON.stringify(config) === JSON.stringify(originalConfig) ||
+      (config["sendEmails"] && Object.entries(config["emailsList"]).length === 0);
+    
+      setButtonDisable(shouldDisableSaveButton);
   }
 
   return (
@@ -169,13 +174,22 @@ export const StatisticsScreen = () => {
           </Modal.Footer>
         </Modal>
 
-        {isDataLoaded? 
-        <SendStatsEmails params={actualConfig} onPropertyChange={statsEmailsOnChange}/>
-        : <Loader type="ThreeDots" color="#2326CF" height="100" width="100"/>
-        }
+        {isDataLoaded ? (
+          <SendStatsEmails
+            params={actualConfig}
+            onPropertyChange={statsEmailsOnChange}
+          />
+        ) : (
+          <Loader type="ThreeDots" color="#2326CF" height="100" width="100" />
+        )}
         <hr />
         <div>
-          <Button className="right" type="submit" color="primary" disabled={buttonDisable}>
+          <Button
+            className="right"
+            type="submit"
+            color="primary"
+            disabled={buttonDisable}
+          >
             Guardar
           </Button>
         </div>
