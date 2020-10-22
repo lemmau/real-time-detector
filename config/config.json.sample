@@ -13,11 +13,11 @@
         "senderMail": "rtd.notifications@gmail.com",
         "senderPassword": "cGFzc3dvcmQK"
     },
-    "possibleElements": ["Barbijo", "Proteccion ocular", "Mascara"],
+    "possibleElements": ["Barbijo", "Proteccion ocular", "Mascara Facial"],
     "objectDetection": {
         "Barbijo": true,
         "Proteccion ocular": true,
-        "Mascara": false
+        "Mascara Facial": false
     },
     "soundAlarm": false,
     "sendEmails": true,

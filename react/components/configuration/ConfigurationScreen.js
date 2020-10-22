@@ -85,11 +85,11 @@ export const ConfigurationScreen = () => {
     const shouldDisableFaceMask =
       config["Barbijo"]["isChecked"] ||
       config["Proteccion ocular"]["isChecked"];
-    const shouldDisableGlassesAndMask = config["Mascara"]["isChecked"];
+    const shouldDisableGlassesAndMask = config["Mascara Facial"]["isChecked"];
 
     config["Barbijo"]["isDisabled"] = shouldDisableGlassesAndMask;
     config["Proteccion ocular"]["isDisabled"] = shouldDisableGlassesAndMask;
-    config["Mascara"]["isDisabled"] = shouldDisableFaceMask;
+    config["Mascara Facial"]["isDisabled"] = shouldDisableFaceMask;
 
     shouldDisableSaveButton(config, soundAlarm);
     setElementsCheckboxs(config);

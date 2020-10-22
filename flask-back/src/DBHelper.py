@@ -39,9 +39,9 @@ def getEventsByClass(db, startTime, endTime):
     dbInfo = {
         'Barbijo': [],
         'Limpio': [],
-        'Protección ocular': [],
+        'Proteccion ocular': [],
         'Mascara Facial': [],
-        'Barbijo y Protección ocular': []
+        'Barbijo y Proteccion ocular': []
     }
 
     sql = f"""SELECT * FROM Event e
