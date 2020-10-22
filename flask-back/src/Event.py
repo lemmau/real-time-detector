@@ -52,4 +52,5 @@ class Event(db.Model):
         if list1 == None:
             return list2
         else:
-            return (list(list(set(list1)-set(list2)) + list(set(list2)-set(list1))))
+            # return (list(list(set(list1)-set(list2)) + list(set(list2)-set(list1))))
+            return list(set(list2)-set(list1))
