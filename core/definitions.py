@@ -2,8 +2,8 @@ import os
 
 # relative paths
 CORE_PATH = os.path.dirname(os.path.abspath(__file__))
-CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_complete.pth.tar'
-CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300_complete.pth.tar'
+CHECKPOINT = CORE_PATH + '/models/checkpoint_ssd300_complete(E3000).pth.tar'
+CHECKPOINT_NEW = CORE_PATH + '/models/checkpoint_ssd300_complete(E3000).pth.tar'
 TEST_DATA_PATH = CORE_PATH + '/data/test_data/'
 COLAB_REPO = '/content/drive/My Drive/Colab Notebooks/SSD300/repo/'
 
@@ -24,9 +24,9 @@ WITH_FACE_SHIELD_RGB = '#F37F0B' #TODO
 # Objects
 CLEAN = 'Infraccion'
 MASK = 'Barbijo'
-GLASSES = 'Protección ocular'
+GLASSES = 'Proteccion ocular'
 FACE_SHIELD = 'Mascara Facial'
-GLASSES_AND_MASK = 'Barbijo y Protección ocular'
+GLASSES_AND_MASK = 'Barbijo y Proteccion ocular'
 
 OBJECT_COLOR_DICT = {
     CLEAN: CLEAN_RGB,

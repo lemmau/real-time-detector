@@ -58,9 +58,9 @@ class EmailSender:
         dbInfo = {
             'Barbijo': [],
             'Limpio': [],
-            'Protección ocular': [],
+            'Proteccion ocular': [],
             'Mascara Facial': [],
-            'Barbijo y Protección ocular': []
+            'Barbijo y Proteccion ocular': []
         }
 
         fileName = 'reporte_{0}-{1}.csv'.format(startDay, endDay)
