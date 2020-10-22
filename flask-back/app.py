@@ -7,7 +7,8 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, send
 from IAModel import IAModel
 from PredictedClass import ClassList
-from core.definitions import CHECKPOINT_NEW as modelPath, EMAIL_SENDER_CRON_ID
+from core.definitions import CHECKPOINT_NEW as modelPath, EMAIL_SENDER_CRON_ID, OBJECT_COLOR_DICT
+from core.definitions import CLEAN, MASK, GLASSES, FACE_SHIELD, GLASSES_AND_MASK
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from src.Video import Video
@@ -78,14 +79,14 @@ def video():
 def getConfiguration():
     objectDetectionConfig = OrderedDict(app.config['objectDetection'])
 
-    shouldDisableFaceMask = objectDetectionConfig['Barbijo'] or objectDetectionConfig['Proteccion ocular']
-    shouldDisableGlassesAndMask = objectDetectionConfig['Mascara']
+    shouldDisableFaceMask = objectDetectionConfig[MASK] or objectDetectionConfig[GLASSES]
+    shouldDisableGlassesAndMask = objectDetectionConfig[FACE_SHIELD]
 
     elements = OrderedDict({key: {'elementName': key, 'isChecked': value} for key, value in objectDetectionConfig.items()})
-    elements["Barbijo"]['isDisabled'] = shouldDisableGlassesAndMask
-    elements["Proteccion ocular"]['isDisabled'] = shouldDisableGlassesAndMask
-    elements["Mascara"]['isDisabled'] = shouldDisableFaceMask
-    elements["soundAlarm"] = app.config['soundAlarm']
+    elements[MASK]['isDisabled'] = shouldDisableGlassesAndMask
+    elements[GLASSES]['isDisabled'] = shouldDisableGlassesAndMask
+    elements[FACE_SHIELD]['isDisabled'] = shouldDisableFaceMask
+    elements['soundAlarm'] = app.config['soundAlarm']
 
     return jsonify(elements)
 
@@ -99,101 +100,119 @@ def getConfigurationStats():
 
 @app.route('/configuration/stats', methods=['POST'])
 def setConfigurationStats():
-    requestData = request.json
-    app.config['sendEmails'] = requestData['sendEmails']
-    app.config['frequency'] = requestData['frequency']
+    try:
+        requestData = request.json
+        app.config['sendEmails'] = requestData['sendEmails']
+        app.config['frequency'] = requestData['frequency']
 
-    return jsonify('{"status":"ok, "message": "Stats Configuration Updated"}')
+        return jsonify('{"status":"ok, "message": "Stats Configuration Updated"}')
+    except:
+        return jsonify('{"status":"Error, "message": "Error updating Stats Configuration"}')
 
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
-    requestData = request.json
+    try:
+        requestData = request.json
 
-    app.config['soundAlarm'] = requestData['soundAlarm']
-    del requestData['soundAlarm']
-    app.config['objectDetection'] = requestData
+        app.config['soundAlarm'] = requestData['soundAlarm']
+        del requestData['soundAlarm']
+        app.config['objectDetection'] = requestData
 
-    return jsonify('{"status":"ok, "message": "Configuration Changed"}')
+        return jsonify('{"status":"ok, "message": "Configuration Changed"}')
+    except:
+        return jsonify('{"status":"Error, "message": "Error on Configuration Change"}')
 
 @app.route('/loadCron', methods=['POST'])
 def setCron():
-    frequency = request.json
-    print(frequency)
+    try:
+        frequency = request.json
+        print(frequency)
 
-    selectedDayOfWeek = Cron.translateDayOfWeek(frequency['propiedadAdicional']) or '*'
-    selectedDayOfMonth = Cron.calculateDayOfMonth(frequency['propiedadAdicional']) or '*'
-    cron = Cron(date=datetime.today().strftime("%Y-%m-%d"), day_of_week=selectedDayOfWeek, day=selectedDayOfMonth, hour=frequency['hora'], isDeleted=False)
+        selectedDayOfWeek = Cron.translateDayOfWeek(frequency['propiedadAdicional']) or '*'
+        selectedDayOfMonth = Cron.calculateDayOfMonth(frequency['propiedadAdicional']) or '*'
+        cron = Cron(date=datetime.today().strftime("%Y-%m-%d"), day_of_week=selectedDayOfWeek, day=selectedDayOfMonth, hour=frequency['hora'], isDeleted=False)
 
-    if scheduler.get_job(EMAIL_SENDER_CRON_ID):
-        scheduler.remove_job(EMAIL_SENDER_CRON_ID)
-        
-    scheduler.add_job(EmailSender.triggerEmailSender, 'cron', day=selectedDayOfMonth, day_of_week=selectedDayOfWeek, hour=frequency['hora'], args=[frequency, datetime.today(), db, app], id=EMAIL_SENDER_CRON_ID)
+        if scheduler.get_job(EMAIL_SENDER_CRON_ID):
+            scheduler.remove_job(EMAIL_SENDER_CRON_ID)
+            
+        scheduler.add_job(EmailSender.triggerEmailSender, 'cron', day=selectedDayOfMonth, day_of_week=selectedDayOfWeek, hour=frequency['hora'], args=[frequency, datetime.today(), db, app], id=EMAIL_SENDER_CRON_ID)
 
-    save(session, cron)
+        save(session, cron)
 
-    app.config["sendEmails"] = "true"
+        app.config["sendEmails"] = "true"
 
-    for prop in frequency:
-        app.config['frequency'][prop] = frequency[prop]
+        for prop in frequency:
+            app.config['frequency'][prop] = frequency[prop]
 
-    return jsonify('{"status":"ok, "message": "Cron successfully triggered"}')
+        return jsonify('{"status":"ok, "message": "Cron successfully triggered"}')
+    except:
+        return jsonify('{"status":"Error, "message": "Error on Cron trigger"}')
 
 @app.route('/removeCron', methods=['GET'])
 def removeCron():
-    scheduler.remove_job(EMAIL_SENDER_CRON_ID)
-    app.config["sendEmails"] = "false"
+    try:
+        scheduler.remove_job(EMAIL_SENDER_CRON_ID)
+        app.config["sendEmails"] = "false"
 
-    return jsonify('{"status":"ok, "message": "Cron successfully removed"}')
+        return jsonify('{"status":"ok, "message": "Cron successfully removed"}')
+    except:
+        return jsonify('{"status":"Error, "message": "Error on Cron remove"}')
 
-@app.route('/statistic/<day>', methods=['GET'])
-def getStatisticOfToday(day):
+@app.route('/statistic/<date>', methods=['GET'])
+def getStatistic(date):
+    try:
+        statisticsData = getStatisticsByDate(db, date)
 
-    sql = f"""SELECT date_format(dr.day, '%%H') hour, dc.name, dr.events FROM DailyReport dr
-              JOIN DetectedClass dc ON dc.id = dr.detectedClassId
-              WHERE date_format(dr.day, '%%Y-%%m-%%d') = '{day}'
-              ORDER BY dr.day"""
+        jsonObject = {}
 
-    queryResult = db.engine.execute(sql)
+        for row in statisticsData:
+            className = row['name']
 
-    jsonObject = {}
+            if className not in jsonObject:
+                jsonObject[className] = {'x': [], 'y': [], 'name': className, 'color': OBJECT_COLOR_DICT[className]}
 
-    for row in queryResult:
-        className = row['name']
+            jsonObject[className]['x'].append(row['hour'])
+            jsonObject[className]['y'].append(row['events'])
 
-        if className not in jsonObject:
-            jsonObject[className] = {'x': [], 'y': [], 'name': className}
-
-        jsonObject[className]['x'].append(row['hour'])
-        jsonObject[className]['y'].append(row['events'])
-
-    return jsonify(list(jsonObject.values()))
+        return jsonify(list(jsonObject.values()))
+    except:
+        return jsonify(list())
 
 @app.route('/emails', methods=['GET'])
 def getEmails():
-    return jsonify(list(getAllEmailsAvailables(session, app)))
+    try:
+        return jsonify(list(getAllEmailsAvailables(session, app)))
+    except:
+        return jsonify(list())
 
 @app.route('/emails', methods=['POST'])
 def saveNewEmail():
-    currentEmails = list(getAllEmails(session, app))
-    email = request.json
-    print(email)
+    try:
+        currentEmails = list(getAllEmails(session, app))
+        email = request.json
+        print(email)
 
-    if any(e.email == email for e in currentEmails):
-        restoreEmail(session, email)
+        if any(e.email == email for e in currentEmails):
+            restoreEmail(session, email)
 
-        return jsonify('{"status":"ok, "message": "{email} sucessfully restored"}')
-    else:
-        emailObject = Email(email)
-        save(session, emailObject)
+            return jsonify('{"status":"ok, "message": "{email} sucessfully restored"}')
+        else:
+            emailObject = Email(email)
+            save(session, emailObject)
 
         return jsonify('{"status":"ok, "message": "{email} sucessfully saved"}')
+    except expression as identifier:
+        return jsonify('{"status":"Error, "message": "Error saving {email}"}')
 
 @app.route('/removeEmail', methods=['POST'])
 def deleteEmails():
-    email = request.json
-    print(email)
-    # emailObject = Email(email, True)
+    try:
+        email = request.json
+        print(email)
+        # emailObject = Email(email, True)
 
-    deleteEmail(session, email)
-    
-    return jsonify('{"status":"ok, "message": "{email} sucessfully deleted"}')
+        deleteEmail(session, email)
+        
+        return jsonify('{"status":"ok, "message": "{email} sucessfully deleted"}')
+    except:
+        return jsonify('{"status":"Error, "message": "Error removing {email}"}')

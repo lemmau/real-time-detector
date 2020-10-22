@@ -51,7 +51,7 @@ export const ConfigurationScreen = () => {
   const [originalSoundConfig, setOriginalSoundConfig] = useState();
 
   useEffect(() => {
-    async function componentMount(){
+    async function componentMount() {
       await getElementsCheckbox();
     }
     componentMount();
@@ -68,49 +68,55 @@ export const ConfigurationScreen = () => {
     );
 
     const config = await response.json();
-    
+
     setOriginalConfig(config);
-    setSoundAlarm(config['soundAlarm']);
-    setOriginalSoundConfig(config['soundAlarm']);
-    
-    delete config['soundAlarm'];
+    setSoundAlarm(config["soundAlarm"]);
+    setOriginalSoundConfig(config["soundAlarm"]);
+
+    delete config["soundAlarm"];
     setElementsCheckboxs(config);
   }
 
-  function checkboxUpdated(key, checkboxValue){
+  function checkboxUpdated(key, checkboxValue) {
     let config = JSON.parse(JSON.stringify(elementsCheckboxs)); //deep copy
 
-    config[key]['isChecked'] = checkboxValue;
+    config[key]["isChecked"] = checkboxValue;
 
-    const shouldDisableFaceMask = config['Barbijo']['isChecked'] || config['Proteccion ocular']['isChecked'];
-    const shouldDisableGlassesAndMask = config['Mascara']['isChecked'];
+    const shouldDisableFaceMask =
+      config["Barbijo"]["isChecked"] ||
+      config["Proteccion ocular"]["isChecked"];
+    const shouldDisableGlassesAndMask = config["Mascara"]["isChecked"];
 
-    config["Barbijo"]['isDisabled'] = shouldDisableGlassesAndMask;
-    config["Proteccion ocular"]['isDisabled'] = shouldDisableGlassesAndMask;
-    config["Mascara"]['isDisabled'] = shouldDisableFaceMask;
+    config["Barbijo"]["isDisabled"] = shouldDisableGlassesAndMask;
+    config["Proteccion ocular"]["isDisabled"] = shouldDisableGlassesAndMask;
+    config["Mascara"]["isDisabled"] = shouldDisableFaceMask;
 
     shouldDisableSaveButton(config, soundAlarm);
     setElementsCheckboxs(config);
   }
 
-  function soundAlarmChanged(){
+  function soundAlarmChanged() {
     shouldDisableSaveButton(elementsCheckboxs, !soundAlarm);
     setSoundAlarm(!soundAlarm);
   }
 
-  function shouldDisableSaveButton(elementsCheckboxs, soundAlarm){
-    const shouldDisableSaveButton = (JSON.stringify(elementsCheckboxs) === JSON.stringify(originalConfig)) && (soundAlarm === originalSoundConfig)
+  function shouldDisableSaveButton(elementsCheckboxs, soundAlarm) {
+    
+    const shouldDisableSaveButton =
+      (JSON.stringify(elementsCheckboxs) === JSON.stringify(originalConfig) &&
+      soundAlarm === originalSoundConfig) ||
+      Object.entries(elementsCheckboxs).every(([_, value]) => !value["isChecked"]);
+
     setButtonDisable(shouldDisableSaveButton);
   }
 
-  async function saveConfig(){
+  async function saveConfig(e) {
+    e.preventDefault();
     const configToSave = {};
     Object.entries(elementsCheckboxs).map(([key, value]) => {
-      configToSave[key] = value['isChecked'];
+      configToSave[key] = value["isChecked"];
     });
-    configToSave['soundAlarm'] = soundAlarm;
-
-    console.log(configToSave);
+    configToSave["soundAlarm"] = soundAlarm;
 
     const requestOptions = {
       method: "POST",
@@ -119,6 +125,7 @@ export const ConfigurationScreen = () => {
     };
 
     await fetch(Config.backendEndpoint + "/configuration", requestOptions);
+    window.location.replace("/statistics");
   }
 
   return (
@@ -130,7 +137,13 @@ export const ConfigurationScreen = () => {
         <FormGroup aria-label="position" row></FormGroup>
 
         {Object.entries(elementsCheckboxs).map(([key, check]) => (
-          <ElementDetectionCheckbox value={check['elementName']} checked={check['isChecked']} disable={check['isDisabled']} key={key} onChange={checkboxUpdated}/>
+          <ElementDetectionCheckbox
+            value={check["elementName"]}
+            checked={check["isChecked"]}
+            disable={check["isDisabled"]}
+            key={key}
+            onChange={checkboxUpdated}
+          />
         ))}
 
         <FormLabel component="legend">
@@ -141,16 +154,22 @@ export const ConfigurationScreen = () => {
           value="Alertas sonoras"
           label="Alertas sonoras"
           control={
-            <Checkbox 
-              color="primary" 
+            <Checkbox
+              color="primary"
               checked={soundAlarm}
-              onChange={soundAlarmChanged}/>
+              onChange={soundAlarmChanged}
+            />
           }
         />
       </FormControl>
 
       <hr />
-      <Button className="right" color="primary" href='/statistics' disabled={buttonDisable} onClick={saveConfig}>
+      <Button
+        className="right"
+        color="primary"
+        disabled={buttonDisable}
+        onClick={saveConfig}
+      >
         Guardar
       </Button>
       <hr />
