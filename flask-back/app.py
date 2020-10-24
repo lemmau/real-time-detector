@@ -70,6 +70,17 @@ def handle_disconnect():
     app.config["clients"].remove(request.sid)
 
 
+@app.route('/set_camera', methods=['POST'])
+def setCamera():
+    try:
+        app.config["deviceId"] = request.json['deviceId']
+        Video.setNewVideoCapture(app.config["deviceId"])
+
+        return jsonify('{"status":"OK"')
+
+    except:
+        return jsonify('{"status":"Error", "message": "Could Not Set Camera"}')
+
 @app.route('/video_feed')
 def video():
     elementsConfig = json.loads(getConfiguration().get_data().decode("utf-8"))
@@ -105,9 +116,9 @@ def setConfigurationStats():
         app.config['sendEmails'] = requestData['sendEmails']
         app.config['frequency'] = requestData['frequency']
 
-        return jsonify('{"status":"ok, "message": "Stats Configuration Updated"}')
+        return jsonify('{"status":"ok", "message": "Stats Configuration Updated"}')
     except:
-        return jsonify('{"status":"Error, "message": "Error updating Stats Configuration"}')
+        return jsonify('{"status":"Error", "message": "Error updating Stats Configuration"}')
 
 @app.route('/configuration', methods=['POST'])
 def setConfiguration():
@@ -118,9 +129,9 @@ def setConfiguration():
         del requestData['soundAlarm']
         app.config['objectDetection'] = requestData
 
-        return jsonify('{"status":"ok, "message": "Configuration Changed"}')
+        return jsonify('{"status":"ok", "message": "Configuration Changed"}')
     except:
-        return jsonify('{"status":"Error, "message": "Error on Configuration Change"}')
+        return jsonify('{"status":"Error", "message": "Error on Configuration Change"}')
 
 @app.route('/loadCron', methods=['POST'])
 def setCron():
@@ -144,9 +155,9 @@ def setCron():
         for prop in frequency:
             app.config['frequency'][prop] = frequency[prop]
 
-        return jsonify('{"status":"ok, "message": "Cron successfully triggered"}')
+        return jsonify('{"status":"ok", "message": "Cron successfully triggered"}')
     except:
-        return jsonify('{"status":"Error, "message": "Error on Cron trigger"}')
+        return jsonify('{"status":"Error", "message": "Error on Cron trigger"}')
 
 @app.route('/removeCron', methods=['GET'])
 def removeCron():
@@ -154,9 +165,9 @@ def removeCron():
         scheduler.remove_job(EMAIL_SENDER_CRON_ID)
         app.config["sendEmails"] = "false"
 
-        return jsonify('{"status":"ok, "message": "Cron successfully removed"}')
+        return jsonify('{"status":"ok", "message": "Cron successfully removed"}')
     except:
-        return jsonify('{"status":"Error, "message": "Error on Cron remove"}')
+        return jsonify('{"status":"Error", "message": "Error on Cron remove"}')
 
 @app.route('/statistic/<date>', methods=['GET'])
 def getStatistic(date):
@@ -195,14 +206,14 @@ def saveNewEmail():
         if any(e.email == email for e in currentEmails):
             restoreEmail(session, email)
 
-            return jsonify('{"status":"ok, "message": "{email} sucessfully restored"}')
+            return jsonify('{"status":"ok", "message": "{email} sucessfully restored"}')
         else:
             emailObject = Email(email)
             save(session, emailObject)
 
-        return jsonify('{"status":"ok, "message": "{email} sucessfully saved"}')
+        return jsonify('{"status":"ok", "message": "{email} sucessfully saved"}')
     except expression as identifier:
-        return jsonify('{"status":"Error, "message": "Error saving {email}"}')
+        return jsonify('{"status":"Error", "message": "Error saving {email}"}')
 
 @app.route('/removeEmail', methods=['POST'])
 def deleteEmails():
@@ -213,6 +224,6 @@ def deleteEmails():
 
         deleteEmail(session, email)
         
-        return jsonify('{"status":"ok, "message": "{email} sucessfully deleted"}')
+        return jsonify('{"status":"ok", "message": "{email} sucessfully deleted"}')
     except:
-        return jsonify('{"status":"Error, "message": "Error removing {email}"}')
+        return jsonify('{"status":"Error", "message": "Error removing {email}"}')
