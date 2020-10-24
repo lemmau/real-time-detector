@@ -7,6 +7,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import Config from "Config";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -39,30 +40,33 @@ export const CameraScreen = () => {
   }, [handleDevices]);
 
 
-  const handleChangeDevice = (e) => {
-    console.log("Selected device: ", e.label);
+  const handleChangeDevice = (deviceId) => {
+  
+    console.log("Selected device id: ", deviceId);
 
-    if(e.label != "") {
-      setsaveButtonDisabled(false)
+    if(!deviceId) {
+      setsaveButtonDisabled(false);
     }
 
-    setCamara(e.label);
+    setCamara(deviceId);
   };
 
   const handleSubmit = () => {
-    // TODO API para pasarle los datos al back
-    // async function setStatisticsConfiguration() {
-    //   const requestOptions = {
-    //     method: "GET",
-    //   };
 
-    //   const response = await fetch(
-    //     Config.backendEndpoint + "/configuration"+ periodicidad + hora + propiedadAdicional,
-    //     requestOptions
-    //   );
-    //   const data = await response.json();
-    // }
-    // setStatisticsConfiguration();
+    async function setStatisticsConfiguration() {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({"deviceId": camara}),
+      };
+
+      await fetch(
+        Config.backendEndpoint + "/set_camera",
+        requestOptions
+      );
+
+    }
+    setStatisticsConfiguration();
   };
 
   return (
@@ -83,7 +87,7 @@ export const CameraScreen = () => {
               error={devices.length == 0}
             >
               {devices.map((device, key) => (
-                <MenuItem value={key} key={key} onClick={handleChangeDevice}>
+                <MenuItem value={key} key={key} onClick={() => handleChangeDevice(key)}>
                   {device.label || `Device ${key + 1}`}
                 </MenuItem>
               ))}

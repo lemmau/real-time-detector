@@ -11,7 +11,7 @@
         "smptServer": "smtp.gmail.com",
         "smptPort": 587,
         "senderMail": "rtd.notifications@gmail.com",
-        "senderPassword": "cGFzc3dvcmQK"
+        "senderPassword": "cnRkdXRuMjAyMAo="
     },
     "possibleElements": ["Barbijo", "Proteccion ocular", "Mascara Facial"],
     "objectDetection": {
