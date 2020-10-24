@@ -84,24 +84,20 @@ class IAModel():
 
         if self.shouldThrowAlarm(currentDetectedClasses):
             for client in app.config["clients"]:
-                app.config["socketIo"].emit('alarm', {'isAudioEnable': soundAlarmOn}, room=client)
+                app.config["socketIo"].emit('alarm', {'isAudioAlarmEnable': soundAlarmOn}, room=client)
 
         self.detectedClassesPrevious = currentDetectedClasses
 
         return annotated_image
 
     def shouldThrowAlarm(self, currentDetectedClasses):
-        if (len(self.detectedClassesPrevious) >= len(currentDetectedClasses)):
-            return False
-        else:
-            # INFRACTION_ID represent the 'clean' class
-            previousInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, self.detectedClassesPrevious))
-            currentInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, currentDetectedClasses))
+        
+        # INFRACTION_ID represent the 'clean' class
+        previousInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, self.detectedClassesPrevious))
+        currentInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, currentDetectedClasses))
 
-            if(len(currentInfractions) > len(previousInfractions)):
-                return True
+        return len(currentInfractions) > len(previousInfractions)
 
-        return False
     
     def evaluateElementsConfiguration(self, prediction, elementsDict):
         maskEnable = elementsDict[MASK]["isChecked"]
