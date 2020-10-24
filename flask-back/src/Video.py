@@ -35,3 +35,8 @@ class Video():
             yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
                 bytearray(encodedImage) + b'\r\n')
 
+    @staticmethod
+    def setNewVideoCapture(deviceId):
+        Video.videoInput.release()
+        Video.videoInput = cv2.VideoCapture(deviceId)
+
