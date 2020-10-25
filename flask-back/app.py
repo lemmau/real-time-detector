@@ -212,7 +212,7 @@ def saveNewEmail():
             save(session, emailObject)
 
         return jsonify('{"status":"ok", "message": "{email} sucessfully saved"}')
-    except expression as identifier:
+    except:
         return jsonify('{"status":"Error", "message": "Error saving {email}"}')
 
 @app.route('/removeEmail', methods=['POST'])
