@@ -32,6 +32,8 @@ class IAModel():
         self.classes = classes
         self.device = torch.device('cpu')
         self.detectedClassesPrevious = []
+        self.stackedInfractions = 0
+        self.tresholdStackedInfractions = 5
 
     def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str, app) -> Image:
         # Transforms needed for SSD300 (we are using torchvision to apply image tranformation) -> https://pytorch.org/docs/stable/torchvision/transforms.html
@@ -96,7 +98,18 @@ class IAModel():
         previousInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, self.detectedClassesPrevious))
         currentInfractions = list(filter(lambda detectedClass: detectedClass.id == INFRACTION_ID, currentDetectedClasses))
 
-        return len(currentInfractions) > len(previousInfractions)
+        if len(currentInfractions) >= len(previousInfractions):
+            self.stackedInfractions += 1
+        
+        if not len(currentInfractions):
+            self.stackedInfractions = 0
+
+        #print(self.stackedInfractions)
+        if self.stackedInfractions >= self.tresholdStackedInfractions:
+            self.stackedInfractions = 0
+            return True
+
+        return False
 
     
     def evaluateElementsConfiguration(self, prediction, elementsDict):
