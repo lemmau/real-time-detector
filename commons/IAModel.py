@@ -1,6 +1,5 @@
 import torch
 import json
-from datetime import datetime
 from torchvision import transforms
 from PIL import Image
 from ElementDrawer import ElementDrawer
@@ -80,13 +79,16 @@ class IAModel():
             text = predictedClass.label.upper()+ " " + "{:.0%}".format(score)
             ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
 
-        Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, datetime.timestamp(datetime.now()), app)
+        Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, app)
 
         soundAlarmOn = app.config['soundAlarm']
 
         if self.shouldThrowAlarm(currentDetectedClasses):
             for client in app.config["clients"]:
                 app.config["socketIo"].emit('alarm', {'isAudioAlarmEnable': soundAlarmOn}, room=client)
+
+            Event.persistInfraction(app)
+
 
         self.detectedClassesPrevious = currentDetectedClasses
 

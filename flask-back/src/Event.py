@@ -1,3 +1,4 @@
+from datetime import datetime
 from src.DetectedClass import DetectedClass
 from sqlalchemy.orm import sessionmaker
 from src.DBHelper import *
@@ -25,7 +26,7 @@ class Event(db.Model):
         self.isInfraction = isInfraction
 
     @staticmethod
-    def processAndPersistEvent(detectedClassesPrevious, currentDetectedClasses, timestamp, app):
+    def processAndPersistEvent(detectedClassesPrevious, currentDetectedClasses, app):
         if (Event.shouldPersistEvents(detectedClassesPrevious, currentDetectedClasses)):
             with app.app_context():
                 Session = sessionmaker()
@@ -34,10 +35,25 @@ class Event(db.Model):
 
                 newClasses = Event.Diff(detectedClassesPrevious, currentDetectedClasses)
 
-                for newClass in newClasses:
-                    print('New detection to be saved: ', newClass.label)
+                timestamp = datetime.timestamp(datetime.now())
 
-                    save(session, Event(timestamp, newClass.id, newClass.id == INFRACTION_ID))
+                for newClass in newClasses:
+                    if newClass.id != INFRACTION_ID:
+                        print('New detection to be saved: ', newClass.label)
+                        save(session, Event(timestamp, newClass.id, False))
+    
+    @staticmethod
+    def persistInfraction(app):
+        timestamp = datetime.timestamp(datetime.now())
+
+        with app.app_context():
+            Session = sessionmaker()
+            Session.configure(bind=db.engine)
+            session = Session()
+
+            print('New detection to be saved: Infraccion')
+            save(session, Event(timestamp, INFRACTION_ID, True))
+
 
     @staticmethod
     def shouldPersistEvents(detectedClassesPrevious, currentDetectedClasses):
