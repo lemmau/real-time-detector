@@ -23,26 +23,30 @@ class DailyReport(db.Model):
 
     @staticmethod
     def runSync(db, session):
-        print('Run dailyReport sync triggered')
+        try:
+            print('Run dailyReport sync triggered')
 
-        endTime = datetime.now()
-        startTime = endTime - timedelta(hours=24)
+            endTime = datetime.now()
+            startTime = endTime - timedelta(hours=24)
 
-        allEventsLast24hsByClass = getEventsByClass(db, startTime, endTime)
+            allEventsLast24hsByClass = getEventsByClass(db, startTime, endTime)
 
-        dailyReportsRowsToAdd = []
+            dailyReportsRowsToAdd = []
 
-        for eventsByClass in allEventsLast24hsByClass:
-            for hour in range(24):
-                eventsInHour = list(filter(lambda event: int(datetime.fromtimestamp(event.timestamp).strftime("%H")) == hour, allEventsLast24hsByClass[eventsByClass]))
+            for eventsByClass in allEventsLast24hsByClass:
+                for hour in range(24):
+                    eventsInHour = list(filter(lambda event: int(datetime.fromtimestamp(event.timestamp).strftime("%H")) == hour, allEventsLast24hsByClass[eventsByClass]))
 
-                if len(eventsInHour) > 0:
-                    events = len(eventsInHour)
-                    day = datetime.fromtimestamp(eventsInHour[0].timestamp).strftime("%Y-%m-%d %H:00:00")
-                    detectedClassId = eventsInHour[0].detectedClassId
+                    if len(eventsInHour) > 0:
+                        events = len(eventsInHour)
+                        day = datetime.fromtimestamp(eventsInHour[0].timestamp).strftime("%Y-%m-%d %H:00:00")
+                        detectedClassId = eventsInHour[0].detectedClassId
 
-                    dailyReportsRowsToAdd.append(DailyReport(day, events, detectedClassId))
+                        dailyReportsRowsToAdd.append(DailyReport(day, events, detectedClassId))
 
-        saveBatch(session, dailyReportsRowsToAdd)
+            saveBatch(session, dailyReportsRowsToAdd)
 
-        print('DailyReport sync finished')
+            print('DailyReport sync finished')
+        except:
+            print('DailyReport sync failed')
+
