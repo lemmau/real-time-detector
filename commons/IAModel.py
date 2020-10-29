@@ -32,7 +32,7 @@ class IAModel():
         self.device = torch.device('cpu')
         self.detectedClassesPrevious = []
         self.stackedInfractions = 0
-        self.tresholdStackedInfractions = 5
+        self.tresholdStackedInfractions = 2
 
     def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str, app) -> Image:
         # Transforms needed for SSD300 (we are using torchvision to apply image tranformation) -> https://pytorch.org/docs/stable/torchvision/transforms.html
@@ -77,18 +77,15 @@ class IAModel():
 
             ElementDrawer.drawRectangule(annotated_image, boxLimits, predictedClass.color)
             text = predictedClass.label.upper()+ " " + "{:.0%}".format(score)
-            ElementDrawer.drawTextBox(annotated_image, text, "calibri.ttf", boxLimits, predictedClass.color)
+            ElementDrawer.drawTextBox(annotated_image, text, "/home/psh/Downloads/Calibri.ttf", boxLimits, predictedClass.color)
 
-        Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, app)
-
-        soundAlarmOn = app.config['soundAlarm']
-
-        if self.shouldThrowAlarm(currentDetectedClasses):
+        isThereInfraction = self.shouldThrowAlarm(currentDetectedClasses)
+        
+        if isThereInfraction:
             for client in app.config["clients"]:
-                app.config["socketIo"].emit('alarm', {'isAudioAlarmEnable': soundAlarmOn}, room=client)
+                app.config["socketIo"].emit('alarm', {'isAudioAlarmEnable': app.config['soundAlarm']}, room=client)
 
-            Event.persistInfraction(app)
-
+        Event.processAndPersistEvent(self.detectedClassesPrevious, currentDetectedClasses, isThereInfraction, app)
 
         self.detectedClassesPrevious = currentDetectedClasses
 

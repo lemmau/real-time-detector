@@ -26,7 +26,7 @@ class Event(db.Model):
         self.isInfraction = isInfraction
 
     @staticmethod
-    def processAndPersistEvent(detectedClassesPrevious, currentDetectedClasses, app):
+    def processAndPersistEvent(detectedClassesPrevious, currentDetectedClasses, persistInfractions:bool, app):
         if (Event.shouldPersistEvents(detectedClassesPrevious, currentDetectedClasses)):
             with app.app_context():
                 Session = sessionmaker()
@@ -35,24 +35,27 @@ class Event(db.Model):
 
                 newClasses = Event.Diff(detectedClassesPrevious, currentDetectedClasses)
 
+                if not persistInfractions:
+                    newClasses = list(filter(lambda detectedClass: detectedClass.id != INFRACTION_ID, newClasses))
+                    print(newClasses)
+
                 timestamp = datetime.timestamp(datetime.now())
 
-                for newClass in newClasses:
-                    if newClass.id != INFRACTION_ID:
-                        print('New detection to be saved: ', newClass.label)
-                        save(session, Event(timestamp, newClass.id, False))
+                for newClass in newClasses:                        
+                    print('New detection to be saved: ', newClass.label)
+                    save(session, Event(timestamp, newClass.id, newClass.id == INFRACTION_ID))
     
-    @staticmethod
-    def persistInfraction(app):
-        timestamp = datetime.timestamp(datetime.now())
+    # @staticmethod
+    # def persistInfraction(detectedClassesPrevious, currentDetectedClasses, app):
+    #     timestamp = datetime.timestamp(datetime.now())
 
-        with app.app_context():
-            Session = sessionmaker()
-            Session.configure(bind=db.engine)
-            session = Session()
+    #     with app.app_context():
+    #         Session = sessionmaker()
+    #         Session.configure(bind=db.engine)
+    #         session = Session()
 
-            print('New detection to be saved: Infraccion')
-            save(session, Event(timestamp, INFRACTION_ID, True))
+    #         print('New detection to be saved: Infraccion')
+    #         save(session, Event(timestamp, INFRACTION_ID, True))
 
 
     @staticmethod
