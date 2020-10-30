@@ -53,3 +53,4 @@ class SendMail():
 		mailer = SendMail()
 		mailer.login()
 		mailer.send(listMails, subject, message, attachments)
+		print('Email sent')

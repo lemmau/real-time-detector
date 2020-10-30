@@ -162,6 +162,16 @@ export const SendStatsEmails = (props) => {
     props.onPropertyChange({"emailsList": emailsList});
   }
 
+  async function enviarEstadisticasAhora() {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "",
+    };
+
+    await fetch(Config.backendEndpoint + "/sendStatsNow", requestOptions);
+  }
+
   function removeItem(arr, item) {
     var index = arr.indexOf(item);
     if (index > -1) {
@@ -259,8 +269,19 @@ export const SendStatsEmails = (props) => {
           <div className={classes.center}>
             
             <ToggleSendEmail onToggle={handleToggleSendMail} toggled={props.params["sendEmails"]}/>
-
-            <hr/>
+            
+            {emailsList.length > 0 && (
+                <div>
+                    <Button
+                    className="right"
+                    color="primary"
+                    onClick={enviarEstadisticasAhora}
+                    >
+                    Enviar estadisticas ahora (presentacion)
+                    </Button>
+                </div>
+                )}
+            <hr />
 
             <div style={!props.params["sendEmails"] ? {pointerEvents: "none", opacity: "0.4"} : {}} className={classes.destinaries}>
               <h3 className={classes.destinataryTitle}>Destinatarios</h3>

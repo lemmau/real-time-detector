@@ -227,3 +227,13 @@ def deleteEmails():
         return jsonify('{"status":"ok", "message": "{email} sucessfully deleted"}')
     except:
         return jsonify('{"status":"Error", "message": "Error removing {email}"}')
+
+@app.route('/sendStatsNow', methods=['POST'])
+def sendStatsNow():
+    try:
+        DailyReport.runSync(db, session)
+        EmailSender.sendEmailNow(datetime.today(), db, app)
+
+        return jsonify('{"status":"ok", "message": "Email successfully sent"}')
+    except:
+        return jsonify('{"status":"Error", "message": "Error sending Email"}')
