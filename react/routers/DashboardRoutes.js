@@ -12,19 +12,19 @@ export const DashboardRoutes = () => {
     return (
         <>
             <Navbar />
-            <ToastProvider>
+            
             <div className="container mt-2">
                 <Switch>
                     <Route exact path="/configuration" component={ ConfigurationScreen } />
                     <Route exact path="/statistics" component={ StatisticsScreen } />
                     <Route exact path="/camera" component={ CameraScreen } />
+                    <ToastProvider>
                     <Route exact path="/webcam" component={ WebcamScreen } />
+                    </ToastProvider>
 
                     <Redirect to="/camera" />
                 </Switch>
             </div>
-            </ToastProvider>
-
         </>
     )
 }
