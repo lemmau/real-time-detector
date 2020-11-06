@@ -4,7 +4,7 @@ import styled from "styled-components";
 import image from "../../assets/broken-image.png";
 import Config from "Config";
 import io from "socket.io-client";
-import { useToasts } from "react-toast-notifications";
+import { useToasts, ToastProvider } from "react-toast-notifications";
 import alarmSound from "../../assets/alarm_sound.mp3";
 
 const WebcamWrapper = styled.div`
@@ -17,6 +17,14 @@ const endpoint = Config.backendEndpoint;
 const socket = io.connect(endpoint);
 
 export const WebcamScreen = () => {
+  return (
+    <ToastProvider>
+      <WebcamStreamView/>
+    </ToastProvider>
+  );
+};
+
+export const WebcamStreamView = () => {
 
   const [isAlarmShowing, setIsAlarmShowing] = useState(false);
 
@@ -46,8 +54,8 @@ export const WebcamScreen = () => {
   }, [isAlarmShowing]);
 
   return (
-    <WebcamWrapper>
-      <Img src={[Config.backendEndpoint + "/video_feed", image]} />
-    </WebcamWrapper>
+      <WebcamWrapper>
+        <Img src={[Config.backendEndpoint + "/video_feed", image]} />
+      </WebcamWrapper>
   );
 };
