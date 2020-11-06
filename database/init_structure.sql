@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `DailyReport`(
     events INT UNSIGNED NOT NULL,
     detectedClassId INT UNSIGNED NOT NULL,
     isDeleted bool NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`id`)
     -- CONSTRAINT `DailyReport_DetectedClass_fk`
     --     FOREIGN KEY (`detectedClassId`) REFERENCES DetectedClass(id)
     --     ON DELETE CASCADE ON UPDATE CASCADE
