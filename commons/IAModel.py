@@ -131,7 +131,7 @@ class IAModel():
             if(prediction.id == 3):
                 return self.classes.getClassByPredictedId(1)
         elif (not faceShieldEnable):
-            if(prediction.id == 4):
+            if(prediction.id == 4 or prediction.id == 1 or prediction.id == 2):
                 return self.classes.getClassByPredictedId(INFRACTION_ID)
         
         return prediction
