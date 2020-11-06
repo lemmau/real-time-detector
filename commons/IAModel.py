@@ -33,7 +33,7 @@ class IAModel():
         self.classes = classes
         self.detectedClassesPrevious = []
         self.stackedInfractions = 0
-        self.tresholdStackedInfractions = 5
+        self.tresholdStackedInfractions = 15
 
     def detect(self, original_image, min_score:float ,max_overlap:float, max_objects:int, elementsConfiguration:str, app) -> Image:
         # Transforms needed for SSD300 (we are using torchvision to apply image tranformation) -> https://pytorch.org/docs/stable/torchvision/transforms.html
