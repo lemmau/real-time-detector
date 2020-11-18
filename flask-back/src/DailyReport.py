@@ -29,6 +29,12 @@ class DailyReport(db.Model):
             endTime = datetime.now()
             startTime = endTime - timedelta(hours=24)
 
+            # drop old DailyReport rows that will be updated
+            sqlDropOldRows = """DELETE FROM DailyReport WHERE unix_timestamp(day) >= {oneDayAgo}
+                                """.format(oneDayAgo=int(startTime.timestamp()))
+
+            db.engine.execute(sqlDropOldRows)
+
             allEventsLast24hsByClass = getEventsByClass(db, startTime, endTime)
 
             dailyReportsRowsToAdd = []
