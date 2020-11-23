@@ -43,13 +43,9 @@ CREATE TABLE IF NOT EXISTS `Cron`(
 
 CREATE TABLE IF NOT EXISTS `Email`(
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    cronId INT UNSIGNED NOT NULL,
     email varchar(200) NOT NULL,
     isDeleted bool NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `Constr_Cron_fk`
-        FOREIGN KEY `Cron_fk` (`cronId`) REFERENCES `Cron` (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `DailyReport`(
@@ -58,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `DailyReport`(
     events INT UNSIGNED NOT NULL,
     detectedClassId INT UNSIGNED NOT NULL,
     isDeleted bool NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY (`id`)
     -- CONSTRAINT `DailyReport_DetectedClass_fk`
     --     FOREIGN KEY (`detectedClassId`) REFERENCES DetectedClass(id)
     --     ON DELETE CASCADE ON UPDATE CASCADE
